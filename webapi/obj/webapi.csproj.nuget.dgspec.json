@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\logan\\source\\repos\\Financial-PlannerAPI\\webapi\\webapi.csproj": {}
+    "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\webapi\\webapi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\logan\\source\\repos\\Financial-PlannerAPI\\webapi\\webapi.csproj": {
+    "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\webapi\\webapi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\logan\\source\\repos\\Financial-PlannerAPI\\webapi\\webapi.csproj",
+        "projectUniqueName": "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\webapi\\webapi.csproj",
         "projectName": "webapi",
-        "projectPath": "C:\\Users\\logan\\source\\repos\\Financial-PlannerAPI\\webapi\\webapi.csproj",
+        "projectPath": "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\webapi\\webapi.csproj",
         "packagesPath": "C:\\Users\\logan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\logan\\source\\repos\\Financial-PlannerAPI\\webapi\\obj\\",
+        "outputPath": "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\webapi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -48,6 +48,30 @@
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[7.0.13, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.13, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.13, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[7.0.13, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.13, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
