@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import './index.css';
 
 export default class App extends Component {
     static displayName = App.name;
-
     constructor(props) {
         super(props);
-        this.state = { forecasts: [], loading: true };
+        this.state = { forecasts: [], loading: true, isLogin: true };
     }
 
     componentDidMount() {
@@ -43,8 +42,6 @@ export default class App extends Component {
             ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
             : App.renderForecastsTable(this.state.forecasts);
 
-        const isLogin = true;
-
         return (
             <div class="flex-loginContainer">
                 <div class="flex-loginChild">
@@ -56,15 +53,15 @@ export default class App extends Component {
                             </span>
                         </div>
                         <div class="header-container-bottom">
-                            <a onclick={this.isLogin == false}>Sign In</a>
+                            <a class="UserOption" onClick={() => { this.setState({isLogin: true}) }}>Sign In</a>
                             <br></br>
-                            <a>Register</a>
+                            <a class="UserOption" onClick={() => { this.setState({ isLogin: false }) }}>Register</a>
                         </div>
                         {/*Top of dialog*/}
                     </div>
                     {
                         (() => {
-                            if (isLogin) {
+                            if (this.state.isLogin) {
                                 return (
                                     <this.Login></this.Login>
                                 )
@@ -84,17 +81,70 @@ export default class App extends Component {
     }
 
     Login() {
-        return (
-            <div class="content">
-            LOGIN PLEASE
-            </div>
-        );
+            const [name, setName] = useState("");
+            const [password, setPassword] = useState("");
+            return (
+                <div class="content">
+                    <div class="input-container">
+                        <label>Username</label><br/>
+                        <input type="text" value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            class="input-box" />
+                    </div>
+                    <div class="input-container">
+                        <label>Password</label><br />
+                        <input type="password" value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            class="input-box" />
+                    </div>
+                    <div class="input-container">
+                        <button onClick={() => this.AuthenticateUser()} class="signIn">Sign In</button>
+                    </div>
+                </div>
+            );
     }
 
+    AuthenticateUser() {
+        console.log("hi")
+    }
+
+ 
+
     Register() {
+        const [username, setUsername] = useState("");
+        const [email, setEmail] = useState("");
+        const [password, setPassword] = useState("");
+        const [confirmPassword, setConfirmPassword] = useState("");
+
         return (
             <div class="content">
-                REGISTER PLEASE
+                <div class="input-container">
+                    <label>Username</label><br />
+                    <input type="text" value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        class="input-box" />
+                </div>
+                <div class="input-container">
+                    <label>Email</label><br />
+                    <input type="text" value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        class="input-box" />
+                </div>
+                <div class="input-container">
+                    <label>Password</label><br />
+                    <input type="password" value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        class="input-box" />
+                </div>
+                <div class="input-container">
+                    <label>Confirm Password</label><br />
+                    <input type="password" value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        class="input-box" />
+                </div>
+                <div class="input-container">
+                    <button class="signIn">Register</button>
+                </div>
             </div>
         );
     }

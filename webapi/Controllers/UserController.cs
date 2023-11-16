@@ -6,6 +6,7 @@ using webapi.Services;
 using Newtonsoft.Json;
 using webapi.Models;
 using System.Net;
+using System.Security.Cryptography;
 
 namespace webapi.Controllers
 {
@@ -48,6 +49,23 @@ namespace webapi.Controllers
             {
                 return "Error processing request";
             }
+        }
+
+        [HttpPost("GetPublicKey")]
+        async public Task<string> GetPublicKey()
+        {
+            //Get private key
+            var key = new CspParameters
+            {
+                KeyContainerName = "MachineKeyStore"
+            };
+
+            using var rsa = new RSACryptoServiceProvider(key);
+
+            string publickey = rsa.ToXmlString(false);
+
+
+            return publickey;
         }
     }
 }
