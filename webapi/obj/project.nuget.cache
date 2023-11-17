@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "+CkBb75lna/rJ4Jhns/QhSbW0xAOddcBLID9qIudxl8lcngl+6NFKtReIfmHQHIpUcI7ghdGJKdzi+29HTXQMg==",
+  "dgSpecHash": "gKjt6PZ03nZwN8oQK1YTsVVao1O0rVELcFtj35f/DaAMIoIimtL3vBa5MUOMG+BEbg0C9IiR8rqadNlmCYMRdA==",
   "success": true,
   "projectFilePath": "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\webapi\\webapi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\logan\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\logan\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
+    "C:\\Users\\logan\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\logan\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\logan\\.nuget\\packages\\microsoft.aspnetcore.openapi\\7.0.13\\microsoft.aspnetcore.openapi.7.0.13.nupkg.sha512",
     "C:\\Users\\logan\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",

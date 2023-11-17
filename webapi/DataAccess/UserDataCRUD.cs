@@ -1,11 +1,17 @@
-﻿using webapi.Models;
+﻿using Newtonsoft.Json;
+using webapi.Models;
+using webapi.Services;
 
 namespace webapi.DataCRUD
 {
     public class UserDataCRUD
     {
         private readonly UserContext _userContext;
-        public UserDataCRUD(UserContext userContext) { _userContext = userContext; }
+
+        public UserDataCRUD(UserContext userContext) 
+        { 
+            _userContext = userContext; 
+        }
 
         public async Task<string> CreateUser(string p_username, string p_email, string p_password)
         {
@@ -30,10 +36,35 @@ namespace webapi.DataCRUD
 
                     _userContext.Users.Add(user);
                     _userContext.SaveChanges();
-                    return sessionID.ToString();
+
+                    return JsonConvert.SerializeObject(new UserSession() { SessionID = user.SessionId });
                 }
 
                 return "Username already exists";
+            }
+            catch
+            {
+                return "Error occured during user creation";
+            }
+        }
+
+        public async Task<string> AuthenticateUser(string p_email, string p_password)
+        {
+            try
+            {
+                var User = _userContext.Users.ToList().FirstOrDefault(username => username.Email == p_email);
+                //Ensure username does exists
+                if (User != null)
+                {
+                    //Compare password
+                    UserService userService = new UserService(new UserDataCRUD(_userContext));
+
+                    if (await userService.ComparePasswords(User.Password, p_password))
+                    {
+                        return JsonConvert.SerializeObject(new UserSession() { SessionID = User.SessionId});
+                    }
+                }
+                return "Username does not exist";
             }
             catch
             {

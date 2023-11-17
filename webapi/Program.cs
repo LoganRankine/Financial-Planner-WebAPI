@@ -9,6 +9,15 @@ var connectionString = builder.Configuration.GetConnectionString("FinancialPlann
 builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<webapi.DataCRUD.UserDataCRUD>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:5173/",
+                                "https://localhost:7073/");
+        });
+});
 
 // Add services to the container.
 
@@ -27,6 +36,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 

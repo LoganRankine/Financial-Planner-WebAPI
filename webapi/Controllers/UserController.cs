@@ -7,11 +7,15 @@ using Newtonsoft.Json;
 using webapi.Models;
 using System.Net;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.Net.Http.Headers;
+using Azure;
 
 namespace webapi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors]
     public class UserController : Controller
     {
         private readonly UserService _userService;
@@ -23,6 +27,7 @@ namespace webapi.Controllers
         async public Task<string> CreateUser()
         {
             HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             try
             {
                 StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
@@ -35,19 +40,62 @@ namespace webapi.Controllers
                     {
                         if(requestUser.Password == requestUser.Confirm_Password)
                         {
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                             string response = await _userService.CreateUser(requestUser.Name, requestUser.Email, requestUser.Password);
-                            HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                            return response;
-                        }
 
-                        return "Passwords do not match";
+                            if (response.Contains("SessionID"))
+                            {
+                                HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                                var session = JsonConvert.DeserializeObject<UserSession>(response);
+                                HttpContext.Response.Cookies.Append("SessionID", session.SessionID);
+
+                            }
+                            return JsonConvert.SerializeObject(response);
+                        }
+                        return JsonConvert.SerializeObject("Passwords do not match");
                     }
                 }
-                return "Error occured decoding body";
+                return JsonConvert.SerializeObject("Error occured decoding body");
             }
             catch 
             {
-                return "Error processing request";
+                return JsonConvert.SerializeObject("Error processing request");
+            }
+        }
+
+        [HttpPost("AuthenticateUser")]
+        async public Task<string> AuthenticateUser()
+        {
+            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            try
+            {
+                StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
+                Task<string> getBody = reader.ReadToEndAsync();
+                if (getBody.IsCompleted)
+                {
+                    User requestUser = JsonConvert.DeserializeObject<User>(getBody.Result);
+
+                    if (requestUser != null)
+                    {
+                        string response = await _userService.AuthenticateUser(requestUser.Name, requestUser.Password);
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+
+
+                        if (response.Contains("SessionID"))
+                        {
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                            var session = JsonConvert.DeserializeObject<UserSession>(response);
+                            HttpContext.Response.Cookies.Append("SessionID", session.SessionID);
+                        }
+                        return JsonConvert.SerializeObject(response);
+                    }
+                }
+                return JsonConvert.SerializeObject("Error occured decoding body");
+            }
+            catch
+            {
+                return JsonConvert.SerializeObject("Error processing request");
             }
         }
 
