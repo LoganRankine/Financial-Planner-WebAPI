@@ -71,5 +71,23 @@ namespace webapi.DataCRUD
                 return "Error occured during user creation";
             }
         }
+
+        public async Task<string> CheckAuthStatus(string p_sessionID)
+        {
+            try
+            {
+                var User = _userContext.Users.ToList().FirstOrDefault(user => user.SessionId == p_sessionID);
+                //Ensure sessionID exists
+                if (User != null)
+                {
+                    return "Authorised";
+                }
+                return "Not Authorised";
+            }
+            catch
+            {
+                return "Error occured checking auth status";
+            }
+        }
     }
 }

@@ -99,6 +99,41 @@ namespace webapi.Controllers
             }
         }
 
+        [HttpGet("CheckAuthStatus")]
+        async public Task<string> AuthStatus()
+        {
+            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            try
+            {
+                string sessionID = HttpContext.Request.Query["SessionId"].ToString();
+
+                if(sessionID == null)
+                {
+                    return "No x-api-key provided in header";
+                }
+
+                string response = await _userService.CheckAuthStatus(sessionID);
+
+                if(response == "Authorised")
+                {
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                    return response;
+                }
+                else if (response == "Not Authorised")
+                {
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    return response;
+                }
+                return "beans";
+            }
+            catch
+            {
+                return JsonConvert.SerializeObject("Error processing request");
+            }
+        }
+
+
         [HttpPost("GetPublicKey")]
         async public Task<string> GetPublicKey()
         {

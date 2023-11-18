@@ -28,7 +28,7 @@ export default class Account extends Component {
                 <div class="account-creation-container">
                     <div class="account-creation-header">
                         <div class="account-creation-title-box">
-                            <h1 class="title">Create your first Budget</h1>
+                            <a id="title">Create your first Budget</a>
                         </div>
                         <div class="account-creation-nav-box">
                             <a style={budgetStyle} class="account-creation-nav-item" onClick={() => { this.setState({ isBudgetDetail: true }) }}>Budget Details</a>
@@ -89,11 +89,11 @@ export default class Account extends Component {
                 </div>
                 <div class="account-creation-footer">
                     <div>
-                        <button class="positive-button">Save Budget</button>
-                        <button class="positive-button">Add Direct Debit</button>
+                        <button title="Save budget details and continue to main page" class="positive-button">Save Budget</button>
+                        <button title="Save budget details and add direct debits" class="positive-button">Add Direct Debit</button>
                     </div>
                     <div>
-                        <button class="negative-button">Skip</button>
+                        <button title="Skip first budget creation" class="negative-button">Skip</button>
                     </div>
                 </div>
             </div>

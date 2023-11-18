@@ -108,7 +108,7 @@ export default class App extends Component {
 
             if (createUserRequest.ok) {
                 setCookie("SessionID", JSON.parse(response).SessionID, { path: "/" })
-                window.location.href = "/"
+                window.location.href = "/Account"
             }
 
             console.log(response);

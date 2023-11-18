@@ -36,7 +36,6 @@
     justify-content: flex-start;
     align-items: center;
     flex-direction: row;
-    height: 50px;
     padding-left: 10px;
 }
 .account-creation-nav-box {
@@ -46,13 +45,18 @@
     align-items: center;
 }
 
-.title{
+#title {
     font-size: 35px;
+    text-decoration: none;
+    color: black;
+    font-weight: 700;
 }
 
 .account-creation-nav-item {
     margin-left: 10px;
     color: black;
+    border-bottom: 2px solid;
+    cursor: pointer;
 }
 .account-creation-content {
     height: 440px;
@@ -69,6 +73,7 @@
     border-color: black;
     height: 30px;
     width: 250px;
+    font-size: 15px;
 }
 
 .account-creation-header {
