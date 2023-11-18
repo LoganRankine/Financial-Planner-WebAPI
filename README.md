@@ -1,9 +1,23 @@
-# Financial-Planner-WebAPI
-A Visual Studio Project using Blazor Server App in C# with SQL database for storage. The functionality of this will be a financial tracker aimed at students to be able to monitor and track monthly spending.
+# Financial Planner WebAPI
+A Visual Studio Project using React and ASP.NET Core with SQL database for storage. The functionality of this will be a financial tracker aimed at students to be able to monitor and track spending.
 
-Milestones and features to be added
-- User account creation using SQL server
+The secondary objective of this project is to learn and develop my front-end skills and frameworks. I have chosen to work with React.
+## Technologies used
+- ASP.NET Core
+- Microsoft SQL Server with Entity Framework
+- React Framework
+- Bcrypt Framework
+- Newtonsoft
+
+## Features and Milestones
+### Features added
+- Account creation
+- Login functionality
+### Features to be added
+- Create first budget upon account creation
 - Calculate monthly budget
+### Future updates 
+- Option to aid in calculating and how much you can save
 - Connect to bank in future
 
 ## Page Design Mockups
