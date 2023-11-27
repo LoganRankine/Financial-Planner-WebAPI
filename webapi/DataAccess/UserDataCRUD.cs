@@ -37,7 +37,7 @@ namespace webapi.DataCRUD
                     _userContext.Users.Add(user);
                     _userContext.SaveChanges();
 
-                    return JsonConvert.SerializeObject(new UserSession() { SessionID = user.SessionId });
+                    return JsonConvert.SerializeObject(new UserSessionResponse() { SessionID = user.SessionId });
                 }
 
                 return "Username already exists";
@@ -61,7 +61,7 @@ namespace webapi.DataCRUD
 
                     if (await userService.ComparePasswords(User.Password, p_password))
                     {
-                        return JsonConvert.SerializeObject(new UserSession() { SessionID = User.SessionId});
+                        return JsonConvert.SerializeObject(new UserSessionResponse() { SessionID = User.SessionId});
                     }
                 }
                 return "Username does not exist";

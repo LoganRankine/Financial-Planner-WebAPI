@@ -8,14 +8,17 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("FinancialPlannerContextConnection") ?? throw new InvalidOperationException("Connection string 'FinancialPlannerContextConnection' not found.");
 builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<webapi.DataCRUD.UserDataCRUD>();
+builder.Services.AddScoped<webapi.DataCRUD.BudgetDataCRUD>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<BudgetService>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
         policy =>
         {
             policy.WithOrigins("https://localhost:5173/",
-                                "https://localhost:7073/");
+                                "https://localhost:7073/", "https://localhost:5173");
+            policy.AllowAnyHeader();
         });
 });
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
 namespace webapi.Models
 {
     public class UserContext : DbContext 
@@ -11,5 +10,7 @@ namespace webapi.Models
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Budget> Budgets { get; set; }
+        public DbSet<BudgetItem> BudgetItems { get; set; }
     }
 }

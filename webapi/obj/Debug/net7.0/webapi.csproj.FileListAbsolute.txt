@@ -40,6 +40,7 @@ C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\bin\Debug\net7.0\web
 C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\bin\Debug\net7.0\webapi.pdb
 C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\bin\Debug\net7.0\Azure.Core.dll
 C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\bin\Debug\net7.0\Azure.Identity.dll
+C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\bin\Debug\net7.0\BCrypt.Net-Next.dll
 C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\bin\Debug\net7.0\Humanizer.dll
 C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\bin\Debug\net7.0\Microsoft.AspNetCore.OpenApi.dll
 C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\bin\Debug\net7.0\Microsoft.Bcl.AsyncInterfaces.dll
@@ -108,4 +109,3 @@ C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\obj\Debug\net7.0\ref
 C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\obj\Debug\net7.0\webapi.pdb
 C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\obj\Debug\net7.0\webapi.genruntimeconfig.cache
 C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\obj\Debug\net7.0\ref\webapi.dll
-C:\Users\logan\source\repos\Financial-Planner-WebAPI\webapi\bin\Debug\net7.0\BCrypt.Net-Next.dll

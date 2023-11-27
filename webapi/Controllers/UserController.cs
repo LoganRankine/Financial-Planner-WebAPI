@@ -46,7 +46,7 @@ namespace webapi.Controllers
                             if (response.Contains("SessionID"))
                             {
                                 HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                                var session = JsonConvert.DeserializeObject<UserSession>(response);
+                                var session = JsonConvert.DeserializeObject<UserSessionResponse>(response);
                                 HttpContext.Response.Cookies.Append("SessionID", session.SessionID);
 
                             }
@@ -85,7 +85,7 @@ namespace webapi.Controllers
                         if (response.Contains("SessionID"))
                         {
                             HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                            var session = JsonConvert.DeserializeObject<UserSession>(response);
+                            var session = JsonConvert.DeserializeObject<UserSessionResponse>(response);
                             HttpContext.Response.Cookies.Append("SessionID", session.SessionID);
                         }
                         return JsonConvert.SerializeObject(response);

@@ -10,16 +10,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 //import { BrowserRouter as Route } from 'react-dom'
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<App />}>
-                </Route>
-                <Route path="/logan" element={<a href="/">homepage init</a>}>
-                </Route>
-                <Route path="/Account" element={await isAuthenticated() ? <Account /> : <a>NOT AUTHORISED</a>}>
-                </Route>
-            </Routes>
-        </BrowserRouter>
+        <App></App>
     </React.StrictMode>,
 )
 

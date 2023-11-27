@@ -1,7 +1,14 @@
 import React, { Component, useState } from 'react';
 import './App.css';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CookiesProvider, useCookies } from "react-cookie";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import FirstPage from './FirstPage'
+import Login from './LogInForm'
+import Register from './RegisterForm'
+import manageBudget from './ManageBudget'
+import CreateBudget from './CreateBudget'
+import CreateDebit from './CreateDebit'
+import ManageBudget from './ManageBudget';
 
 export default class App extends Component {
     static displayName = App.name;
@@ -41,49 +48,43 @@ export default class App extends Component {
 
     
     render() {
-        let contents = this.state.loading
-            ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-            : App.renderForecastsTable(this.state.forecasts);
+        //let contents = this.state.loading
+        //    ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
+        //    : App.renderForecastsTable(this.state.forecasts);
+        const authenticate = async () => {
+            if (document.cookie == '') {
+                return false
+                console.log("Cookie not found")
+            }
+            else {
+                let sessionID = document.cookie.replace("SessionID=", "")
+                let checkAuthStatus = await fetch(`https://localhost:7073/api/User/CheckAuthStatus?SessionId=${sessionID}`,
+                    {
+                        method: 'GET',
+                        mode: 'cors',
+                    }
+                )
+                if (checkAuthStatus.ok) {
+                    return true;
+                }
+
+                return false;
+            }
+        }
 
         return (
-
-            <div class="flex-loginContainer">
-                <div class="flex-loginChild">
-                    <div class="login-header">
-                        {/*Top of dialog*/}
-                        <div class="header-container-top">
-                            <span id="login-loginLogo" class="material-symbols-outlined">
-                                account_balance
-                            </span>
-                        </div>
-                        <div class="header-container-top">
-                            <a id="header-title">Financial Planner</a>
-                        </div>
-                        <div class="header-container-bottom">
-                            <a class="UserOption" onClick={() => { this.setState({ isLogin: true }) }}>Sign In</a>
-                            <br></br>
-                            <a class="UserOption" onClick={() => { this.setState({ isLogin: false }) }}>Register</a>
-                        </div>
-                        {/*Top of dialog*/}
-                    </div>
-                    {
-                        (() => {
-                            if (this.state.isLogin) {
-                                return (
-                                    <this.Login></this.Login>
-                                )
-                            } else {
-                                return (
-                                    <this.Register></this.Register>
-                                )
-                            }
-                        })()
-                    }
-                    {/*<h1 id="tabelLabel" >Weather forecast</h1>*/}
-                    {/*<p>This component demonstrates fetching data from the server.</p>*/}
-                    {/*{contents}*/}
-                </div>
-            </div>
+            <Router>
+                <Routes>
+                    <Route exact path="/" element={<FirstPage child={<Login />} />}>
+                    </Route>
+                    <Route exact path="/Register" element={<FirstPage child={<Register />} />}>
+                    </Route>
+                    <Route exact path="/Account/CreateBudget" element={<ManageBudget child={<CreateBudget />}></ManageBudget>}>
+                    </Route>
+                    <Route exact path="/Account/ManageBudget/CreateDebit" element={<ManageBudget child={<CreateDebit />} ></ManageBudget>}>
+                    </Route>
+                </Routes>
+            </Router>
         );
     }
 
@@ -112,8 +113,6 @@ export default class App extends Component {
             }
 
             console.log(response);
-
-
         };
 
         return (
@@ -137,11 +136,11 @@ export default class App extends Component {
         );
     }
 
-    AuthenticateUser() {
-        console.log("hi")
+    async isAuthenticated() {
+    
+
     }
 
- 
 
     Register() {
         const [username, setUsername] = useState("");

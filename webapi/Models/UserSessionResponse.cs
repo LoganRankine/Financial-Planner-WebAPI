@@ -1,6 +1,6 @@
 ﻿namespace webapi.Models
 {
-    public class UserSession
+    public class UserSessionResponse
     {
         public string SessionID { get; set; }
     }
