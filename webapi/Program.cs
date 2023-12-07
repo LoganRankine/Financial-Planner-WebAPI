@@ -9,8 +9,10 @@ var connectionString = builder.Configuration.GetConnectionString("FinancialPlann
 builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<webapi.DataCRUD.UserDataCRUD>();
 builder.Services.AddScoped<webapi.DataCRUD.BudgetDataCRUD>();
+builder.Services.AddScoped<webapi.DataAccess.DirectDebitCRUD>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BudgetService>();
+builder.Services.AddScoped<DirectDebitService>();
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(

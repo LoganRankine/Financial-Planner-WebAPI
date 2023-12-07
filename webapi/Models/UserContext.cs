@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using webapi.Models.DirectDebitObjects;
+
 namespace webapi.Models
 {
     public class UserContext : DbContext 
@@ -12,5 +14,6 @@ namespace webapi.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Budget> Budgets { get; set; }
         public DbSet<BudgetItem> BudgetItems { get; set; }
+        public DbSet<DirectDebit> DirectDebits { get; set; }
     }
 }

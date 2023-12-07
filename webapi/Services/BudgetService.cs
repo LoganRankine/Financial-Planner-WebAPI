@@ -1,4 +1,6 @@
 ﻿using webapi.DataCRUD;
+using webapi.Models;
+using webapi.Models.DirectDebitObjects;
 
 namespace webapi.Services
 {
@@ -22,5 +24,31 @@ namespace webapi.Services
             return response;
         }
 
+        public async Task<string> UpdateBudgetAmount(string p_budget_id, DirectDebitResponse p_direct_debit)
+        {
+            //Get budget object
+            Budget budget = await GetBudget(p_budget_id);
+
+            DateTime debitDate = p_direct_debit.DebitDate;
+            int count = 0;
+            while(debitDate.CompareTo(budget.EndDate) < 0)
+            {
+                debitDate.AddDays(p_direct_debit.Frequency);
+                count++;
+            }
+
+            decimal deducation_value = count * p_direct_debit.DebitAmount;
+
+            string response = await _budgetDataCRUD.UpdateBudgetAmount(p_budget_id, deducation_value);
+            
+            return response;
+        }
+
+        public async Task<Budget> GetBudget(string p_budget_Id)
+        {
+            Budget budget = await _budgetDataCRUD.GetBudget(p_budget_Id);
+
+            return budget;
+        }
     }
 }

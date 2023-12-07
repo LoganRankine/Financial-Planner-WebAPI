@@ -67,7 +67,7 @@ namespace webapi.DataCRUD
                 {
                     //Get all budgets for user
                     List<Budget> budgets = user.Budgets.ToList();
-                    if(budgets.Count > 0) 
+                    if (budgets.Count > 0)
                     {
                         List<BudgetResponse> budgetResponses = new();
                         foreach (Budget budget in budgets)
@@ -91,6 +91,42 @@ namespace webapi.DataCRUD
             {
                 return "Error occured getting all budgets";
             }
+        }
+
+        public async Task<Budget> GetBudget(string p_budgetId)
+        {
+            try
+            {
+                //find user using SessionID
+                Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == p_budgetId).FirstOrDefault();
+
+                if (budget != null)
+                {
+                    return budget;
+                }
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
+        public async Task<string> UpdateBudgetAmount(string p_budget_Id, decimal p_deduction_value)
+        {
+            Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == p_budget_Id).FirstOrDefault();
+            
+            if (budget != null)
+            {
+                //Update value
+                decimal updatedAmount = budget.BudgetAmount - p_deduction_value;
+                budget.BudgetAmount = updatedAmount;
+
+                _userContext.Budgets.Update(budget);
+                _userContext.SaveChanges();
+            }
+            return null;
         }
 
     }
