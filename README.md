@@ -37,6 +37,10 @@ The secondary objective of this project is to learn and develop my front-end ski
 
 ### Main Account page
 <img width="576" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/82576385-d2be-4818-9e87-f61f37d78b77">
+<img width="581" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/c0c2cdca-81e2-4550-baec-9244c66eed42">
+<img width="586" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/e541956d-bb9b-472d-9854-8f45434ed07a">
+
+
 
 
 
