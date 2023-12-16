@@ -9,6 +9,7 @@ import manageBudget from './ManageBudget'
 import CreateBudget from './CreateBudget'
 import CreateDebit from './CreateDebit'
 import ManageBudget from './ManageBudget';
+import AccountHomepage from './AccountHomepage';
 
 export default class App extends Component {
     static displayName = App.name;
@@ -83,6 +84,7 @@ export default class App extends Component {
                     </Route>
                     <Route exact path="/Account/ManageBudget/CreateDebit" element={<ManageBudget child={<CreateDebit />} ></ManageBudget>}>
                     </Route>
+                    <Route exact path="Account/Home" element={<AccountHomepage></AccountHomepage>} ></Route>
                 </Routes>
             </Router>
         );

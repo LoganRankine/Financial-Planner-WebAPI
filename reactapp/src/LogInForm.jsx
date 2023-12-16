@@ -1,4 +1,4 @@
-import './Account';
+import './Account.css';
 import React, { Component, useState } from 'react';
 import { CookiesProvider, useCookies } from "react-cookie";
 import FirstPage from './FirstPage';
