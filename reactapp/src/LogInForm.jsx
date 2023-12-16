@@ -26,7 +26,7 @@ function login() {
         let response = await createuserrequest.json();
 
         if (createuserrequest.ok) {
-            setCookie("SessionID", JSON.parse(response).sessionid, { path: "/" })
+            setCookie("SessionID", JSON.parse(response).SessionID, { path: "/" })
             window.location.href = "/Account/CreateBudget"
         }
 

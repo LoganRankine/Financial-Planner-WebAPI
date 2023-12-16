@@ -113,7 +113,7 @@ namespace webapi.DataCRUD
         }
 
 
-        public async Task<string> UpdateBudgetAmount(string p_budget_Id, decimal p_deduction_value)
+        public async Task<bool> UpdateBudgetAmount(string p_budget_Id, decimal p_deduction_value)
         {
             Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == p_budget_Id).FirstOrDefault();
             
@@ -125,8 +125,10 @@ namespace webapi.DataCRUD
 
                 _userContext.Budgets.Update(budget);
                 _userContext.SaveChanges();
+
+                return true;
             }
-            return null;
+            return false;
         }
 
     }

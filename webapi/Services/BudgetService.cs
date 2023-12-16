@@ -24,7 +24,7 @@ namespace webapi.Services
             return response;
         }
 
-        public async Task<string> UpdateBudgetAmount(string p_budget_id, DirectDebitResponse p_direct_debit)
+        public async Task<bool> UpdateBudgetAmount(string p_budget_id, DirectDebitResponse p_direct_debit)
         {
             //Get budget object
             Budget budget = await GetBudget(p_budget_id);
@@ -33,15 +33,15 @@ namespace webapi.Services
             int count = 0;
             while(debitDate.CompareTo(budget.EndDate) < 0)
             {
-                debitDate.AddDays(p_direct_debit.Frequency);
+                debitDate = debitDate.AddDays(p_direct_debit.Frequency);
                 count++;
             }
 
             decimal deducation_value = count * p_direct_debit.DebitAmount;
 
-            string response = await _budgetDataCRUD.UpdateBudgetAmount(p_budget_id, deducation_value);
+            bool updateSuccessful = await _budgetDataCRUD.UpdateBudgetAmount(p_budget_id, deducation_value);
             
-            return response;
+            return updateSuccessful;
         }
 
         public async Task<Budget> GetBudget(string p_budget_Id)

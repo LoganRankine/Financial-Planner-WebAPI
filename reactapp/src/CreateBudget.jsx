@@ -80,15 +80,7 @@ function CreateBudget() {
                 </div>
                 <div class="account-creation-footer">
                     <div>
-                        <button title="Save budget details and continue to main page" class="positive-button" onClick={() =>
-                        {
-                            if (saveBudget) {
-                            }
-                            else {
-
-                            }
-                            }
-                        }>Save Budget</button>
+                        <button title="Save budget details and continue to main page" class="positive-button" onClick={saveBudget}>Save Budget</button>
                         <button title="Save budget details and add direct debits" class="positive-button">Add Direct Debit</button>
                     </div>
                     <div>

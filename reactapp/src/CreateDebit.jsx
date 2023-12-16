@@ -3,12 +3,52 @@ import './Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 
 function CreateDebit() {
+    const [cookies, setCookie] = useCookies(['SessionID']);
     const [directDebitName, setDirectDebitName] = useState("");
     const [paymentDate, setPaymentDate] = useState("");
     const [interval, setInterval] = useState("");
     const [directDebitAmount, setDebitAmount] = useState("");
 
     const cars = ['Ford', 'BMW', 'Audi', 'Vauxhaul', 'Renault', 'SEAT'];
+
+    //get direct debits
+
+    //Add direct debits
+    const saveDebit = async (event) => {
+        const budgetId = sessionStorage.getItem("BudgetId")
+
+        const createDebit = {
+            BudgetId: budgetId,
+            DebitName: directDebitName,
+            DebitAmount: directDebitAmount,
+            DebitDate: paymentDate,
+            Frequency: interval
+        }
+        console.log("Add inputs to JSON object", createDebit)
+
+        //Send data to create budget
+        let sessionId = cookies.SessionID
+        console.log(sessionId)
+
+        const myHeaders = new Headers();
+        myHeaders.append("x-api-key", sessionId)
+
+        let createUserRequest = await fetch("https://localhost:7073/api/DirectDebit/CreateDebit",
+            {
+                method: 'POST', body: JSON.stringify(createDebit),
+                mode: 'cors',
+                headers: myHeaders,
+            }
+        )
+
+        //let response = await createUserRequest.json();
+
+
+        if (createUserRequest.ok) {
+            console.log("added direct debit successfully")
+        }
+        return false;
+    }
 
     const Column = (props) => {
         return (
@@ -46,7 +86,7 @@ function CreateDebit() {
                     </div>
                     <div class="input-container">
                         <label>Interval</label><br />
-                        <input type="date" value={interval}
+                        <input type="number" value={interval}
                             onChange={(e) => setInterval(e.target.value)}
                             class="input-box" />
                     </div>
@@ -58,14 +98,14 @@ function CreateDebit() {
                     </div>
                 </div>
                 <div class="debit-details-display">
-                    {cars.map((car) => <Column name={car} />)}
+                    
                 </div>
             </div>
             <div>
                 <div class="account-creation-footer">
                     <div>
                         <button title="Save budget details and continue to main page" class="positive-button">Save Budget</button>
-                        <button title="Save budget details and add direct debits" class="positive-button">Add Direct Debit</button>
+                        <button onClick={saveDebit} title="Save budget details and add direct debits" class="positive-button">Add Direct Debit</button>
                     </div>
                     <div>
                         <button title="Skip first budget creation" class="negative-button">Skip</button>
