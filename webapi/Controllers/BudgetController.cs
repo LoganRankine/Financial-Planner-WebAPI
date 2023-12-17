@@ -30,39 +30,29 @@ namespace webapi.Controllers
             HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             try
             {
-                StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
-                Task<string> getBody = reader.ReadToEndAsync();
-                if (getBody.IsCompleted)
+                string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                if (sessionID != null || sessionID != "")
                 {
-                    CreateBudget createBudget = JsonConvert.DeserializeObject<CreateBudget>(getBody.Result);
-                    string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    string response = await _budgetService.GetAllBudgets(sessionID);
 
-                    if (createBudget != null)
+                    if (response.Contains("BudgetName"))
                     {
-                        if (sessionID != null || sessionID != "")
-                        {
-                            HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                            string response = await _budgetService.GetAllBudgets(sessionID);
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        return JsonConvert.SerializeObject(response);
 
-                            if (response.Contains("BudgetName"))
-                            {
-                                HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                                return JsonConvert.SerializeObject(response);
-
-                            }
-                            else if(response.Contains("No Budgets"))
-                            {
-                                HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                                return JsonConvert.SerializeObject(response);
-                            }
-                            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-                            return JsonConvert.SerializeObject(response);
-                        }
-                        return JsonConvert.SerializeObject("SessionId not included in header");
                     }
+                    else if (response.Contains("No Budgets"))
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        return JsonConvert.SerializeObject(response);
+                    }
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                    return JsonConvert.SerializeObject(response);
                 }
-                return JsonConvert.SerializeObject("Error occured decoding body");
+                return JsonConvert.SerializeObject("SessionId not included in header");
             }
             catch
             {

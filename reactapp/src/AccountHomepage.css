@@ -6,21 +6,88 @@
 }
 
 .top-navbar {
+    display: flex;
     background-color: white;
-    height: 60px;
+    height: 80px;
     border-bottom: solid 2px black;
+    flex-shrink: 0;
 }
 
 .title-box {
-    height: 60px !important;
+    height: 100%;
     width: 250px;
     display: flex;
+}
+
+.list {
+    /* width: 100%; */
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.list-header-item {
+    width: 19%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+/*    border-right: 1px solid;
+*/    font-weight: 700;
+    font-size: medium;
+}
+
+.list-header-title{
 
 }
 
+.list-header {
+    margin-top: 20px;
+    background-color: #0092FC;
+    height: 50px;
+    border-top: 2px solid black;
+    display: flex;
+    flex-direction: row;
+}
+
+.list-content {
+    margin-top: 30px;
+    max-height: 80%;
+    width: calc(100% + 14px);
+    overflow-y: scroll;
+}
+
+.list-content-column {
+    border-top: 2px solid black;
+    height: 50px;
+    display: flex;
+}
+
+.list-content-item {
+    width: 19%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: medium;
+}
+
+.list-content-option {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 70px;
+}
 
 #icon{
     font-size: 24px;
+}
+
+.content-area {
+    width: 100%;
+    background-color: white;
+    margin: 20px;
+    height: calc(100vh - 120px);
+    /* border-radius: 10px; */
+    box-shadow: 0px 0px 2px 4px #dcdcdc9c;
 }
 
 .account-content {
@@ -28,7 +95,7 @@
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
-    height: 100vh;
+    max-height: calc(100vh - 82px);
 }
 
 .top-navbar-logo {
@@ -57,23 +124,23 @@
 
 .sidebar {
     display: flex;
-    width: 250px;
     background-color: white;
-    height: 100%;
+    height: calc(100vh - 82px);
     flex-direction: column;
     align-items: flex-start;
+    flex-grow: 0;
+    flex-shrink: 0;
+    justify-content: space-between;
 }
 
 .navbar-item {
     display: flex;
     border-radius: 5px;
     border: 2px solid;
-    margin-top: 5px;
-    margin-left: 5px;
-    margin-bottom: 5px;
+    margin: 5px;
     padding: 10px;
     /* margin-right: auto; */
-    width: 215px;
+    width: 260px;
     background-color: #68c7fb;
 }
 

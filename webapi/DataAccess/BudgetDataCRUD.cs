@@ -66,7 +66,7 @@ namespace webapi.DataCRUD
                 if (user != null)
                 {
                     //Get all budgets for user
-                    List<Budget> budgets = user.Budgets.ToList();
+                    List<Budget> budgets = _userContext.Budgets.Where(budget => budget.Id == user.Id).ToList();
                     if (budgets.Count > 0)
                     {
                         List<BudgetResponse> budgetResponses = new();
