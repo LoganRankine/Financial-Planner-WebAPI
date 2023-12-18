@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-import './index.css'
+import './css/index.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 
 import Account from "../src/Account.jsx"

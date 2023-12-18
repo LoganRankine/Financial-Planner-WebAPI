@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-import './App.css';
+import './css/App.css';
 import { CookiesProvider, useCookies } from "react-cookie";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import FirstPage from './FirstPage'
@@ -10,6 +10,10 @@ import CreateBudget from './CreateBudget'
 import CreateDebit from './CreateDebit'
 import ManageBudget from './ManageBudget';
 import AccountHomepage from './AccountHomepage';
+import DisplayBudgetList from './DisplayBudgetList'
+import DisplayBudgetsSidebar from './DisplayBudgetsSidebar'
+import BudgetSidebar from './ManageBudgetComponents/Sidebar'
+
 
 export default class App extends Component {
     static displayName = App.name;
@@ -80,11 +84,10 @@ export default class App extends Component {
                     </Route>
                     <Route exact path="/Register" element={<FirstPage child={<Register />} />}>
                     </Route>
-                    <Route exact path="/Account/CreateBudget" element={<ManageBudget child={<CreateBudget />}></ManageBudget>}>
-                    </Route>
-                    <Route exact path="/Account/ManageBudget/CreateDebit" element={<ManageBudget child={<CreateDebit />} ></ManageBudget>}>
-                    </Route>
-                    <Route exact path="Account/Home" element={<AccountHomepage></AccountHomepage>} ></Route>
+                    <Route exact path="Account/Home" element={<AccountHomepage Sidebar={<DisplayBudgetsSidebar />} Content={<DisplayBudgetList />}></AccountHomepage>} ></Route>
+                    <Route exact path="Account/CreateBudget" element={<AccountHomepage Sidebar={<DisplayBudgetsSidebar />} Content={<ManageBudget child={<CreateBudget />}></ManageBudget>} />} ></Route>
+                    <Route exact path="Account/ManageBudget/CreateDebit" element={<AccountHomepage Sidebar={<DisplayBudgetsSidebar />} Content={<ManageBudget child={<CreateDebit />}></ManageBudget>} />} ></Route>
+                    <Route exact path="Account/ManageBudget/EditDebit" element={<AccountHomepage Sidebar={<BudgetSidebar />} Content={<ManageBudget child={<CreateDebit />}></ManageBudget>} />} ></Route>
                 </Routes>
             </Router>
         );

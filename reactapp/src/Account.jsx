@@ -1,5 +1,5 @@
 import React, { Children, Component, useState } from 'react';
-import './Account.css'
+import './css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 
 export default class Account extends Component {

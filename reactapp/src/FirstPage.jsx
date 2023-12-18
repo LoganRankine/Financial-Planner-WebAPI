@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-import './Account.css';
+import './css/Account.css';
 import { CookiesProvider, useCookies } from "react-cookie";
 import {Link } from "react-router-dom";
 

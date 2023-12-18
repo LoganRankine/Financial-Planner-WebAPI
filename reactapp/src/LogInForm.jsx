@@ -1,4 +1,4 @@
-import './Account.css';
+import './css/Account.css';
 import React, { Component, useState } from 'react';
 import { CookiesProvider, useCookies } from "react-cookie";
 import FirstPage from './FirstPage';
@@ -27,7 +27,7 @@ function login() {
 
         if (createuserrequest.ok) {
             setCookie("SessionID", JSON.parse(response).SessionID, { path: "/" })
-            window.location.href = "/Account/CreateBudget"
+            window.location.href = "/Account/Home"
         }
 
         console.log(response);
