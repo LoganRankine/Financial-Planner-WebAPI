@@ -154,6 +154,11 @@
 }
 
 .navbar-item:hover {
+    box-shadow: inset 0px 0px 2px 1px #0000009c;
+    width: -1px;
+}
+
+.navbar-item:hover {
     background-color: #cdd4d9;
 }
 

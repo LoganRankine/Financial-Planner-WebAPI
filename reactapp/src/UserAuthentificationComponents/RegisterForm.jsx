@@ -1,7 +1,7 @@
-import './Account';
+import '../Account';
 import React, { Component, useState } from 'react';
 import { CookiesProvider, useCookies } from "react-cookie";
-import FirstPage from './FirstPage'
+import FirstPage from '../FirstPage'
 import { Link } from "react-router-dom";
 
 function Register() {

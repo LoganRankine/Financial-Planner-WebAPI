@@ -1,11 +1,11 @@
 import React, { Children, Component, useState, useEffect } from 'react';
-import './css/Account.css'
+import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
-import './css/AccountHomepage.css'
+import '../css/AccountHomepage.css'
 import { Link } from "react-router-dom";
 
 
-import DisplayBudgetList from './DisplayBudgetList'
+import DisplayBudgetList from '../ManageBudgetComponents/DisplayBudgetList'
 
 
 

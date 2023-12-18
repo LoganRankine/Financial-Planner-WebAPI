@@ -1,10 +1,10 @@
 import React, { Children, Component, useState, useEffect } from 'react';
 import { format } from "date-fns";
 
-import './css/Account.css'
+import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
-import './css/AccountHomepage.css'
+import '../css/AccountHomepage.css'
 
 
 
