@@ -130,6 +130,42 @@ namespace webapi.DataCRUD
                 return "Error occured getting all budgets";
             }
         }
+        public async Task<string> GetBudgetItems(string p_budget_id)
+        {
+            try
+            {
+                //find user using SessionID
+                List<BudgetItem> p_budgetItems = _userContext.BudgetItems.Where(budgetItem => budgetItem.BudgetId == p_budget_id).ToList();
+
+                if (p_budgetItems != null)
+                {
+                    //Get all budgets for user
+                    if (p_budgetItems.Count > 0)
+                    {
+                        List<BudgetItemResponse> budgetItemResponse = new();
+                        foreach (BudgetItem budget_item in p_budgetItems)
+                        {
+                            budgetItemResponse.Add(new BudgetItemResponse()
+                            {
+                                ItemId = budget_item.ItemId,
+                                ItemAmount = budget_item.ItemAmount,
+                                ItemName = budget_item.ItemName,
+                                PurchaseDate = budget_item.PurchaseDate,
+                            });
+                        }
+                        return JsonConvert.SerializeObject(budgetItemResponse);
+                    }
+                    return "No Budget Items";
+                }
+                return "No Budget Items";
+
+            }
+            catch
+            {
+                return "Error occured getting budget items";
+            }
+        }
+
         public async Task<bool> UserAccess(string p_session_Id, string p_budget_Id)
         {
             try

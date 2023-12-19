@@ -60,6 +60,44 @@ namespace webapi.Controllers
                 return JsonConvert.SerializeObject("Error processing request");
             }
         }
+        [HttpGet("BudgetItems")]
+        async public Task<string> GetBudgetItems()
+        {
+            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            try
+            {
+                string budget_id = HttpContext.Request.Query["budget_Id"].ToString();
+                string session_id = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                if (await _budgetService.UserAccess(session_id, budget_id))
+                {
+                    string response = await _budgetService.GetBudgetItems(budget_id);
+
+                    if (response.Contains("ItemName"))
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        return JsonConvert.SerializeObject(response);
+
+                    }
+                    else if (response.Contains("No Budget Items"))
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        return JsonConvert.SerializeObject(response);
+                    }
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                    return JsonConvert.SerializeObject(response);
+                }
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                return JsonConvert.SerializeObject("User does not have access to this budget");
+            }
+            catch
+            {
+                return JsonConvert.SerializeObject("Error processing request");
+            }
+        }
 
         /// <summary>
         /// Creates a budget- Request must contain JSON body with BudgetName(string), BudgetAmount(decimal),

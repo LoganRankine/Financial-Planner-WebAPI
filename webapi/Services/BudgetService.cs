@@ -40,6 +40,13 @@ namespace webapi.Services
             return response;
         }
 
+        public async Task<string> GetBudgetItems(string p_budget_Id)
+        {
+            string response = await _budgetDataCRUD.GetBudgetItems(p_budget_Id);
+
+            return response;
+        }
+
         public async Task<bool> UpdateBudgetAmount(string p_budget_id, DirectDebitResponse p_direct_debit)
         {
             //Get budget object
