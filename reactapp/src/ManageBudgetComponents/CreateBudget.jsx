@@ -62,13 +62,13 @@ function CreateBudget() {
                 </div>
                 <div class="input-container">
                     <label>Start Date</label><br />
-                    <input type="date" value={startDate}
+                    <input type="datetime-local" value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
                         class="input-box" />
                 </div>
                 <div class="input-container">
                     <label>End Date</label><br />
-                    <input type="date" value={endDate}
+                    <input type="datetime-local" value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
                         class="input-box" />
                 </div>

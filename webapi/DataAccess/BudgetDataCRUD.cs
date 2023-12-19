@@ -153,6 +153,7 @@ namespace webapi.DataCRUD
                                 PurchaseDate = budget_item.PurchaseDate,
                             });
                         }
+                        budgetItemResponse = budgetItemResponse.OrderByDescending(date => date.PurchaseDate).ToList();
                         return JsonConvert.SerializeObject(budgetItemResponse);
                     }
                     return "No Budget Items";

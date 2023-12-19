@@ -2,18 +2,31 @@ import React, { Children, Component, useState, useEffect } from 'react';
 import '../css/AccountHomepage.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
+
 import '../css/Budget.css'
-function BudgetItemColumn() {
-    const [cookies, setCookie] = useCookies(['SessionID']);
+function BudgetItemColumn(budgetItem) {
+    const [itemId, setItemId] = useState("");
+    const [formattedPurchaseDate, setFormattedPurchaseDate] = useState("");
+    useEffect(() => {
+        setItemId(budgetItem.budgetItem.ItemId)
+        var purchaseDate = new Date(budgetItem.budgetItem.PurchaseDate)
+
+        let date = format(purchaseDate, "EEEE do LLLL yyyy")
+        let time = format(purchaseDate, "p")
+        setFormattedPurchaseDate(`${date} at ${time}`)
+
+    }, []);
+
     return (
         <div className="budget-content-item">
             <div className="budget-item-box">
                 <div className="budget-item-left">
-                    <a className="budget-item-title">Beans and Burger</a>
-                    <a className="budget-item-date">Tuesday 12th March 2024 at 19:06 </a>
+                    <a className="budget-item-title">{budgetItem.budgetItem.ItemName}</a>
+                    <a className="budget-item-date">{formattedPurchaseDate} </a>
                 </div>
                 <div className="budget-item-right">
-                    <a className="budget-item-price">45.99</a>
+                    <a className="budget-item-price">&#163;{budgetItem.budgetItem.ItemAmount}</a>
                     <div className="list-content-option">
                         <span class="material-symbols-outlined">edit</span>
                         <span class="material-symbols-outlined">delete</span>
