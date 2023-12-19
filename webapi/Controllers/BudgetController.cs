@@ -24,6 +24,7 @@ namespace webapi.Controllers
         /// Gets all budgets- Request must contain sessionID
         /// </summary>
         /// <returns>Successful- All budgets as JSON object stringified. </returns>
+        [Authorize]
         [HttpGet("AllBudgets")]
         async public Task<string> GetAllBudgets()
         {
@@ -60,6 +61,17 @@ namespace webapi.Controllers
                 return JsonConvert.SerializeObject("Error processing request");
             }
         }
+
+        [Authorize]
+        [HttpGet("CalculateWeekly")]
+        async public Task<bool> CalculateWeekly()
+        {
+            string budget_id = HttpContext.Request.Query["budget_id"].ToString();
+            await _budgetService.CalculateWeekly(budget_id);
+            return await _budgetService.CalculateWeekly(budget_id);
+        }
+
+        [Authorize]
         [HttpGet("BudgetItems")]
         async public Task<string> GetBudgetItems()
         {
@@ -139,6 +151,30 @@ namespace webapi.Controllers
                 return JsonConvert.SerializeObject("Error processing request");
             }
         }
+
+        [Authorize]
+        [HttpGet("GetBudget")]
+        async public Task<string> Budget()
+        {
+            try
+            {
+                string session_id = HttpContext.Request.Headers["x-api-key"].ToString();
+                string budget_id = HttpContext.Request.Query["budget_id"].ToString();
+
+                if(budget_id != "")
+                {
+                    return await _budgetService.GetBudgetString(budget_id);
+                }
+
+                return "";
+            }
+            catch
+            {
+                return "";
+            }
+            return "";
+        }
+
 
         [Authorize]
         [HttpPost("CreateBudgetItem")]

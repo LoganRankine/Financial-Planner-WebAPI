@@ -12,6 +12,8 @@ namespace webapi.Models.BudgetObjects
         public string BudgetName { get; set; }
         [Column(TypeName = "decimal(19,4)")]
         public decimal BudgetAmount { get; set; }
+        [Column(TypeName = "decimal(19,4)")]
+        public decimal WeeklyAmount { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public ICollection<BudgetItem> BudgetItems { get; set; }

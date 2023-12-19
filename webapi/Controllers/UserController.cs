@@ -135,6 +135,36 @@ namespace webapi.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet("GetUsername")]
+        async public Task<string> Username()
+        {
+            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            try
+            {
+                string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                string response = await _userService.UserName(sessionID);
+
+                if (response != "Not Found")
+                {
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                    return JsonConvert.SerializeObject(response);
+                }
+                else
+                {
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    return JsonConvert.SerializeObject(response);
+                }
+            }
+            catch
+            {
+                return JsonConvert.SerializeObject("Error processing request");
+            }
+        }
+
+
 
         [HttpPost("GetPublicKey")]
         async public Task<string> GetPublicKey()

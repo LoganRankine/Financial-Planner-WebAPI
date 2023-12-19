@@ -1,17 +1,19 @@
 import React, { Children, Component, useState } from 'react';
 import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
+import Alert from 'react-bootstrap/Alert';
 
-function PurchaseForm() {
+function PurchaseForm(budget_id) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [itemName, setItemName] = useState("");
     const [purchaseDate, setPurchaseDate] = useState("");
     const [itemAmount, setItemAmount] = useState("");
-    const budgetId = "3266cb34-223b-42d7-9380-59cae4d587d2"
+    //const budgetId = "3266cb34-223b-42d7-9380-59cae4d587d2"
 
+    console.log("This window is purchase form, budgetId is:", budget_id.budget_id)
     const addPurchase = async (event) => {
         const createPurchase = {
-            BudgetId: budgetId,
+            BudgetId: budget_id.budget_id,
             ItemName: itemName,
             ItemAmount: itemAmount,
             PurchaseDate: purchaseDate,

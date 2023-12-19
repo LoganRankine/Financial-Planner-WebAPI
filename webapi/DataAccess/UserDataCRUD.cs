@@ -89,5 +89,22 @@ namespace webapi.DataCRUD
                 return false;
             }
         }
+        public async Task<string> UserName(string p_sessionID)
+        {
+            try
+            {
+                var User = _userContext.Users.ToList().FirstOrDefault(user => user.SessionId == p_sessionID);
+                //Ensure sessionID exists
+                if (User != null)
+                {
+                    return User.Name;
+                }
+                return "Not Found";
+            }
+            catch
+            {
+                return "Not Found";
+            }
+        }
     }
 }

@@ -33,6 +33,12 @@ namespace webapi.Services
 
             return response;
         }
+        public async Task<string> UserName(string p_sessionID)
+        {
+            string response = await _userDataCRUD.UserName(p_sessionID);
+
+            return response;
+        }
 
         public async Task<bool> ComparePasswords(string p_hashedPassword, string p_recievedPassword)
         {

@@ -11,6 +11,7 @@
     height: 70px;
     border-bottom: solid 2px black;
     flex-shrink: 0;
+    justify-content: space-between;
 }
 
 .title-box {
@@ -72,6 +73,7 @@
     align-items: center;
     justify-content: center;
     font-size: medium;
+    cursor: pointer;
 }
 
 .list-content-option {
@@ -164,4 +166,20 @@
 
 #bottom-navbar{
     margin-top: auto;
+}
+
+.login-display-content {
+    display: flex;
+    margin-right: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-display-name {
+    display: flex;
+    padding: 10px;
+    background-color: #2f2fff;
+    border-radius: 5px;
+    color: white;
+    font-family: sans-serif;
 }

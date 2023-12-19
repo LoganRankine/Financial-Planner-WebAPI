@@ -1,4 +1,5 @@
-﻿using webapi.DataCRUD;
+﻿using Newtonsoft.Json;
+using webapi.DataCRUD;
 using webapi.Models;
 using webapi.Models.BudgetObjects;
 using webapi.Models.DirectDebitObjects;
@@ -40,6 +41,16 @@ namespace webapi.Services
             return response;
         }
 
+        public async Task<string> GetBudgetString(string p_budget_Id)
+        {
+            Budget response = await _budgetDataCRUD.GetBudget(p_budget_Id);
+
+            BudgetResponse temp = new BudgetResponse { BudgetName = response.BudgetName, WeeklyAmount = response.WeeklyAmount };
+
+            return JsonConvert.SerializeObject(temp);
+        }
+
+
         public async Task<string> GetBudgetItems(string p_budget_Id)
         {
             string response = await _budgetDataCRUD.GetBudgetItems(p_budget_Id);
@@ -62,7 +73,7 @@ namespace webapi.Services
 
             decimal deducation_value = count * p_direct_debit.DebitAmount;
 
-            bool updateSuccessful = await _budgetDataCRUD.UpdateBudgetAmount(p_budget_id, deducation_value);
+            bool updateSuccessful = await _budgetDataCRUD.UpdateBudgetAmount(p_budget_id, deducation_value, p_direct_debit);
             
             return updateSuccessful;
         }
@@ -72,6 +83,11 @@ namespace webapi.Services
             Budget budget = await _budgetDataCRUD.GetBudget(p_budget_Id);
 
             return budget;
+        }
+
+        public async Task<bool> CalculateWeekly(string p_budget_Id)
+        {
+            return await _budgetDataCRUD.CalculateWeekly(p_budget_Id);
         }
     }
 }

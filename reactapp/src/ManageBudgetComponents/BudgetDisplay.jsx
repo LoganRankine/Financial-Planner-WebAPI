@@ -11,18 +11,22 @@ function BudgetDisplay() {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [budgetItems, setBudgetItems] = useState(null);
     const [show, setShow] = useState(false);
+    const [p_budgetId, setBudgetId] = useState("");
+    const [p_budget, setBudget] = useState("");
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-
     useEffect(() => {
         let sessionId = "139b5da0-84c9-4ebf-9a5b-d1494a80dc6e"
-        let budget_Id = "3266cb34-223b-42d7-9380-59cae4d587d2"
+        const query = window.location.pathname.replace("/Account/Display/Budget/budget_id=", "")
 
+        let budgetId = "3266cb34-223b-42d7-9380-59cae4d587d2"
+
+        setBudgetId(query)
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
-        fetch(`https://localhost:7073/api/Budget/BudgetItems?budget_Id=${budget_Id}`,
+        fetch(`https://localhost:7073/api/Budget/BudgetItems?budget_Id=${query}`,
             {
                 method: 'GET',
                 mode: 'cors',
@@ -32,8 +36,22 @@ function BudgetDisplay() {
             const temp = JSON.parse(data)
             console.log(temp)
             setBudgetItems(temp)
+            setBudgetId(query)
+        });
+
+        fetch(`https://localhost:7073/api/Budget/GetBudget?budget_Id=${query}`,
+            {
+                method: 'GET',
+                mode: 'cors',
+                headers: myHeaders,
+            }
+        ).then(response => response.json()).then(data2 => {
+            console.log("Budget details", data2)
+            setBudget(data2)
         });
     }, []);
+
+    console.log("BudgetId from query",p_budgetId)
 
 
     return (
@@ -43,7 +61,7 @@ function BudgetDisplay() {
                     <Modal.Title>Add Purchase</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <PurchaseForm></PurchaseForm>
+                    <PurchaseForm budget_id={p_budgetId}></PurchaseForm>
                 </Modal.Body>
             {/*    <Modal.Footer>*/}
             {/*        <Button variant="secondary" onClick={handleClose}>*/}
@@ -54,12 +72,13 @@ function BudgetDisplay() {
             <div className="budget-header">
                 {/*left header*/}
                 <div className="budget-header-right">
+                    <a style={{ backgroundColor: "white" }} className="budget-header-item">{p_budget.BudgetName}</a>
                     <a className="budget-header-item">Weekly total: </a>
-                    <a className="budget-header-item">Weekly target: </a>
+                    <a className="budget-header-item">Weekly target: &#163;{p_budget.WeeklyAmount.toFixed(2)}</a>
                 </div>
                 {/*right header*/}
                 <div className="budget-header-right">
-                    <button onClick={handleShow}>Add Purchase</button>
+                    <button className="budget-header-item" onClick={handleShow}>Add Purchase</button>
                 </div>
             </div>
             <div className="budget-content">

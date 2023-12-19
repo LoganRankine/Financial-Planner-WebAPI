@@ -4,7 +4,7 @@ import { CookiesProvider, useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 import '../css/AccountHomepage.css'
 
-function Homepage({ Sidebar, Content }) {
+function Homepage({ Sidebar, Content, loginDisplay }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [allBudgets, setBudgets] = useState(null);
 
@@ -20,6 +20,7 @@ function Homepage({ Sidebar, Content }) {
                     {/*Name*/}
                     <a className="top-navbar-name">Financial Planner by Logan</a>
                 </div>
+                {loginDisplay}
             </header>
             <div className="account-content">
                 {/*Display Sidebar*/}

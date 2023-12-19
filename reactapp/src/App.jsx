@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import './css/App.css';
 import { CookiesProvider, useCookies } from "react-cookie";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useParams } from "react-router-dom";
 import FirstPage from './FirstPage'
 import Login from './UserAuthentificationComponents/LogInForm'
 import Register from './UserAuthentificationComponents/RegisterForm'
@@ -14,6 +14,7 @@ import DisplayBudgetList from './ManageBudgetComponents/DisplayBudgetList'
 import DisplayBudgetsSidebar from './AccountComponents/HomeSidebar'
 import BudgetSidebar from './AccountComponents/BudgetSidebar'
 import BudgetDisplay from './ManageBudgetComponents/BudgetDisplay'
+import LoginDisplay from './UserAuthentificationComponents/LoginDisplay'
 
 
 export default class App extends Component {
@@ -85,10 +86,11 @@ export default class App extends Component {
                     </Route>
                     <Route exact path="/Register" element={<FirstPage child={<Register />} />}>
                     </Route>
-                    <Route exact path="Account/Home" element={<AccountHomepage Sidebar={<DisplayBudgetsSidebar />} Content={<DisplayBudgetList />}></AccountHomepage>} ></Route>
+                    <Route exact path="Account/Home" element={<AccountHomepage Sidebar={<DisplayBudgetsSidebar />} Content={<DisplayBudgetList />} loginDisplay={<LoginDisplay/>}></AccountHomepage>} ></Route>
                     <Route exact path="Account/CreateBudget" element={<AccountHomepage Sidebar={<DisplayBudgetsSidebar />} Content={<ManageBudget child={<CreateBudget />}></ManageBudget>} />} ></Route>
-                    <Route exact path="Account/ManageBudget/CreateDebit" element={<AccountHomepage Sidebar={<DisplayBudgetsSidebar />} Content={<ManageBudget child={<CreateDebit />}></ManageBudget>} />} ></Route>
-                    <Route exact path="Account/Budget/Display" element={<AccountHomepage Sidebar={<BudgetSidebar />} Content={<BudgetDisplay/>} />} ></Route>
+                    <Route exact path="Account/ManageBudget/CreateDebit" element={<AccountHomepage Sidebar={<DisplayBudgetsSidebar />} Content={<ManageBudget child={<CreateDebit />}></ManageBudget>} />} loginDisplay={<LoginDisplay />}></Route>
+                    <Route exact path="Account/Budget/Display" element={<AccountHomepage Sidebar={<BudgetSidebar />} Content={<BudgetDisplay />} />} loginDisplay={<LoginDisplay />}></Route>
+                    <Route exact path="Account/Display/Budget/:budget_id" element={<AccountHomepage Sidebar={<BudgetSidebar />} Content={<BudgetDisplay />} loginDisplay={<LoginDisplay />} />} ></Route>
                 </Routes>
             </Router>
         );

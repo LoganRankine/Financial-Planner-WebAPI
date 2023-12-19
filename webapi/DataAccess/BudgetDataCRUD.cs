@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using webapi.Models;
 using webapi.Models.BudgetObjects;
+using webapi.Models.DirectDebitObjects;
 using webapi.Services;
 
 namespace webapi.DataCRUD
@@ -13,6 +14,8 @@ namespace webapi.DataCRUD
         { 
             _userContext = userContext; 
         }
+
+
 
         public async Task<string> CreateBudget(string p_session_Id, string p_budget_name, decimal p_budget_amount, DateTime p_start_date, DateTime p_end_date)
         {
@@ -83,7 +86,14 @@ namespace webapi.DataCRUD
                     //Add to database
                     _userContext.BudgetItems.Add(budgetItem);
                     _userContext.SaveChanges();
-                    return JsonConvert.SerializeObject(budgetItem);
+                    string response = JsonConvert.SerializeObject(new BudgetItemResponse 
+                    { 
+                        ItemAmount = budgetItem.ItemAmount,
+                        PurchaseDate = budgetItem.PurchaseDate,
+                        ItemId= budgetItem.ItemId,
+                        ItemName = budgetItem.ItemName
+                    });
+                    return response;
 
                 }
                 return "User not found";
@@ -116,7 +126,8 @@ namespace webapi.DataCRUD
                                 BudgetName = budget.BudgetName,
                                 BudgetAmount = budget.BudgetAmount,
                                 StartDate = budget.StartDate,
-                                EndDate = budget.EndDate
+                                EndDate = budget.EndDate,
+                                WeeklyAmount = budget.WeeklyAmount,
                             });
                         }
                         return JsonConvert.SerializeObject(budgetResponses);
@@ -154,7 +165,8 @@ namespace webapi.DataCRUD
                             });
                         }
                         budgetItemResponse = budgetItemResponse.OrderByDescending(date => date.PurchaseDate).ToList();
-                        return JsonConvert.SerializeObject(budgetItemResponse);
+                        string response = JsonConvert.SerializeObject(budgetItemResponse);
+                        return response;
                     }
                     return "No Budget Items";
                 }
@@ -213,22 +225,48 @@ namespace webapi.DataCRUD
         }
 
 
-        public async Task<bool> UpdateBudgetAmount(string p_budget_Id, decimal p_deduction_value)
+        public async Task<bool> UpdateBudgetAmount(string p_budget_Id, decimal p_deduction_value, DirectDebitResponse p_direct_debit)
         {
             Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == p_budget_Id).FirstOrDefault();
+
+            DirectDebit debit = _userContext.DirectDebits.Where(directDebit => directDebit.DebitId == p_direct_debit.DebitId).FirstOrDefault();
             
             if (budget != null)
             {
-                //Update value
-                decimal updatedAmount = budget.BudgetAmount - p_deduction_value;
-                budget.BudgetAmount = updatedAmount;
+                if(debit != null)
+                {
+                    //Update budget value
+                    decimal updatedAmount = budget.BudgetAmount - p_deduction_value;
+                    budget.BudgetAmount = updatedAmount;
 
-                _userContext.Budgets.Update(budget);
-                _userContext.SaveChanges();
+                    _userContext.Budgets.Update(budget);
 
-                return true;
+                    //Update direct debit total amount
+                    debit.DebitTotalAmount = p_deduction_value;
+                    _userContext.DirectDebits.Update(debit);
+                    _userContext.SaveChanges();
+                    return true;
+                }
+                return false;
             }
             return false;
+        }
+
+        public async Task<bool> CalculateWeekly(string p_budget_id)
+        {
+            //Get budget
+            Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId==p_budget_id).FirstOrDefault();
+
+            double weeks = (budget.EndDate -  budget.StartDate).TotalDays/7;
+            decimal totalAmount = budget.BudgetAmount;
+            decimal weeklyAmount = totalAmount / (decimal)weeks;
+
+            budget.WeeklyAmount = weeklyAmount;
+
+            _userContext.Budgets.Update(budget);
+            _userContext.SaveChanges();
+
+            return true;
         }
 
     }

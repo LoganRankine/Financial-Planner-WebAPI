@@ -8,6 +8,10 @@ function Sidebar() {
     return (
         <div className="sidebar">
             <div>
+                <Link className="navbar-item" to="/Account/Home">
+                    <span id="icon" class="material-symbols-outlined">home</span>
+                    <a id="nav-title">Home</a>
+                </Link>
                 <Link className="navbar-item" to="/Account/CreateBudget">
                     <span id="icon" class="material-symbols-outlined">shopping_cart</span>
                     <a id="nav-title">Budget</a>

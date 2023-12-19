@@ -12,6 +12,8 @@ namespace webapi.Models.DirectDebitObjects
         public string DebitName { get; set; }
         [Column(TypeName = "decimal(19,4)")]
         public decimal DebitAmount { get; set; }
+        [Column(TypeName = "decimal(19,4)")]
+        public decimal DebitTotalAmount { get; set; }
         public DateTime DebitDate { get; set; }
         public int Frequency { get; set; }
     }

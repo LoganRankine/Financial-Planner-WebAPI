@@ -23,13 +23,16 @@ function BudgetListColumn(budgets) {
     const getBudgetId = async (event) => {
         console.log(budgetId)
     }
+    const directBudget = async (event) => {
+        window.location.href = `/Account/Display/Budget/budget_id=${budgetId}`
+    }
     return (
-        <div className="list-content-column">
-            <div className="list-content-item">{budgets.budgets.BudgetName}</div>
-            <div className="list-content-item">{formattedStartDate}</div>
-            <div className="list-content-item">{formattedEndDate}</div>
-            <div className="list-content-item">&#163;{budgets.budgets.BudgetAmount}</div>
-            <div className="list-content-item"></div>
+        <div className="list-content-column" >
+            <div className="list-content-item" onClick={directBudget}>{budgets.budgets.BudgetName}</div>
+            <div className="list-content-item" onClick={directBudget}>{formattedStartDate}</div>
+            <div className="list-content-item" onClick={directBudget}>{formattedEndDate}</div>
+            <div className="list-content-item" onClick={directBudget}>&#163;{budgets.budgets.BudgetAmount.toFixed(2)}</div>
+            <div className="list-content-item">&#163;{budgets.budgets.WeeklyAmount.toFixed(2)}</div>
             <div className="list-content-option">
                 <span class="material-symbols-outlined" onClick={getBudgetId}>edit</span>
                 <span class="material-symbols-outlined">delete</span>
