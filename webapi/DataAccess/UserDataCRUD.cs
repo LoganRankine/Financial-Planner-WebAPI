@@ -72,7 +72,7 @@ namespace webapi.DataCRUD
             }
         }
 
-        public async Task<string> CheckAuthStatus(string p_sessionID)
+        public async Task<bool> CheckAuthStatus(string p_sessionID)
         {
             try
             {
@@ -80,13 +80,13 @@ namespace webapi.DataCRUD
                 //Ensure sessionID exists
                 if (User != null)
                 {
-                    return "Authorised";
+                    return true;
                 }
-                return "Not Authorised";
+                return false;
             }
             catch
             {
-                return "Error occured checking auth status";
+                return false;
             }
         }
     }

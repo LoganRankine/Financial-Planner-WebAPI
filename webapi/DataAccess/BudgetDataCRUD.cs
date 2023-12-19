@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using webapi.Models;
+using webapi.Models.BudgetObjects;
 using webapi.Services;
 
 namespace webapi.DataCRUD
@@ -20,7 +21,7 @@ namespace webapi.DataCRUD
                 //Try and find user using SessionID
                 User user = _userContext.Users.Where(user => user.SessionId == p_session_Id).FirstOrDefault();
 
-                if(user != null)
+                if (user != null)
                 {
                     //Create Budget
                     Guid budgetId = Guid.NewGuid();
@@ -39,16 +40,53 @@ namespace webapi.DataCRUD
                     _userContext.Budgets.Add(budget);
                     _userContext.SaveChanges();
 
-                    return JsonConvert.SerializeObject(new BudgetResponse() { 
+                    return JsonConvert.SerializeObject(new BudgetResponse()
+                    {
                         BudgetId = budget.BudgetId,
                         BudgetName = budget.BudgetName,
-                        BudgetAmount = (decimal)budget.BudgetAmount, 
-                        StartDate = p_start_date, 
+                        BudgetAmount = (decimal)budget.BudgetAmount,
+                        StartDate = p_start_date,
                         EndDate = p_end_date
                     });
 
                 }
                 return "SessionID incorrect or expired";
+            }
+            catch
+            {
+                return "Error occured during budget creation";
+            }
+        }
+
+        public async Task<string> CreateBudgetItem(string p_session_Id, string p_budget_id, string p_item_name, decimal p_item_amount, DateTime p_purchase_date)
+        {
+            try
+            {
+                //Try and find user using SessionID
+                User user = _userContext.Users.Where(user => user.SessionId == p_session_Id).FirstOrDefault();
+
+                //Ensure the user is able to use this budgetID
+
+                if (user != null)
+                {
+                    //Create Budget
+                    Guid itemId = Guid.NewGuid();
+
+                    BudgetItem budgetItem = new BudgetItem{
+                        BudgetId= p_budget_id,
+                        ItemId = itemId.ToString(),
+                        ItemAmount = p_item_amount,
+                        PurchaseDate = p_purchase_date,
+                        ItemName = p_item_name,
+                    };
+
+                    //Add to database
+                    _userContext.BudgetItems.Add(budgetItem);
+                    _userContext.SaveChanges();
+                    return JsonConvert.SerializeObject(budgetItem);
+
+                }
+                return "User not found";
             }
             catch
             {
@@ -90,6 +128,31 @@ namespace webapi.DataCRUD
             catch
             {
                 return "Error occured getting all budgets";
+            }
+        }
+        public async Task<bool> UserAccess(string p_session_Id, string p_budget_Id)
+        {
+            try
+            {
+                //Get User
+                User user = _userContext.Users.Where(user => user.SessionId == p_session_Id).FirstOrDefault();
+                List<Budget> budgets = _userContext.Budgets.Where(budget => budget.BudgetId == p_budget_Id).ToList();
+
+                if (user != null)
+                {
+                    List<Budget> temp = budgets.Where(budget => budget.Id == user.Id).ToList();
+                    if(temp.Count > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
             }
         }
 

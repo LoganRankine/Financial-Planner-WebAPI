@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.Net.Http.Headers;
 using Azure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace webapi.Controllers
 {
@@ -99,6 +100,7 @@ namespace webapi.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("CheckAuthStatus")]
         async public Task<string> AuthStatus()
         {
@@ -106,24 +108,24 @@ namespace webapi.Controllers
             HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             try
             {
-                string sessionID = HttpContext.Request.Query["SessionId"].ToString();
+                string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
 
                 if(sessionID == null)
                 {
                     return "No x-api-key provided in header";
                 }
 
-                string response = await _userService.CheckAuthStatus(sessionID);
+                bool response = await _userService.CheckAuthStatus(sessionID);
 
-                if(response == "Authorised")
+                if(response)
                 {
                     HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                    return response;
+                    return "Authorised";
                 }
-                else if (response == "Not Authorised")
+                else if (!response)
                 {
                     HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    return response;
+                    return "Not Authorised";
                 }
                 return "beans";
             }

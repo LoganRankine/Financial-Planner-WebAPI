@@ -1,5 +1,6 @@
 ﻿using webapi.DataCRUD;
 using webapi.Models;
+using webapi.Models.BudgetObjects;
 using webapi.Models.DirectDebitObjects;
 
 namespace webapi.Services
@@ -13,6 +14,21 @@ namespace webapi.Services
         public async Task<string> CreateBudget(string p_session_Id, string p_budget_name, decimal p_budget_amount, DateTime p_start_date, DateTime p_end_date)
         {
             string response = await _budgetDataCRUD.CreateBudget(p_session_Id, p_budget_name, p_budget_amount, p_start_date, p_end_date);
+
+            return response;
+        }
+
+        public async Task<bool> UserAccess(string p_session_Id, string p_budget_Id)
+        {
+            bool response = await _budgetDataCRUD.UserAccess(p_session_Id, p_budget_Id);
+
+            return response;
+        }
+
+
+        public async Task<string> CreateBudgetItem(string p_session_Id, string p_budget_id, string p_item_name, decimal p_item_amount, DateTime p_purchase_date)
+        {
+            string response = await _budgetDataCRUD.CreateBudgetItem(p_session_Id, p_budget_id, p_item_name, p_item_amount, p_purchase_date);
 
             return response;
         }

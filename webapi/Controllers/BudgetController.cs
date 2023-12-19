@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;
-using webapi.Models;
+using webapi.Models.BudgetObjects;
 using webapi.Services;
 
 namespace webapi.Controllers
@@ -91,6 +92,41 @@ namespace webapi.Controllers
                         HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
 
                         return JsonConvert.SerializeObject("SessionId not included in header");
+                    }
+                }
+                return JsonConvert.SerializeObject("Error occured decoding body");
+            }
+            catch
+            {
+                return JsonConvert.SerializeObject("Error processing request");
+            }
+        }
+
+        [Authorize]
+        [HttpPost("CreateBudgetItem")]
+        async public Task<string> CreateBudgetItem()
+        {
+            //HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            try
+            {
+                StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
+                Task<string> getBody = reader.ReadToEndAsync();
+                if (getBody.IsCompleted)
+                {
+                    CreateBudgetItem createBudgetItem = JsonConvert.DeserializeObject<CreateBudgetItem>(getBody.Result);
+                    string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                    if (createBudgetItem != null)
+                    {
+                        if (await _budgetService.UserAccess(sessionID, createBudgetItem.BudgetId))
+                        {
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                            string response = await _budgetService.CreateBudgetItem(sessionID, createBudgetItem.BudgetId, createBudgetItem.ItemName, createBudgetItem.ItemAmount, createBudgetItem.PurchaseDate);
+
+                            return JsonConvert.SerializeObject(response);
+                        }
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        return JsonConvert.SerializeObject("User does not own this budget");
                     }
                 }
                 return JsonConvert.SerializeObject("Error occured decoding body");

@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using webapi.Services;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("FinancialPlannerContextConnection") ?? throw new InvalidOperationException("Connection string 'FinancialPlannerContextConnection' not found.");
@@ -10,6 +12,7 @@ builder.Services.AddDbContext<UserContext>(options => options.UseSqlServer(conne
 builder.Services.AddScoped<webapi.DataCRUD.UserDataCRUD>();
 builder.Services.AddScoped<webapi.DataCRUD.BudgetDataCRUD>();
 builder.Services.AddScoped<webapi.DataAccess.DirectDebitCRUD>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BudgetService>();
 builder.Services.AddScoped<DirectDebitService>();
@@ -23,6 +26,14 @@ builder.Services.AddCors(options =>
             policy.AllowAnyHeader();
         });
 });
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "CustomAuthentication";
+}).AddScheme<AuthenticationSchemeOptions, webapi.Auth.CustomAuthenticationHandler>
+    ("CustomAuthentication", options => { });
+
+
 
 // Add services to the container.
 

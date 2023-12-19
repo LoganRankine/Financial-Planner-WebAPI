@@ -27,9 +27,9 @@ namespace webapi.Services
             return response;
         }
 
-        public async Task<string> CheckAuthStatus(string p_sessionID)
+        public async Task<bool> CheckAuthStatus(string p_sessionID)
         {
-            string response = await _userDataCRUD.CheckAuthStatus(p_sessionID);
+            bool response = await _userDataCRUD.CheckAuthStatus(p_sessionID);
 
             return response;
         }

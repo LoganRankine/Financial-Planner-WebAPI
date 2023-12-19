@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace webapi.Models
+namespace webapi.Models.BudgetObjects
 {
     public class BudgetResponse
     {

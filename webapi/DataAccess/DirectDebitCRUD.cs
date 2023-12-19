@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using webapi.Models;
+using webapi.Models.BudgetObjects;
 using webapi.Models.DirectDebitObjects;
 
 namespace webapi.DataAccess

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
+using webapi.Models.BudgetObjects;
 
 namespace webapi.Models
 {
