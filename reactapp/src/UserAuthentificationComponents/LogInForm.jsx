@@ -34,21 +34,21 @@ function login() {
     };
 
     return (
-        <div class="content">
-            <div class="input-container">
-                <label>username</label><br />
+        <div className="content">
+            <div className="input-container">
+                <label>Username</label><br />
                 <input type="text" value={name}
                     onChange={(e) => setName(e.target.value)}
-                    class="input-box" />
+                    className="input-box" />
             </div>
-            <div class="input-container">
-                <label>password</label><br />
+            <div className="input-container">
+                <label>Password</label><br />
                 <input type="password" value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    class="input-box" />
+                    className="input-box" />
             </div>
-            <div class="input-container">
-                <button onClick={authenticaterequest} class="signin">sign in</button>
+            <div className="input-container">
+                <button onClick={authenticaterequest} className="signin">sign in</button>
             </div>
         </div>
     );

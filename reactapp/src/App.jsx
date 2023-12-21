@@ -7,7 +7,7 @@ import Login from './UserAuthentificationComponents/LogInForm'
 import Register from './UserAuthentificationComponents/RegisterForm'
 import manageBudget from './ManageBudgetComponents/ManageBudget'
 import CreateBudget from './ManageBudgetComponents/CreateBudget'
-import CreateDebit from './ManageBudgetComponents/CreateDebit'
+import CreateDebit from './ManageDebitComponents/CreateDebit'
 import ManageBudget from './ManageBudgetComponents/ManageBudget';
 import AccountHomepage from './AccountComponents/AccountHomepage';
 import DisplayBudgetList from './ManageBudgetComponents/DisplayBudgetList'

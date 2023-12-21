@@ -11,22 +11,22 @@ function FirstPage({child }) {
 
     return (
 
-        <div class="flex-loginContainer">
-            <div class="flex-loginChild">
-                <div class="login-header">
+        <div className="flex-loginContainer">
+            <div className="flex-loginChild">
+                <div className="login-header">
                     {/*Top of dialog*/}
-                    <div class="header-container-top">
-                        <span id="login-loginLogo" class="material-symbols-outlined">
+                    <div className="header-container-top">
+                        <span id="login-loginLogo" className="material-symbols-outlined">
                             account_balance
                         </span>
                     </div>
-                    <div class="header-container-top">
+                    <div className="header-container-top">
                         <a id="header-title">Financial Planner</a>
                     </div>
-                    <div class="header-container-bottom">
-                        <Link class="UserOption" to="/">Sign In</Link>
+                    <div className="header-container-bottom">
+                        <Link className="UserOption" to="/">Sign In</Link>
                         <br></br>
-                        <Link class="UserOption" to="/Register">Register</Link>
+                        <Link className="UserOption" to="/Register">Register</Link>
                     </div>
                     {/*Top of dialog*/}
                 </div>

@@ -37,33 +37,33 @@ function Register() {
     };
 
     return (
-        <div class="content">
-            <div class="input-container">
+        <div className="content">
+            <div className="input-container">
                 <label>Username</label><br />
                 <input type="text" value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    class="input-box" />
+                    className="input-box" />
             </div>
-            <div class="input-container">
+            <div className="input-container">
                 <label>Email</label><br />
                 <input type="text" value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    class="input-box" />
+                    className="input-box" />
             </div>
-            <div class="input-container">
+            <div className="input-container">
                 <label>Password</label><br />
                 <input type="password" value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    class="input-box" />
+                    className="input-box" />
             </div>
-            <div class="input-container">
+            <div className="input-container">
                 <label>Confirm Password</label><br />
                 <input type="password" value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    class="input-box" />
+                    className="input-box" />
             </div>
-            <div class="input-container">
-                <button onClick={createRequest} class="signin">Register</button>
+            <div className="input-container">
+                <button onClick={createRequest} className="signin">Register</button>
             </div>
         </div>
     );
