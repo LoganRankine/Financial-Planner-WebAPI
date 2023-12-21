@@ -1,6 +1,9 @@
 # Financial Planner WebAPI
 A Visual Studio Project using React and ASP.NET Core with SQL database for storage. The functionality of this will be a financial tracker aimed at students to be able to monitor and track spending.
 
+## Figma to design design 
+https://www.figma.com/file/gOmGLcGKWn86EE00v0cGey/Finance-Planner?type=design&node-id=0%3A1&mode=design&t=sJycTjPZtnJX8D5M-1
+
 The secondary objective of this project is to learn and develop my front-end skills and frameworks. I have chosen to work with React.
 ## Technologies used
 - ASP.NET Core
