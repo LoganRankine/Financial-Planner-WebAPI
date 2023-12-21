@@ -8,17 +8,43 @@ The secondary objective of this project is to learn and develop my front-end ski
 - React Framework
 - Bcrypt Framework
 - Newtonsoft
+- React bootstrap
 
 ## Features and Milestones
 ### Features added
 - Account creation
 - Login functionality
+- Create budget
+- Add direct debits to budgets
+- View all budgets
+- Add purchases to budgets
+- Calculate weekly budget
 ### Features to be added
 - Create first budget upon account creation
-- Calculate monthly budget
+- Calculate weekly budget
 ### Future updates 
 - Option to aid in calculating and how much you can save
 - Connect to bank in future
+
+## UI Screenshots
+### Registraion page
+#### Login option
+<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/03f3df1c-eaae-439a-a54c-a08d2b2101ab">
+
+#### Register option
+<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/dcb37a0d-78e8-4074-b9b7-e3d6fc0c3a14">
+
+### Create Budget page
+#### Budget details option
+<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/e0a74648-092a-403f-a4be-f46fb68e171c">
+
+#### Direct debit option
+<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/4a7b6d60-b1d7-4f87-b0d0-14d79cb2a983">
+
+### Main Account page
+<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/e1553121-8001-4035-8902-9ed1f7daa55c">
+<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/c4a89a4c-a135-4bcd-ad90-9e7f70e5a583">
+
 
 ## Page Design Mockups
 ### Registraion page
