@@ -9,6 +9,7 @@ The secondary objective of this project is to learn and develop my front-end ski
 - Bcrypt Framework
 - Newtonsoft
 - React bootstrap
+- date-fns
 
 ## Features and Milestones
 ### Features added
