@@ -14,9 +14,21 @@ namespace webapi.Services
 
         public async Task<string> CreateBudget(string p_session_Id, string p_budget_name, decimal p_budget_amount, DateTime p_start_date, DateTime p_end_date)
         {
-            string response = await _budgetDataCRUD.CreateBudget(p_session_Id, p_budget_name, p_budget_amount, p_start_date, p_end_date);
+            //Check that request information
+            Budget budget = await _budgetDataCRUD.CreateBudget(p_session_Id, p_budget_name, p_budget_amount, p_start_date, p_end_date);
 
-            return response;
+            if(budget != null)
+            {
+                return JsonConvert.SerializeObject(new BudgetResponse()
+                {
+                    BudgetId = budget.BudgetId,
+                    BudgetName = budget.BudgetName,
+                    BudgetAmount = (decimal)budget.BudgetAmount,
+                    StartDate = p_start_date,
+                    EndDate = p_end_date
+                });
+            }
+            return "Budget";
         }
 
         public async Task<bool> UserAccess(string p_session_Id, string p_budget_Id)
@@ -29,33 +41,82 @@ namespace webapi.Services
 
         public async Task<string> CreateBudgetItem(string p_session_Id, string p_budget_id, string p_item_name, decimal p_item_amount, DateTime p_purchase_date)
         {
-            string response = await _budgetDataCRUD.CreateBudgetItem(p_session_Id, p_budget_id, p_item_name, p_item_amount, p_purchase_date);
+            BudgetItem budgetItem = await _budgetDataCRUD.CreateBudgetItem(p_session_Id, p_budget_id, p_item_name, p_item_amount, p_purchase_date);
 
-            return response;
+            if(budgetItem != null)
+            {
+                string response = JsonConvert.SerializeObject(new BudgetItemResponse
+                {
+                    ItemAmount = budgetItem.ItemAmount,
+                    PurchaseDate = budgetItem.PurchaseDate,
+                    ItemId = budgetItem.ItemId,
+                    ItemName = budgetItem.ItemName
+                });
+                return response;
+            }
+            return JsonConvert.SerializeObject("Failed to create BudgetItem");
         }
 
         public async Task<string> GetAllBudgets(string p_session_Id)
         {
-            string response = await _budgetDataCRUD.GetAllBudgets(p_session_Id);
+            List<Budget> budgets = await _budgetDataCRUD.GetAllBudgets(p_session_Id);
 
-            return response;
+            if(budgets.Count > 0)
+            {
+                List<BudgetResponse> budgetResponses = new();
+                foreach (Budget temp_budget in budgets)
+                {
+                    budgetResponses.Add(new BudgetResponse()
+                    {
+                        BudgetId = temp_budget.BudgetId,
+                        BudgetName = temp_budget.BudgetName,
+                        BudgetAmount = temp_budget.BudgetAmount,
+                        StartDate = temp_budget.StartDate,
+                        EndDate = temp_budget.EndDate,
+                        WeeklyAmount = temp_budget.WeeklyAmount,
+                    });
+                }
+                return JsonConvert.SerializeObject(budgetResponses);
+            }
+            return JsonConvert.SerializeObject("No Budgets");
         }
 
         public async Task<string> GetBudgetString(string p_budget_Id)
         {
-            Budget response = await _budgetDataCRUD.GetBudget(p_budget_Id);
+            Budget budget = await _budgetDataCRUD.GetBudget(p_budget_Id);
 
-            BudgetResponse temp = new BudgetResponse { BudgetName = response.BudgetName, WeeklyAmount = response.WeeklyAmount };
+            if(budget != null)
+            {
+                BudgetResponse budgetResponse = new BudgetResponse { BudgetName = budget.BudgetName, WeeklyAmount = budget.WeeklyAmount };
 
-            return JsonConvert.SerializeObject(temp);
+                return JsonConvert.SerializeObject(budgetResponse);
+            }
+
+            return "budget_id does not exist";
         }
 
 
         public async Task<string> GetBudgetItems(string p_budget_Id)
         {
-            string response = await _budgetDataCRUD.GetBudgetItems(p_budget_Id);
+            //Get budget items using budget id
+            List<BudgetItem> Budgetresponse = await _budgetDataCRUD.GetBudgetItems(p_budget_Id);
 
-            return response;
+            if(Budgetresponse.Count > 0)
+            {
+                List<BudgetItemResponse> budgetItemResponse = new();
+                foreach (BudgetItem budget_item in Budgetresponse)
+                {
+                    budgetItemResponse.Add(new BudgetItemResponse()
+                    {
+                        ItemId = budget_item.ItemId,
+                        ItemAmount = budget_item.ItemAmount,
+                        ItemName = budget_item.ItemName,
+                        PurchaseDate = budget_item.PurchaseDate,
+                    });
+                }
+                return JsonConvert.SerializeObject(budgetItemResponse);
+            }
+            return JsonConvert.SerializeObject("No Budget Items");
         }
 
         public async Task<bool> UpdateBudgetAmount(string p_budget_id, DirectDebitResponse p_direct_debit)

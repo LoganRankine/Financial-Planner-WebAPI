@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,6 @@ namespace webapi.Controllers
     {
         private readonly BudgetService _budgetService;
 
-
         public BudgetController(BudgetService budgetService) { _budgetService = budgetService; }
 
         /// <summary>
@@ -28,37 +28,40 @@ namespace webapi.Controllers
         [HttpGet("AllBudgets")]
         async public Task<string> GetAllBudgets()
         {
-            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             try
             {
                 string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
 
-                if (sessionID != null || sessionID != "")
+                string response = await _budgetService.GetAllBudgets(sessionID);
+
+                if (response.Contains("BudgetName"))
                 {
-                    HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    string response = await _budgetService.GetAllBudgets(sessionID);
-
-                    if (response.Contains("BudgetName"))
-                    {
-                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                        return JsonConvert.SerializeObject(response);
-
-                    }
-                    else if (response.Contains("No Budgets"))
-                    {
-                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                        return JsonConvert.SerializeObject(response);
-                    }
-                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                     return JsonConvert.SerializeObject(response);
+
                 }
-                return JsonConvert.SerializeObject("SessionId not included in header");
+                if (response.Contains("No Budgets"))
+                {
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.NoContent;
+                    return JsonConvert.SerializeObject("");
+                }
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured getting budgets",
+                    ErrorDescription = response
+                });
+
             }
             catch
             {
-                return JsonConvert.SerializeObject("Error processing request");
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured getting budgets",
+                    ErrorDescription = "An unexpected error occured. Check request."
+                });
             }
         }
 
@@ -76,8 +79,6 @@ namespace webapi.Controllers
         [HttpGet("BudgetItems")]
         async public Task<string> GetBudgetItems()
         {
-            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             try
             {
                 string budget_id = HttpContext.Request.Query["budget_Id"].ToString();
@@ -91,24 +92,37 @@ namespace webapi.Controllers
                     {
                         HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                         return JsonConvert.SerializeObject(response);
-
                     }
-                    else if (response.Contains("No Budget Items"))
+
+                    if(response.Contains("No Budget Items"))
                     {
-                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                        return JsonConvert.SerializeObject(response);
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.NoContent;
+                        return JsonConvert.SerializeObject("");
                     }
-                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
-                    return JsonConvert.SerializeObject(response);
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "Error occured getting budget items",
+                        ErrorDescription = response
+                    });
                 }
 
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                return JsonConvert.SerializeObject("User does not have access to this budget");
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "BudgetItem forbidden",
+                    ErrorDescription = "User does not have access to this budget. Check you have included the correct SessionID."
+                });
             }
             catch
             {
-                return JsonConvert.SerializeObject("Error processing request");
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured getting budget items",
+                    ErrorDescription = "An unexpected error occured. Check request."
+                });
             }
         }
 
@@ -117,6 +131,7 @@ namespace webapi.Controllers
         /// StartDate(DateTime) EndDate(DateTime). Must include SessionId as header.
         /// </summary>
         /// <returns> Successful- Created Budget in JSON with BudgetId. Unsuccessful- Reason why it failed</returns>
+        [Authorize]
         [HttpPost("CreateBudget")]
         async public Task<string> CreateBudget()
         {
@@ -125,31 +140,45 @@ namespace webapi.Controllers
             try
             {
                 StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
-                Task<string> getBody = reader.ReadToEndAsync();
-                if (getBody.IsCompleted)
+                string getBody = await reader.ReadToEndAsync();
+
+                CreateBudget createBudget = JsonConvert.DeserializeObject<CreateBudget>(getBody);
+                string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                if (createBudget != null)
                 {
-                    CreateBudget createBudget = JsonConvert.DeserializeObject<CreateBudget>(getBody.Result);
-                    string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
-
-                    if (createBudget != null)
+                    string response = await _budgetService.CreateBudget(sessionID, createBudget.BudgetName, createBudget.BudgetAmount, createBudget.StartDate, createBudget.EndDate);
+                    
+                    if (response.Contains("BudgetName"))
                     {
-                        if (sessionID != null || sessionID != "")
-                        {
-                            HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                            string response = await _budgetService.CreateBudget(sessionID, createBudget.BudgetName, createBudget.BudgetAmount, createBudget.StartDate, createBudget.EndDate);
-
-                            return JsonConvert.SerializeObject(response);
-                        }
-                        HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-
-                        return JsonConvert.SerializeObject("SessionId not included in header");
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        return JsonConvert.SerializeObject(response);
                     }
+
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "Error occured creating budget",
+                        ErrorDescription = response
+                    });
                 }
-                return JsonConvert.SerializeObject("Error occured decoding body");
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured parsing body",
+                    ErrorDescription = "Could not parse string to budget object. Check the budget object made correctly."
+                });
             }
             catch
             {
-                return JsonConvert.SerializeObject("Error processing request");
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured creating budget error",
+                    ErrorDescription = "An unexpected error occured. Check request."
+                });
             }
         }
 
@@ -160,59 +189,105 @@ namespace webapi.Controllers
             try
             {
                 string session_id = HttpContext.Request.Headers["x-api-key"].ToString();
-                string budget_id = HttpContext.Request.Query["budget_id"].ToString();
 
+                string budget_id = HttpContext.Request.Query["budget_id"].ToString();
+                
+                //Ensure budget id was included in request
                 if(budget_id != "")
                 {
-                    return await _budgetService.GetBudgetString(budget_id);
+                    string response = await _budgetService.GetBudgetString(budget_id);
+
+                    if (response.Contains("BudgetName"))
+                    {
+                        return response;
+                    }
+
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "budget_id error",
+                        ErrorDescription = response
+                    });
                 }
 
-                return "";
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "budget_id error",
+                    ErrorDescription = "budget_id was not sent in query or incorrectly included. Include '?budget_id={BudgetId}' in query of request."
+                });
             }
             catch
             {
-                return "";
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured getting budget error",
+                    ErrorDescription = "An unexpected error occured. Check request."
+                });
             }
-            return "";
         }
-
 
         [Authorize]
         [HttpPost("CreateBudgetItem")]
         async public Task<string> CreateBudgetItem()
         {
-            //HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             try
             {
+                //Get request body into a string
                 StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
-                Task<string> getBody = reader.ReadToEndAsync();
-                if (getBody.IsCompleted)
-                {
-                    CreateBudgetItem createBudgetItem = JsonConvert.DeserializeObject<CreateBudgetItem>(getBody.Result);
-                    string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+                string getBody = await reader.ReadToEndAsync();
 
-                    if (createBudgetItem != null)
+                //Parse request string into budgetitem object
+                CreateBudgetItem createBudgetItem = JsonConvert.DeserializeObject<CreateBudgetItem>(getBody);
+
+                string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                //Ensure object has been parsed
+                if (createBudgetItem != null)
+                {
+                    //Does the user have access to the budget?
+                    if (await _budgetService.UserAccess(sessionID, createBudgetItem.BudgetId))
                     {
-                        if (await _budgetService.UserAccess(sessionID, createBudgetItem.BudgetId))
+                        string response = await _budgetService.CreateBudgetItem(sessionID, createBudgetItem.BudgetId, createBudgetItem.ItemName, createBudgetItem.ItemAmount, createBudgetItem.PurchaseDate);
+
+                        if (response.Contains("ItemName"))
                         {
                             HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                            string response = await _budgetService.CreateBudgetItem(sessionID, createBudgetItem.BudgetId, createBudgetItem.ItemName, createBudgetItem.ItemAmount, createBudgetItem.PurchaseDate);
-
                             return JsonConvert.SerializeObject(response);
                         }
-                        HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                        return JsonConvert.SerializeObject("User does not own this budget");
+
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        return JsonConvert.SerializeObject(new Models.Error
+                        {
+                            ErrorTitle = "Error decoding body",
+                            ErrorDescription = response
+                        });
+
                     }
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "BudgetItem forbidden",
+                        ErrorDescription = "User does not have access to this BudgetItem. Check you have included the correct SessionID."
+                    });
                 }
-                return JsonConvert.SerializeObject("Error occured decoding body");
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error 
+                { 
+                    ErrorTitle= "Error parsing BudgetItem",
+                    ErrorDescription = "The budgetItem object sent in request could not be parsed. Check whether budget item is created correctly."
+                });
             }
             catch
             {
-                return JsonConvert.SerializeObject("Error processing request");
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error decoding body",
+                    ErrorDescription = "Error occured getting request body "
+                });
             }
         }
-
-
-
     }
 }

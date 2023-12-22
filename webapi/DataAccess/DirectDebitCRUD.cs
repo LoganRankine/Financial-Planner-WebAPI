@@ -47,6 +47,7 @@ namespace webapi.DataAccess
                         DebitDate = directDebit.DebitDate,
                         DebitAmount = directDebit.DebitAmount,
                         Frequency = directDebit.Frequency,
+                        DebitDueDate= directDebit.DebitDueDate
                     };
 
                 }
@@ -116,6 +117,7 @@ namespace webapi.DataAccess
                         DebitDate = directDebit.DebitDate,
                         Frequency=directDebit.Frequency,
                         DebitDueDate = directDebit.DebitDueDate,
+                        DebitTotalAmount = directDebit.DebitTotalAmount
                     });
                 }
 
