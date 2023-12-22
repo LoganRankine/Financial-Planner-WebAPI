@@ -26,7 +26,8 @@ function login() {
         let response = await createuserrequest.json();
 
         if (createuserrequest.ok) {
-            setCookie("SessionID", JSON.parse(response).SessionID, { path: "/" })
+            console.log(response)
+            setCookie("SessionID", response.SessionID, { path: "/" })
             window.location.href = "/Account/Home"
         }
 

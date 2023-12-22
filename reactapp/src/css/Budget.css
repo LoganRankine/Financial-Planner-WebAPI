@@ -63,6 +63,16 @@
     margin: 5px;
     padding: 5px;
 }
+
+.budget-content-item:hover {
+        background-color: #ededed;
+        cursor: pointer;
+}
+
+.debit-content-item:hover {
+    background-color: #ededed;
+    cursor: pointer;
+}
 .budget-item-right {
 }
 .budget-item-left {

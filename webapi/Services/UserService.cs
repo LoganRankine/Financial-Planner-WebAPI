@@ -11,13 +11,18 @@ namespace webapi.Services
 
         public UserService(UserDataCRUD userDataCRUD) { _userDataCRUD = userDataCRUD; }
 
-        public async Task<string> CreateUser(string p_username, string p_email, string p_password)
+        public async Task<string> CreateUser(string p_username, string p_email, string p_password, string p_confirm_password)
         {
             //Hash password
             string hashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(p_password, 13);
-            string response = await _userDataCRUD.CreateUser(p_username, p_email, hashedPassword);
 
-            return response;
+            if (p_password == p_confirm_password)
+            {
+                string response = await _userDataCRUD.CreateUser(p_username, p_email, hashedPassword);
+                return response;
+            }
+
+            return "No Match";
         }
 
         public async Task<string> AuthenticateUser(string p_username, string p_password)

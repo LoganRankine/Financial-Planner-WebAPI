@@ -21,46 +21,74 @@ namespace webapi.Controllers
     {
         private readonly UserService _userService;
 
-
         public UserController(UserService userService) { _userService = userService; }
 
         [HttpPost("CreateUser")]
         async public Task<string> CreateUser()
         {
-            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             try
             {
                 StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
-                Task<string> getBody = reader.ReadToEndAsync();
-                if (getBody.IsCompleted)
+                string getBody = await reader.ReadToEndAsync();
+
+                CreateUser requestUser = JsonConvert.DeserializeObject<CreateUser>(getBody);
+
+                if (requestUser != null)
                 {
-                    CreateUser requestUser = JsonConvert.DeserializeObject<CreateUser>(getBody.Result);
-
-                    if(requestUser != null)
+                    if (requestUser.Password == requestUser.Confirm_Password)
                     {
-                        if(requestUser.Password == requestUser.Confirm_Password)
-                        {
-                            HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                            string response = await _userService.CreateUser(requestUser.Name, requestUser.Email, requestUser.Password);
+                        string response = await _userService.CreateUser(requestUser.Name, requestUser.Email, requestUser.Password, requestUser.Confirm_Password);
 
-                            if (response.Contains("SessionID"))
-                            {
+                        switch (response)
+                        {
+                            case string message when message.Contains("No Match"):
+                                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                                return JsonConvert.SerializeObject(new Models.Error
+                                {
+                                    ErrorTitle = "Passwords do not match",
+                                    ErrorDescription = "Confirm password and password does not match. Ensure they match before making request"
+                                });
+
+                            case string message when message.Contains("Creation error"):
+                                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                return JsonConvert.SerializeObject(new Models.Error
+                                {
+                                    ErrorTitle = "Error occured creating user",
+                                    ErrorDescription = "An error occured creating the user"
+                                });
+
+                            case string message when message.Contains("Username exists"):
+                                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                                return JsonConvert.SerializeObject(new Models.Error
+                                {
+                                    ErrorTitle = "Username exists",
+                                    ErrorDescription = "The username provided is already in use. Try again with different username"
+                                });
+
+                            case string message when message.Contains("SessionID"):
                                 HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                                 var session = JsonConvert.DeserializeObject<UserSessionResponse>(response);
                                 HttpContext.Response.Cookies.Append("SessionID", session.SessionID);
-
-                            }
-                            return JsonConvert.SerializeObject(response);
+                                return JsonConvert.SerializeObject(response);
                         }
-                        return JsonConvert.SerializeObject("Passwords do not match");
                     }
                 }
-                return JsonConvert.SerializeObject("Error occured decoding body");
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured parsing user object",
+                    ErrorDescription = "Check the object is constructed correct. Check request."
+                });
             }
             catch 
             {
-                return JsonConvert.SerializeObject("Error processing request");
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured creating user",
+                    ErrorDescription = "An unexpected error occured. Check request."
+                });
             }
         }
 
@@ -72,31 +100,54 @@ namespace webapi.Controllers
             try
             {
                 StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
-                Task<string> getBody = reader.ReadToEndAsync();
-                if (getBody.IsCompleted)
+                string getBody = await reader.ReadToEndAsync();
+                User requestUser = JsonConvert.DeserializeObject<User>(getBody);
+
+                if (requestUser != null)
                 {
-                    User requestUser = JsonConvert.DeserializeObject<User>(getBody.Result);
+                    string response = await _userService.AuthenticateUser(requestUser.Name, requestUser.Password);
 
-                    if (requestUser != null)
+                    switch (response)
                     {
-                        string response = await _userService.AuthenticateUser(requestUser.Name, requestUser.Password);
-                        HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-
-
-                        if (response.Contains("SessionID"))
-                        {
+                        case string message when message.Contains("SessionID"):
                             HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                             var session = JsonConvert.DeserializeObject<UserSessionResponse>(response);
                             HttpContext.Response.Cookies.Append("SessionID", session.SessionID);
-                        }
-                        return JsonConvert.SerializeObject(response);
+                            return response;
+
+                        case string message when message.Contains("Incorrect Password"):
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                            return JsonConvert.SerializeObject(new Models.Error
+                            {
+                                ErrorTitle = "User authentication error",
+                                ErrorDescription = "Password or username was incorrect. Try again."
+                            });
+
+                        case string message when message.Contains("Username does not exist"):
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                            return JsonConvert.SerializeObject(new Models.Error
+                            {
+                                ErrorTitle = "User authentication error",
+                                ErrorDescription = "Password or username was incorrect. Try again."
+                            });
                     }
                 }
-                return JsonConvert.SerializeObject("Error occured decoding body");
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured parsing Authentification object",
+                    ErrorDescription = "Check the object is constructed correct. Check request."
+                });
             }
             catch
             {
-                return JsonConvert.SerializeObject("Error processing request");
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured authenticating user",
+                    ErrorDescription = "An unexpected error occured. Check request."
+                });
             }
         }
 
@@ -110,28 +161,32 @@ namespace webapi.Controllers
             {
                 string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
 
-                if(sessionID == null)
-                {
-                    return "No x-api-key provided in header";
-                }
-
                 bool response = await _userService.CheckAuthStatus(sessionID);
 
                 if(response)
                 {
                     HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                    return "Authorised";
+                    return JsonConvert.SerializeObject(sessionID);
                 }
-                else if (!response)
+                else
                 {
                     HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    return "Not Authorised";
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "User not authenticated",
+                        ErrorDescription = "The sessionId provided in header is not authenicated"
+                    });
+
                 }
-                return "beans";
             }
             catch
             {
-                return JsonConvert.SerializeObject("Error processing request");
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured authenticating user",
+                    ErrorDescription = "An unexpected error occured. Check request."
+                });
             }
         }
 
@@ -147,24 +202,39 @@ namespace webapi.Controllers
 
                 string response = await _userService.UserName(sessionID);
 
-                if (response != "Not Found")
+                switch (response)
                 {
-                    HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                    return JsonConvert.SerializeObject(response);
-                }
-                else
-                {
-                    HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    return JsonConvert.SerializeObject(response);
+                    case "Not Found":
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        return JsonConvert.SerializeObject(new Models.Error
+                        {
+                            ErrorTitle = "User not found",
+                            ErrorDescription = "User could not be found. Check request."
+                        });
+
+                    case "Error":
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        return JsonConvert.SerializeObject(new Models.Error
+                        {
+                            ErrorTitle = "Error occured getting user informatiom",
+                            ErrorDescription = "Error occured getting user information. Check request."
+                        });
+
+                    default:
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        return JsonConvert.SerializeObject(response);
                 }
             }
             catch
             {
-                return JsonConvert.SerializeObject("Error processing request");
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured authenticating user",
+                    ErrorDescription = "An unexpected error occured. Check request."
+                });
             }
         }
-
-
 
         [HttpPost("GetPublicKey")]
         async public Task<string> GetPublicKey()

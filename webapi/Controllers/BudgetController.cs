@@ -20,10 +20,6 @@ namespace webapi.Controllers
 
         public BudgetController(BudgetService budgetService) { _budgetService = budgetService; }
 
-        /// <summary>
-        /// Gets all budgets- Request must contain sessionID
-        /// </summary>
-        /// <returns>Successful- All budgets as JSON object stringified. </returns>
         [Authorize]
         [HttpGet("AllBudgets")]
         async public Task<string> GetAllBudgets()
@@ -73,7 +69,6 @@ namespace webapi.Controllers
             await _budgetService.CalculateWeekly(budget_id);
             return await _budgetService.CalculateWeekly(budget_id);
         }
-
 
         [Authorize]
         [HttpGet("BudgetItems")]
@@ -126,11 +121,6 @@ namespace webapi.Controllers
             }
         }
 
-        /// <summary>
-        /// Creates a budget- Request must contain JSON body with BudgetName(string), BudgetAmount(decimal),
-        /// StartDate(DateTime) EndDate(DateTime). Must include SessionId as header.
-        /// </summary>
-        /// <returns> Successful- Created Budget in JSON with BudgetId. Unsuccessful- Reason why it failed</returns>
         [Authorize]
         [HttpPost("CreateBudget")]
         async public Task<string> CreateBudget()

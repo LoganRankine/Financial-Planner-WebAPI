@@ -40,11 +40,11 @@ namespace webapi.DataCRUD
                     return JsonConvert.SerializeObject(new UserSessionResponse() { SessionID = user.SessionId });
                 }
 
-                return "Username already exists";
+                return "Username exists";
             }
             catch
             {
-                return "Error occured during user creation";
+                return "Creation error";
             }
         }
 
@@ -63,12 +63,14 @@ namespace webapi.DataCRUD
                     {
                         return JsonConvert.SerializeObject(new UserSessionResponse() { SessionID = User.SessionId});
                     }
+
+                    return "Incorrect Password";
                 }
                 return "Username does not exist";
             }
             catch
             {
-                return "Error occured during user creation";
+                return "";
             }
         }
 
@@ -97,13 +99,13 @@ namespace webapi.DataCRUD
                 //Ensure sessionID exists
                 if (User != null)
                 {
-                    return User.Name;
+                    return JsonConvert.SerializeObject(User.Name);
                 }
                 return "Not Found";
             }
             catch
             {
-                return "Not Found";
+                return "Error";
             }
         }
     }
