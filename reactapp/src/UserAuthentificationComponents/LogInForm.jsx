@@ -48,7 +48,7 @@ function login() {
                     className="input-box" />
             </div>
             <div className="input-container">
-                <button onClick={authenticaterequest} className="signin">sign in</button>
+                <button onClick={authenticaterequest} className="signin">Sign in</button>
             </div>
         </div>
     );

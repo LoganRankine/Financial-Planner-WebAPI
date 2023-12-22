@@ -42,7 +42,7 @@ function CreateDebitForm({ budget_id }) {
     }
 
     return (
-        <div class="account-creation-content">
+        <div>
             <div class="debit-creation-content">
                 <div class="debit-detail-input">
                     <div class="input-container">
@@ -72,7 +72,7 @@ function CreateDebitForm({ budget_id }) {
                 </div>
             </div>
             <div>
-                <div class="account-creation-footer">
+                <div class="debit-creation-footer">
                     <div>
                     </div>
                     <div>

@@ -17,8 +17,12 @@ namespace webapi.Services
 
         public async Task<string> CreateDirectDebit(string p_budget_Id, string p_debit_name, decimal p_debit_amount, DateTime p_debit_date, int p_frequency)
         {
+            //Find the due date
+            DateTime debit_date_due = p_debit_date;
+            debit_date_due = debit_date_due.AddDays(p_frequency);
+
             //Ensure it has been successfully added
-            DirectDebitResponse response = await _directDebitDataCRUD.CreateDebit(p_budget_Id, p_debit_name, p_debit_amount, p_debit_date, p_frequency);
+            DirectDebitResponse response = await _directDebitDataCRUD.CreateDebit(p_budget_Id, p_debit_name, p_debit_amount, p_debit_date, p_frequency, debit_date_due);
 
             bool updateSuccessfull = await _budgetService.UpdateBudgetAmount(p_budget_Id, response);
 

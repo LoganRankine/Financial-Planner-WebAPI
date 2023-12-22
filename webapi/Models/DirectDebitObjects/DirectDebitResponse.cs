@@ -8,6 +8,7 @@
         public DateTime DebitDate { get; set; }
         public int Frequency { get; set; }
         public decimal DebitTotalAmount { get; set; }
+        public DateTime DebitDueDate { get; set; }
 
     }
 }

@@ -48,7 +48,7 @@ function DirectDebitsDisplay({Sidebar}) {
             <div className="budget-display">
                 <Modal show={show} onHide={handleClose} animation={true} centered >
                     <Modal.Header closeButton>
-                        <Modal.Title>Add Purchase</Modal.Title>
+                        <Modal.Title>Add Direct Debit</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <CreateDebitForm budget_id={p_budgetId}></CreateDebitForm>

@@ -14,7 +14,7 @@ namespace webapi.DataAccess
             _userContext = userContext;
         }
 
-        public async Task<DirectDebitResponse> CreateDebit(string p_budget_Id, string p_debit_name, decimal p_debit_amount, DateTime p_debit_date, int p_frequency)
+        public async Task<DirectDebitResponse> CreateDebit(string p_budget_Id, string p_debit_name, decimal p_debit_amount, DateTime p_debit_date, int p_frequency, DateTime p_due_date)
         {
             try
             {
@@ -34,6 +34,7 @@ namespace webapi.DataAccess
                         DebitAmount = p_debit_amount,
                         DebitDate = p_debit_date,
                         Frequency = p_frequency,
+                        DebitDueDate = p_due_date
                     };
                     //Add to database
                     _userContext.DirectDebits.Add(directDebit);
@@ -100,13 +101,21 @@ namespace webapi.DataAccess
                 List<DirectDebitResponse> directDebitResponse = new List<DirectDebitResponse>();
                 foreach(DirectDebit directDebit in directDebits)
                 {
+                    if(DateTime.Now.CompareTo(directDebit.DebitDueDate) > 0)
+                    {
+                        directDebit.DebitDueDate = directDebit.DebitDueDate.AddDays(directDebit.Frequency);
+
+                        //Change the direct debit date to reflect that it has now passed
+                        _userContext.DirectDebits.Update(directDebit);
+                    }
                     directDebitResponse.Add(new DirectDebitResponse
                     {
                         DebitId = directDebit.DebitId,
                         DebitName = directDebit.DebitName,
                         DebitAmount = directDebit.DebitAmount,
                         DebitDate = directDebit.DebitDate,
-                        Frequency=directDebit.Frequency
+                        Frequency=directDebit.Frequency,
+                        DebitDueDate = directDebit.DebitDueDate,
                     });
                 }
 
