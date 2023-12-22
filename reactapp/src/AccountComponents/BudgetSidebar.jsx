@@ -4,7 +4,7 @@ import { CookiesProvider, useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 import '../css/AccountHomepage.css'
 
-function Sidebar() {
+function Sidebar({budget_id }) {
     return (
         <div className="sidebar">
             <div>
@@ -12,11 +12,11 @@ function Sidebar() {
                     <span id="icon" class="material-symbols-outlined">home</span>
                     <a id="nav-title">Home</a>
                 </Link>
-                <Link className="navbar-item" to="/Account/CreateBudget">
+                <Link className="navbar-item" to={`/Account/Display/Budget/budget_id=${budget_id}`}>
                     <span id="icon" class="material-symbols-outlined">shopping_cart</span>
                     <a id="nav-title">Budget</a>
                 </Link>
-                <Link className="navbar-item" to="/Account/Home">
+                <Link className="navbar-item" to={`/Account/Display/DirectDebits/budget_id=${budget_id}`}>
                     <span id="icon" class="material-symbols-outlined">payments</span>
                     <a id="nav-title">Direct Debit</a>
                 </Link>

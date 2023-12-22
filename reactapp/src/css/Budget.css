@@ -95,4 +95,61 @@
     align-items: center;
 }
 
+.debit-content-item {
+    width: 60%;
+    height: 60px;
+    border: 1px solid grey;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 5px;
+}
+
+.debit-item-right {
+}
+
+.debit-item-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 70%;
+}
+
+.debit-item-left-box {
+    display: flex;
+    justify-content: space-between;
+}
+
+#debit-item-frequency{
+    color: red;
+}
+
+.debit-item-box {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.debit-item-title {
+    color: black;
+    font-weight: 700;
+    font-size: large;
+}
+
+.debit-item-date {
+    font-size: small;
+    color: grey;
+}
+
+.debit-item-price {
+    color: black;
+    font-size: x-large;
+}
+
+.debit-item-right {
+    display: flex;
+    align-items: center;
+}
+
 

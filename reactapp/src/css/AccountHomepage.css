@@ -5,6 +5,10 @@
     flex-direction: column;
 }
 
+.base-content {
+    display: contents;
+}
+
 .top-navbar {
     display: flex;
     background-color: white;

@@ -8,7 +8,7 @@ import BudgetListColumn from './BudgetListColumn'
 
 
 
-function DisplayBudgets() {
+function DisplayBudgets({SideBar }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
 
     const [allBudgets, setBudgets] = useState(null);
@@ -33,21 +33,25 @@ function DisplayBudgets() {
 
 
     return (
-        <div className="content-area">
-            <div className="list">
-                <div className="list-header">
-                    <div className="list-header-item">Budget Name</div>
-                    <div className="list-header-item">Start Date</div>
-                    <div className="list-header-item">End Date</div>
-                    <div className="list-header-item">Total Amount</div>
-                    <div className="list-header-item">Weekly Amount</div>
-                    <div className="list-content-option"></div>
-                </div>
-                <div className="list-content">
-                    {!allBudgets ? 'Loading' : allBudgets.map(budget => (< BudgetListColumn budgets={budget} />))}
-                    {/*{!allBudgets ? 'Loading' : allBudgets.allBudgets.map}*/}
+        <div className="base-content">
+            {SideBar}
+            <div className="content-area">
+                <div className="list">
+                    <div className="list-header">
+                        <div className="list-header-item">Budget Name</div>
+                        <div className="list-header-item">Start Date</div>
+                        <div className="list-header-item">End Date</div>
+                        <div className="list-header-item">Total Amount</div>
+                        <div className="list-header-item">Weekly Amount</div>
+                        <div className="list-content-option"></div>
+                    </div>
+                    <div className="list-content">
+                        {!allBudgets ? 'Loading' : allBudgets.map(budget => (< BudgetListColumn budgets={budget} />))}
+                        {/*{!allBudgets ? 'Loading' : allBudgets.allBudgets.map}*/}
+                    </div>
                 </div>
             </div>
+
         </div>
     );
 }

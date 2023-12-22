@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -23,6 +24,7 @@ namespace webapi.Controllers
         /// Gets all budgets- Request must contain sessionID
         /// </summary>
         /// <returns>Successful- All budgets as JSON object stringified. </returns>
+        [Authorize]
         [HttpGet("AllDirectDebits")]
         async public Task<string> GetAllDirectDebits()
         {
@@ -33,11 +35,10 @@ namespace webapi.Controllers
                 string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
 
                 //Get budgetId
-                string budgetId = HttpContext.Request.Query["BudgetId"].ToString();
+                string budgetId = HttpContext.Request.Query["budget_Id"].ToString();
 
-                if ((sessionID != null || sessionID != "") && (budgetId != null || budgetId != ""))
+                if(await _directDebitService.UserAccess(sessionID, budgetId))
                 {
-                    HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     string response = await _directDebitService.GetAllDebits(budgetId, sessionID);
 
                     if (response.Contains("DebitName"))
@@ -54,7 +55,9 @@ namespace webapi.Controllers
                     HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
                     return JsonConvert.SerializeObject(response);
+
                 }
+
                 return JsonConvert.SerializeObject("Error occured");
             }
             catch
@@ -63,11 +66,13 @@ namespace webapi.Controllers
             }
         }
 
+
         /// <summary>
         /// Creates a budget- Request must contain JSON body with BudgetName(string), BudgetAmount(decimal),
         /// StartDate(DateTime) EndDate(DateTime). Must include SessionId as header.
         /// </summary>
         /// <returns> Successful- Created Budget in JSON with BudgetId. Unsuccessful- Reason why it failed</returns>
+        [Authorize]
         [HttpPost("CreateDebit")]
         async public Task<string> CreateDebit()
         {

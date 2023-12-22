@@ -21,7 +21,7 @@ function PurchaseForm(budget_id) {
         console.log("Add inputs to JSON object", createPurchase)
 
         //Send data to create budget
-        let sessionId = "139b5da0-84c9-4ebf-9a5b-d1494a80dc6e"
+        let sessionId = cookies.SessionID
         console.log(sessionId)
 
         const myHeaders = new Headers();

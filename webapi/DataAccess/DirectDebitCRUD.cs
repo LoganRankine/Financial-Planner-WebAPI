@@ -57,12 +57,42 @@ namespace webapi.DataAccess
             }
         }
 
+        public async Task<bool> UserAccess(string p_session_Id, string p_budget_id)
+        {
+            try
+            {
+                //Get User
+                User user = _userContext.Users.Where(user => user.SessionId == p_session_Id).FirstOrDefault();
+
+                //find direct debit
+                DirectDebit directDebit = _userContext.DirectDebits.Where(debit => debit.BudgetId == p_budget_id).FirstOrDefault();
+
+                if (user != null)
+                {
+                    //find budget debit belongs too, does the budget id match the user id?
+                    Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == directDebit.BudgetId).FirstOrDefault();
+                    
+                    if(budget.Id == user.Id)
+                    {
+                        return true;
+
+                    }
+                    return false;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<string> GetAllDebits(string p_budget_Id, string p_session_Id)
         {
             //Does this user have access to it?
             User user = _userContext.Users.Where(user => user.SessionId == p_session_Id).FirstOrDefault();
 
-            if (user == null)
+            if (user != null)
             {
                 //get all direct debits assosiated with budget
                 List<DirectDebit> directDebits = _userContext.DirectDebits.Where(directDebit => directDebit.BudgetId == p_budget_Id).ToList();
@@ -79,6 +109,8 @@ namespace webapi.DataAccess
                         Frequency=directDebit.Frequency
                     });
                 }
+
+                return JsonConvert.SerializeObject(directDebitResponse);
             }
 
             return "No Budgets";

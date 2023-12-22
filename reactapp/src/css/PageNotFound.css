@@ -1,0 +1,39 @@
+.page-not-found {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 70px;
+}
+
+.not-found-container {
+    border-radius: 20px;
+    background-color: white;
+    width: 40%;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0px 0px 2px 4px #dcdcdc9c;
+}
+
+p {
+    margin: 10px;
+    font-weight: 500;
+}
+
+.not-found-container-header {
+    font-size: xx-large;
+    font-weight: 700;
+    color: red;
+    font-family: monospace;
+}
+
+.button-return {
+    background-color: #384eff;
+    border-radius: 5px;
+    padding: 10px;
+    color: white;
+    cursor: pointer;
+}
