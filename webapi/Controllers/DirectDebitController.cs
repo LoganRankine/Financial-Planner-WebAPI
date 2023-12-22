@@ -45,7 +45,6 @@ namespace webapi.Controllers
                     {
                         HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                         return JsonConvert.SerializeObject(response);
-
                     }
                     else if (response.Contains("No Budgets"))
                     {
@@ -65,7 +64,6 @@ namespace webapi.Controllers
                 return JsonConvert.SerializeObject("Error processing request");
             }
         }
-
 
         /// <summary>
         /// Creates a budget- Request must contain JSON body with BudgetName(string), BudgetAmount(decimal),
@@ -108,8 +106,5 @@ namespace webapi.Controllers
                 return JsonConvert.SerializeObject("Error processing request");
             }
         }
-
-
-
     }
 }

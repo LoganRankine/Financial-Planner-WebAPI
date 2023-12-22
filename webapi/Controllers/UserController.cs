@@ -222,7 +222,7 @@ namespace webapi.Controllers
 
                     default:
                         HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                        return JsonConvert.SerializeObject(response);
+                        return response;
                 }
             }
             catch
