@@ -17,6 +17,7 @@ namespace webapi.Services
 
         public async Task<string> CreateDirectDebit(string p_budget_Id, string p_debit_name, decimal p_debit_amount, DateTime p_debit_date, int p_frequency)
         {
+
             //Find the due date
             DateTime debit_date_due = p_debit_date;
             debit_date_due = debit_date_due.AddDays(p_frequency);
@@ -31,7 +32,7 @@ namespace webapi.Services
                 return JsonConvert.SerializeObject(response);
             }
 
-            return "unsuccessful";
+            return "Creation Failure";
 
             //If added successfully
             //Update budget amount
@@ -48,8 +49,29 @@ namespace webapi.Services
 
         public async Task<string> GetAllDebits(string p_budget_Id, string p_session_Id)
         {
-            string response = await _directDebitDataCRUD.GetAllDebits(p_budget_Id, p_session_Id);
-            return response;
+            List<DirectDebit> response = await _directDebitDataCRUD.GetAllDebits(p_budget_Id, p_session_Id);
+
+            if(response.Count == 0)
+            {
+                List<DirectDebitResponse> directDebitResponses = new List<DirectDebitResponse>();
+
+                foreach (DirectDebit debit in response)
+                {
+                    directDebitResponses.Add(new DirectDebitResponse
+                    {
+                        DebitId = debit.DebitId,
+                        DebitName = debit.DebitName,
+                        DebitAmount = debit.DebitAmount,
+                        DebitDate = debit.DebitDate,
+                        Frequency = debit.Frequency,
+                        DebitDueDate = debit.DebitDueDate,
+                        DebitTotalAmount = debit.DebitTotalAmount
+                    });
+                }
+                return JsonConvert.SerializeObject(directDebitResponses);
+            }
+
+            return "No DirectDebits";
         }
 
     }

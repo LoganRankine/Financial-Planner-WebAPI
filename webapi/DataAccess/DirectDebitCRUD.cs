@@ -89,7 +89,7 @@ namespace webapi.DataAccess
             }
         }
 
-        public async Task<string> GetAllDebits(string p_budget_Id, string p_session_Id)
+        public async Task<List<DirectDebit>> GetAllDebits(string p_budget_Id, string p_session_Id)
         {
             //Does this user have access to it?
             User user = _userContext.Users.Where(user => user.SessionId == p_session_Id).FirstOrDefault();
@@ -99,7 +99,6 @@ namespace webapi.DataAccess
                 //get all direct debits assosiated with budget
                 List<DirectDebit> directDebits = _userContext.DirectDebits.Where(directDebit => directDebit.BudgetId == p_budget_Id).ToList();
 
-                List<DirectDebitResponse> directDebitResponse = new List<DirectDebitResponse>();
                 foreach(DirectDebit directDebit in directDebits)
                 {
                     if(DateTime.Now.CompareTo(directDebit.DebitDueDate) > 0)
@@ -109,22 +108,12 @@ namespace webapi.DataAccess
                         //Change the direct debit date to reflect that it has now passed
                         _userContext.DirectDebits.Update(directDebit);
                     }
-                    directDebitResponse.Add(new DirectDebitResponse
-                    {
-                        DebitId = directDebit.DebitId,
-                        DebitName = directDebit.DebitName,
-                        DebitAmount = directDebit.DebitAmount,
-                        DebitDate = directDebit.DebitDate,
-                        Frequency=directDebit.Frequency,
-                        DebitDueDate = directDebit.DebitDueDate,
-                        DebitTotalAmount = directDebit.DebitTotalAmount
-                    });
                 }
 
-                return JsonConvert.SerializeObject(directDebitResponse);
+                return directDebits;
             }
 
-            return "No Budgets";
+            return null;
         }
 
     }

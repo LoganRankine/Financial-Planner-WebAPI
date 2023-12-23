@@ -28,8 +28,6 @@ namespace webapi.Controllers
         [HttpGet("AllDirectDebits")]
         async public Task<string> GetAllDirectDebits()
         {
-            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             try
             {
                 string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
@@ -46,22 +44,26 @@ namespace webapi.Controllers
                         HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                         return JsonConvert.SerializeObject(response);
                     }
-                    else if (response.Contains("No Budgets"))
+                    if (response.Contains("No DirectDebits"))
                     {
-                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                        return JsonConvert.SerializeObject(response);
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.NoContent;
+                        return JsonConvert.SerializeObject("");
                     }
-                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-                    return JsonConvert.SerializeObject(response);
-
                 }
-
-                return JsonConvert.SerializeObject("Error occured");
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Unauthourised debit",
+                    ErrorDescription = "This user does not own the direct debits. Check the sessionId is for correct user."
+                });
             }
             catch
             {
-                return JsonConvert.SerializeObject("Error processing request");
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured parsing body",
+                    ErrorDescription = "The object could not be parsed from the body. Check the debit creation object is correct."
+                });
             }
         }
 
@@ -74,36 +76,48 @@ namespace webapi.Controllers
         [HttpPost("CreateDebit")]
         async public Task<string> CreateDebit()
         {
-            //HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            //HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             try
             {
                 StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
-                Task<string> getBody = reader.ReadToEndAsync();
-                if (getBody.IsCompleted)
+                string getBody = await reader.ReadToEndAsync();
+
+                CreateDirectDebit createDebit = JsonConvert.DeserializeObject<CreateDirectDebit>(getBody);
+                string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                if (createDebit != null)
                 {
-                    CreateDirectDebit createDebit = JsonConvert.DeserializeObject<CreateDirectDebit>(getBody.Result);
-                    string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+                    string response = await _directDebitService.CreateDirectDebit(createDebit.BudgetId, createDebit.DebitName, createDebit.DebitAmount, createDebit.DebitDate, createDebit.Frequency);
 
-                    if (createDebit != null)
+                    if (response.Contains("DebitName"))
                     {
-                        if (sessionID != null || sessionID != "")
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        return JsonConvert.SerializeObject(response);
+                    }
+                    if(response.Contains("Creation Failure"))
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        return JsonConvert.SerializeObject(new Models.Error
                         {
-                            HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                            string response = await _directDebitService.CreateDirectDebit(createDebit.BudgetId, createDebit.DebitName, createDebit.DebitAmount, createDebit.DebitDate, createDebit.Frequency);
-
-                            return JsonConvert.SerializeObject(response);
-                        }
-                        HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-
-                        return JsonConvert.SerializeObject("SessionId not included in header");
+                            ErrorTitle = "Error occured creating direct debit",
+                            ErrorDescription = "There was a error in the server that prevented the direct debit from been saved."
+                        });
                     }
                 }
-                return JsonConvert.SerializeObject("Error occured decoding body");
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured parsing body",
+                    ErrorDescription = "The object could not be parsed from the body. Check the debit creation object is correct."
+                });
             }
             catch
             {
-                return JsonConvert.SerializeObject("Error processing request");
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured decoding the body",
+                    ErrorDescription = "The body could not be decoded. Check if the body is correct."
+                });
             }
         }
     }
