@@ -51,7 +51,7 @@ namespace webapi.Services
         {
             List<DirectDebit> response = await _directDebitDataCRUD.GetAllDebits(p_budget_Id, p_session_Id);
 
-            if(response.Count == 0)
+            if(response.Count != 0)
             {
                 List<DirectDebitResponse> directDebitResponses = new List<DirectDebitResponse>();
 
