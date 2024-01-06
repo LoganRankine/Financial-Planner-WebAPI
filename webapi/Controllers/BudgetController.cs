@@ -279,5 +279,54 @@ namespace webapi.Controllers
                 });
             }
         }
+
+        [Authorize]
+        [HttpDelete("DeleteBudget")]
+        async public Task<string> DeleteBudget()
+        {
+            try
+            {
+                string budgetId = HttpContext.Request.Query["budget_Id"].ToString();
+                string sessionId = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                if (await _budgetService.UserAccess(sessionId, budgetId))
+                {
+                    bool deleteComplete = await _budgetService.DeleteBudget(budgetId);
+
+                    if(deleteComplete)
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        return JsonConvert.SerializeObject(new Models.Success {
+                            SuccessTitle = "Delete Successful",
+                            SuccessDescription = $"{budgetId} was deleted"
+                        });
+                    }
+
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "Failed to delete",
+                        ErrorDescription = "Budget was not delete. Ensure budgetId exists."
+                    });
+
+                }
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Budget Unauthourized",
+                    ErrorDescription = "User does not have access to this budget. Check x-api-key if its for correct user."
+                });
+            }
+            catch
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured with request",
+                    ErrorDescription = ""
+                });
+            }
+        }
     }
 }

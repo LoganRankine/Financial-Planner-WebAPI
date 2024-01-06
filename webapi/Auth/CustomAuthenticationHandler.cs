@@ -12,6 +12,7 @@ using System.Net;
 using System.Reflection.PortableExecutable;
 using System.Net.Http.Headers;
 using webapi.DataCRUD;
+using Newtonsoft.Json;
 
 namespace webapi.Auth
 {
@@ -65,7 +66,7 @@ namespace webapi.Auth
 
         protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
         {
-            byte[] messagebytes = Encoding.ASCII.GetBytes("Unauthorized.Check ApiKey in Header is correct.");
+            byte[] messagebytes = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(new Models.Error { ErrorTitle = "Unauthorized", ErrorDescription = "Check ApiKey in Header is correct." }));
             Context.Response.StatusCode = (int)HttpStatusCode.Unauthorized; ;
             Context.Response.ContentType = "application/json";
             await Context.Response.Body.WriteAsync(messagebytes, 0, messagebytes.Length);

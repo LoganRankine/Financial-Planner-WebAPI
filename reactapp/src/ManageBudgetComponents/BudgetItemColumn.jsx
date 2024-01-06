@@ -29,7 +29,7 @@ function BudgetItemColumn(budgetItem) {
                     <a className="budget-item-price">&#163;{budgetItem.budgetItem.ItemAmount}</a>
                     <div className="list-content-option">
                         <span class="material-symbols-outlined">edit</span>
-                        <span class="material-symbols-outlined">delete</span>
+                        <span id="delete-icon" class="material-symbols-outlined">delete</span>
                     </div>
                 </div>
             </div>

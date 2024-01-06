@@ -15,8 +15,6 @@ namespace webapi.DataCRUD
             _userContext = userContext; 
         }
 
-
-
         public async Task<Budget> CreateBudget(string p_session_Id, string p_budget_name, decimal p_budget_amount, DateTime p_start_date, DateTime p_end_date)
         {
             try
@@ -111,6 +109,7 @@ namespace webapi.DataCRUD
                 return null;
             }
         }
+
         public async Task<List<BudgetItem>> GetBudgetItems(string p_budget_id)
         {
             try
@@ -118,7 +117,7 @@ namespace webapi.DataCRUD
                 //find user using SessionID
                 List<BudgetItem> p_budgetItems = _userContext.BudgetItems.Where(budgetItem => budgetItem.BudgetId == p_budget_id).ToList();
 
-                if (p_budgetItems != null)
+                if (p_budgetItems.Count != 0)
                 {
                     //Get all budgets for user
                     if (p_budgetItems.Count > 0)
@@ -220,8 +219,6 @@ namespace webapi.DataCRUD
             }
         }
 
-
-
         public async Task<bool> UpdateBudgetAmount(string p_budget_Id, decimal p_deduction_value, DirectDebitResponse p_direct_debit)
         {
             Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == p_budget_Id).FirstOrDefault();
@@ -264,6 +261,45 @@ namespace webapi.DataCRUD
             _userContext.SaveChanges();
 
             return true;
+        }
+
+        public async Task<bool> DeleteBudget(string p_budget_id)
+        {
+            try
+            {
+                Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == p_budget_id).FirstOrDefault();
+
+                if(budget != null)
+                {
+                    //Remove budget, remove everything assosiated to budget
+                    List<DirectDebit> directDebits = _userContext.DirectDebits.Where(debit => debit.BudgetId == p_budget_id).ToList();
+                    List<BudgetItem> budgetItems = _userContext.BudgetItems.Where(budgetItem => budgetItem.BudgetId == p_budget_id).ToList();
+                    
+                    //Remove direct debits
+                    directDebits.ForEach(directDebit =>
+                    {
+                        _userContext.Remove(directDebit);
+                    });
+
+                    //Remove budget items
+                    budgetItems.ForEach(budgetItem =>
+                    {
+                        _userContext.Remove(budgetItem);
+                    });
+
+                    //Remove budget
+                    _userContext.Budgets.Remove(budget);
+
+                    _userContext.SaveChanges();
+                    Console.WriteLine($"Budget {p_budget_id} deleted");
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
     }

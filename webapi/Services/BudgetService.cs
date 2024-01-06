@@ -95,26 +95,30 @@ namespace webapi.Services
             return "budget_id does not exist";
         }
 
-
         public async Task<string> GetBudgetItems(string p_budget_Id)
         {
             //Get budget items using budget id
             List<BudgetItem> Budgetresponse = await _budgetDataCRUD.GetBudgetItems(p_budget_Id);
 
-            if(Budgetresponse.Count > 0)
+            if (Budgetresponse != null)
             {
-                List<BudgetItemResponse> budgetItemResponse = new();
-                foreach (BudgetItem budget_item in Budgetresponse)
+                if(Budgetresponse.Count > 0)
                 {
-                    budgetItemResponse.Add(new BudgetItemResponse()
+                    List<BudgetItemResponse> budgetItemResponse = new();
+                    foreach (BudgetItem budget_item in Budgetresponse)
                     {
-                        ItemId = budget_item.ItemId,
-                        ItemAmount = budget_item.ItemAmount,
-                        ItemName = budget_item.ItemName,
-                        PurchaseDate = budget_item.PurchaseDate,
-                    });
+                        budgetItemResponse.Add(new BudgetItemResponse()
+                        {
+                            ItemId = budget_item.ItemId,
+                            ItemAmount = budget_item.ItemAmount,
+                            ItemName = budget_item.ItemName,
+                            PurchaseDate = budget_item.PurchaseDate,
+                        });
+                    }
+                    return JsonConvert.SerializeObject(budgetItemResponse);
+
                 }
-                return JsonConvert.SerializeObject(budgetItemResponse);
+                return JsonConvert.SerializeObject("No Budget Items");
             }
             return JsonConvert.SerializeObject("No Budget Items");
         }
@@ -149,6 +153,18 @@ namespace webapi.Services
         public async Task<bool> CalculateWeekly(string p_budget_Id)
         {
             return await _budgetDataCRUD.CalculateWeekly(p_budget_Id);
+        }
+
+        public async Task<bool> DeleteBudget(string p_budget_Id)
+        {
+            bool isDeleted = await _budgetDataCRUD.DeleteBudget(p_budget_Id);
+
+            if(isDeleted)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

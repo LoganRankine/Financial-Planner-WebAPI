@@ -61,6 +61,11 @@
     overflow-y: scroll;
 }
 
+#delete-icon{
+    color: red;
+    cursor: pointer;
+}
+
 .list-content-column:hover {
     background-color: #ededed;
 }

@@ -55,6 +55,12 @@
     overflow-y: scroll;
 }
 
+#delete-icon {
+    color: red;
+    cursor: pointer;
+}
+
+
 .budget-content-item {
     width: 47%;
     height: 60px;

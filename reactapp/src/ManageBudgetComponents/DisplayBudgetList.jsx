@@ -31,6 +31,10 @@ function DisplayBudgets({SideBar }) {
         });
     }, []);
 
+    const reload = (event) => {
+        window.location.reload()
+    }
+
 
     return (
         <div className="base-content">
@@ -43,7 +47,11 @@ function DisplayBudgets({SideBar }) {
                         <div className="list-header-item">End Date</div>
                         <div className="list-header-item">Total Amount</div>
                         <div className="list-header-item">Weekly Amount</div>
-                        <div className="list-content-option"></div>
+                        <div className="list-content-option">
+                            <span onClick={reload} class="material-symbols-outlined" style={{ cursor: 'pointer' }}>
+                                refresh
+                            </span>
+                        </div>
                     </div>
                     <div className="list-content">
                         {!allBudgets ? 'Loading' : allBudgets.map(budget => (< BudgetListColumn budgets={budget} />))}

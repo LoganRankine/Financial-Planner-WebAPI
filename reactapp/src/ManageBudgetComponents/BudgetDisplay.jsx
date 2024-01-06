@@ -7,6 +7,7 @@ import BudgetItemColumn from './BudgetItemColumn'
 import PurchaseForm from './PurchaseForm'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+
 function BudgetDisplay({Sidebar }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [budgetItems, setBudgetItems] = useState(null);
