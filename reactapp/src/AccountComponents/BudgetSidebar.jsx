@@ -14,7 +14,7 @@ function Sidebar({budget_id }) {
                 </Link>
                 <Link className="navbar-item" to={`/Account/Display/Budget/budget_id=${budget_id}`}>
                     <span id="icon" class="material-symbols-outlined">shopping_cart</span>
-                    <a id="nav-title">Budget</a>
+                    <a id="nav-title">Purchases</a>
                 </Link>
                 <Link className="navbar-item" to={`/Account/Display/DirectDebits/budget_id=${budget_id}`}>
                     <span id="icon" class="material-symbols-outlined">payments</span>

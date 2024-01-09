@@ -347,7 +347,7 @@ namespace webapi.Controllers
 
                 if (await _budgetService.UserAccess(sessionId, budget_Id))
                 {
-                    bool deleteComplete = _budgetService.DeleteBudgetItem(budget_Id);
+                    bool deleteComplete = _budgetService.DeleteBudgetItem(budgetItem_Id);
 
                     if (deleteComplete)
                     {

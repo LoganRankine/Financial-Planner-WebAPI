@@ -14,6 +14,8 @@ import ToastContainer from 'react-bootstrap/ToastContainer';
 function BudgetListColumn(budgets) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [budgetId, setBudgetId] = useState("");
+    const [budgetName, setBudgetName] = useState("");
+
     const [formattedStartDate, setformattedStartDate] = useState("");
     const [formattedEndDate, setformattedEndDate] = useState("");
     const [showDelete, setShowDelete] = useState(false);
@@ -58,6 +60,7 @@ function BudgetListColumn(budgets) {
 
     useEffect(() => {
         setBudgetId(budgets.budgets.BudgetId)
+        setBudgetName(budgets.budgets.BudgetName)
         var startDate = new Date(budgets.budgets.StartDate)
         var endDate = new Date(budgets.budgets.EndDate)
         setformattedStartDate(format(startDate, "dd-MM-yyyy"))
@@ -74,7 +77,7 @@ function BudgetListColumn(budgets) {
 
     return (
         <div className="list-content-column" >
-            <div className="list-content-item" onClick={directBudget}>{budgets.budgets.BudgetName}</div>
+            <div className="list-content-item" onClick={directBudget}>{budgetName}</div>
             <div className="list-content-item" onClick={directBudget}>{formattedStartDate}</div>
             <div className="list-content-item" onClick={directBudget}>{formattedEndDate}</div>
             <div className="list-content-item" onClick={directBudget}>&#163;{budgets.budgets.BudgetAmount.toFixed(2)}</div>
@@ -88,7 +91,7 @@ function BudgetListColumn(budgets) {
                     <Modal.Title>Delete Budget</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>Are you sure? You want to delete {budgets.budgets.BudgetName}</p>
+                    <p style={{ fontWeight: '400' }}>You are deleting the budget: <b>{budgetName}</b>, are you sure?</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="danger" onClick={deleteBudget}>
@@ -101,7 +104,7 @@ function BudgetListColumn(budgets) {
                     </Modal.Footer>
             </Modal>
             <ToastContainer position="top-end" >
-                <Toast show={deleteStatus} onClose={toggleDeleteStatus} animation={true} bg={isSuccess ? "Success" : "Warning"} delay={3000} autohide>
+                <Toast show={deleteStatus} onClose={toggleDeleteStatus} animation={true} bg={isSuccess ? "success" : "warning"} delay={3000} autohide>
                     <Toast.Header>
                         <img
                             src="holder.js/20x20?text=%20"

@@ -128,6 +128,7 @@ namespace webapi.Services
                                 ItemAmount = budget_item.ItemAmount,
                                 ItemName = budget_item.ItemName,
                                 PurchaseDate = budget_item.PurchaseDate,
+                                BudgetId = budget_item.BudgetId,
                             });
                         }
                         return JsonConvert.SerializeObject(budgetItemResponse);

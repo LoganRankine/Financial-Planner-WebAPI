@@ -57,7 +57,8 @@ namespace webapi.Services
                         DebitDate = debit.DebitDate,
                         Frequency = debit.Frequency,
                         DebitDueDate = debit.DebitDueDate,
-                        DebitTotalAmount = debit.DebitTotalAmount
+                        DebitTotalAmount = debit.DebitTotalAmount,
+                        BudgetId = debit.BudgetId,
                     });
                 }
                 return JsonConvert.SerializeObject(directDebitResponses);
