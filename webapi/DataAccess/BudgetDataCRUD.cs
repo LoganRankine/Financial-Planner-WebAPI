@@ -45,10 +45,7 @@ namespace webapi.DataCRUD
                 }
                 return null;
             }
-            catch
-            {
-                return null;
-            }
+            catch{ throw; }
         }
 
         public async Task<BudgetItem> CreateBudgetItem(string p_session_Id, string p_budget_id, string p_item_name, decimal p_item_amount, DateTime p_purchase_date)
@@ -61,29 +58,38 @@ namespace webapi.DataCRUD
                 //Ensure the user is able to use this budgetID
                 if (user != null)
                 {
-                    //Create Budget
-                    Guid itemId = Guid.NewGuid();
+                    Budget budget = _userContext.Budgets.Where(temp_budget => temp_budget.BudgetId == p_budget_id).FirstOrDefault();
 
-                    BudgetItem budgetItem = new BudgetItem{
-                        BudgetId= p_budget_id,
-                        ItemId = itemId.ToString(),
-                        ItemAmount = p_item_amount,
-                        PurchaseDate = p_purchase_date,
-                        ItemName = p_item_name,
-                    };
+                    if (budget != null)
+                    {
+                        //Create BudgetItem
+                        Guid itemId = Guid.NewGuid();
 
-                    //Add to database
-                    _userContext.BudgetItems.Add(budgetItem);
-                    _userContext.SaveChanges();
+                        BudgetItem budgetItem = new BudgetItem
+                        {
+                            BudgetId = p_budget_id,
+                            ItemId = itemId.ToString(),
+                            ItemAmount = p_item_amount,
+                            PurchaseDate = p_purchase_date,
+                            ItemName = p_item_name,
+                        };
 
-                    return budgetItem;
+                        //Deduct item amount form budget total
+                        Budget updatedBudget = budget;
+                        updatedBudget.BudgetAmount -= budgetItem.ItemAmount;
+
+                        //Add to database
+                        _userContext.BudgetItems.Add(budgetItem);
+                        _userContext.Budgets.Update(updatedBudget);
+
+                        _userContext.SaveChanges();
+
+                        return budgetItem;
+                    }
                 }
                 return null;
             }
-            catch
-            {
-                return null;
-            }
+            catch { throw; }
         }
 
         public async Task<List<Budget>> GetAllBudgets(string p_session_Id)
@@ -106,7 +112,7 @@ namespace webapi.DataCRUD
             }
             catch
             {
-                return null;
+                throw;
             }
         }
 
@@ -131,7 +137,7 @@ namespace webapi.DataCRUD
             }
             catch
             {
-                return null;
+                throw;
             }
         }
 
@@ -170,7 +176,7 @@ namespace webapi.DataCRUD
             }
             catch
             {
-                return "Error occured getting budget items";
+                throw;
             }
         }
 
@@ -215,7 +221,7 @@ namespace webapi.DataCRUD
             }
             catch
             {
-                return null;
+                throw;
             }
         }
 
@@ -269,12 +275,12 @@ namespace webapi.DataCRUD
             {
                 Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == p_budget_id).FirstOrDefault();
 
-                if(budget != null)
+                if (budget != null)
                 {
                     //Remove budget, remove everything assosiated to budget
                     List<DirectDebit> directDebits = _userContext.DirectDebits.Where(debit => debit.BudgetId == p_budget_id).ToList();
                     List<BudgetItem> budgetItems = _userContext.BudgetItems.Where(budgetItem => budgetItem.BudgetId == p_budget_id).ToList();
-                    
+
                     //Remove direct debits
                     directDebits.ForEach(directDebit =>
                     {
@@ -296,9 +302,45 @@ namespace webapi.DataCRUD
                 }
                 return false;
             }
-            catch
+            catch (Exception ex)
             {
+                throw;
+            }
+        }
+
+        public bool DeleteBudgetItem(string p_budgetItem_id)
+        {
+            try
+            {
+                BudgetItem budgetItem = _userContext.BudgetItems.Where(budget => budget.ItemId == p_budgetItem_id).FirstOrDefault();
+
+                if (budgetItem != null)
+                {
+                    //Find the budget
+                    Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == budgetItem.BudgetId).FirstOrDefault();
+
+                    if (budget != null)
+                    {
+                        //Add the budgetItem value back to budget
+                        Budget updateBudget = budget;
+                        updateBudget.BudgetAmount = budget.BudgetAmount + budgetItem.ItemAmount;
+
+                        //Update budget amount and remove bugdetItem
+                        _userContext.BudgetItems.Remove(budgetItem);
+                        _userContext.Budgets.Update(updateBudget);
+
+                        _userContext.SaveChanges();
+
+                        Console.WriteLine($"BudgetItem {p_budgetItem_id} deleted");
+
+                        return true;
+                    }
+                }
                 return false;
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 

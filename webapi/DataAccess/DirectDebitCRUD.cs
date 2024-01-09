@@ -59,36 +59,6 @@ namespace webapi.DataAccess
             }
         }
 
-        public async Task<bool> UserAccess(string p_session_Id, string p_budget_id)
-        {
-            try
-            {
-                //Get User
-                User user = _userContext.Users.Where(user => user.SessionId == p_session_Id).FirstOrDefault();
-
-                //find direct debit
-                DirectDebit directDebit = _userContext.DirectDebits.Where(debit => debit.BudgetId == p_budget_id).FirstOrDefault();
-
-                if (user != null)
-                {
-                    //find budget debit belongs too, does the budget id match the user id?
-                    Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == directDebit.BudgetId).FirstOrDefault();
-                    
-                    if(budget.Id == user.Id)
-                    {
-                        return true;
-
-                    }
-                    return false;
-                }
-                return false;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         public async Task<List<DirectDebit>> GetAllDebits(string p_budget_Id, string p_session_Id)
         {
             //Does this user have access to it?
@@ -114,6 +84,42 @@ namespace webapi.DataAccess
             }
 
             return null;
+        }
+
+        public bool DeleteDebit(string p_debit_id)
+        {
+            try
+            {
+                DirectDebit directDebit = _userContext.DirectDebits.Where(debit => debit.DebitId == p_debit_id).FirstOrDefault();
+
+                if (directDebit != null)
+                {
+                    //Find the budget
+                    Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == directDebit.BudgetId).FirstOrDefault();
+
+                    if (budget != null)
+                    {
+                        //Add the debit value back to budget
+                        Budget updateBudget = budget;
+                        updateBudget.BudgetAmount = budget.BudgetAmount + directDebit.DebitTotalAmount;
+
+                        //Update budget amount and remove debit
+                        _userContext.DirectDebits.Remove(directDebit);
+                        _userContext.Budgets.Update(updateBudget);
+
+                        _userContext.SaveChanges();
+
+                        Console.WriteLine($"BudgetItem {p_debit_id} deleted");
+
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
     }

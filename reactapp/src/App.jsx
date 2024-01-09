@@ -32,9 +32,9 @@ export default class App extends Component {
                 <Routes>
                     <Route exact path="/" element={<FirstPage child={<Login />} />}></Route>
                     <Route exact path="/Register" element={<FirstPage child={<Register />} />}></Route>
-                    <Route exact path="Account/Home" element={<AccountHomepage Content={<DisplayBudgetList SideBar={<DisplayBudgetsSidebar />} />} loginDisplay={<LoginDisplay/>}></AccountHomepage>} ></Route>
-                    <Route exact path="Account/CreateBudget" element={<AccountHomepage Content={<ManageBudget Sidebar={<DisplayBudgetsSidebar />} child={<CreateBudget />}></ManageBudget>} />} ></Route>
-                    <Route exact path="Account/ManageBudget/CreateDebit" element={<AccountHomepage Content={<ManageBudget Sidebar={<DisplayBudgetsSidebar />} child={<CreateDebit />}></ManageBudget>} />} loginDisplay={<LoginDisplay />}></Route>
+                    <Route exact path="Account/Home" element={<AccountHomepage Content={<DisplayBudgetList SideBar={<DisplayBudgetsSidebar />} />} loginDisplay={<LoginDisplay />}></AccountHomepage>} ></Route>
+                    <Route exact path="Account/CreateBudget" element={<AccountHomepage Sidebar={<DisplayBudgetsSidebar></DisplayBudgetsSidebar>} Content={<ManageBudget child={<CreateBudget />}></ManageBudget>} />} ></Route>
+                    <Route exact path="Account/ManageBudget/CreateDebit" element={<AccountHomepage Sidebar={<DisplayBudgetsSidebar></DisplayBudgetsSidebar>} Content={<ManageBudget child={<CreateDebit />}></ManageBudget>} />} loginDisplay={<LoginDisplay />}></Route>
                     <Route exact path="Account/Budget/Display" element={<AccountHomepage Content={<BudgetDisplay Sidebar={<BudgetSidebar />} />} />} loginDisplay={<LoginDisplay />}></Route>
                     <Route exact path="Account/Display/Budget/:budget_id" element={<AccountHomepage Content={<BudgetDisplay Sidebar={BudgetSidebar} />} loginDisplay={<LoginDisplay />} />} ></Route>
                     <Route exact path="Account/Display/DirectDebits/:budget_id" element={<AccountHomepage Content={<DirectDebitDisplay Sidebar={BudgetSidebar} />} loginDisplay={<LoginDisplay />} />} ></Route>

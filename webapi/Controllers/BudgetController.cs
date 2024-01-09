@@ -162,7 +162,6 @@ namespace webapi.Controllers
             }
             catch
             {
-
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return JsonConvert.SerializeObject(new Models.Error
                 {
@@ -298,7 +297,7 @@ namespace webapi.Controllers
                         HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                         return JsonConvert.SerializeObject(new Models.Success {
                             SuccessTitle = "Delete Successful",
-                            SuccessDescription = $"{budgetId} was deleted"
+                            SuccessDescription = $"Budget: {budgetId} was deleted"
                         });
                     }
 
@@ -306,9 +305,8 @@ namespace webapi.Controllers
                     return JsonConvert.SerializeObject(new Models.Error
                     {
                         ErrorTitle = "Failed to delete",
-                        ErrorDescription = "Budget was not delete. Ensure budgetId exists."
+                        ErrorDescription = "Budget was not deleted. Ensure budgetId exists."
                     });
-
                 }
 
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
@@ -325,6 +323,64 @@ namespace webapi.Controllers
                 {
                     ErrorTitle = "Error occured with request",
                     ErrorDescription = ""
+                });
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("DeleteBudgetItem")]
+        async public Task<string> DeleteBudgetItem(string budget_Id, string budgetItem_Id)
+        {
+            try
+            {
+                string sessionId = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                if(budget_Id == ""|| budgetItem_Id == "")
+                {
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "Budget",
+                        ErrorDescription = "budgetItem_Id or budget_Id was not provided in the request. Include them and try the request again."
+                    });
+                }
+
+                if (await _budgetService.UserAccess(sessionId, budget_Id))
+                {
+                    bool deleteComplete = _budgetService.DeleteBudgetItem(budget_Id);
+
+                    if (deleteComplete)
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        return JsonConvert.SerializeObject(new Models.Success
+                        {
+                            SuccessTitle = "Delete Successful",
+                            SuccessDescription = $"BudgetItem: {budgetItem_Id} was deleted"
+                        });
+                    }
+
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "Failed to delete",
+                        ErrorDescription = "BudgetItem was not deleted. Ensure budgetItem exists."
+                    });
+                }
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "BudgetItem Unauthourized",
+                    ErrorDescription = "User does not have access to this budgetItem. Check x-api-key if its for correct user."
+                });
+            }
+            catch
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured with request",
+                    ErrorDescription = "An error occured while deleted the budgetItem."
                 });
             }
         }

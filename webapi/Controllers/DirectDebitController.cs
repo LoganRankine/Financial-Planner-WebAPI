@@ -18,7 +18,9 @@ namespace webapi.Controllers
     {
         private readonly DirectDebitService _directDebitService;
 
-        public DirectDebitController(DirectDebitService directDebitService) { _directDebitService = directDebitService; }
+        private readonly BudgetService _budgetService;
+
+        public DirectDebitController(DirectDebitService directDebitService, BudgetService budgetService) { _directDebitService = directDebitService; _budgetService = budgetService; }
 
         /// <summary>
         /// Gets all budgets- Request must contain sessionID
@@ -35,7 +37,7 @@ namespace webapi.Controllers
                 //Get budgetId
                 string budgetId = HttpContext.Request.Query["budget_Id"].ToString();
 
-                if(await _directDebitService.UserAccess(sessionID, budgetId))
+                if(await _budgetService.UserAccess(sessionID, budgetId))
                 {
                     string response = await _directDebitService.GetAllDebits(budgetId, sessionID);
 
@@ -120,5 +122,65 @@ namespace webapi.Controllers
                 });
             }
         }
+
+        [Authorize]
+        [HttpDelete("DeleteDirectDebit")]
+        async public Task<string> DeleteDirectDebit(string budget_Id, string debit_Id)
+        {
+            try
+            {
+                string sessionId = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                if (budget_Id == "" || debit_Id == "")
+                {
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "Delete debit request paramaters missing",
+                        ErrorDescription = "budget_Id or debit_Id was not provided in the request. Include them and try the request again."
+                    });
+                }
+
+                //Ensure user is authourised to modify budget
+                if (await _budgetService.UserAccess(sessionId, budget_Id))
+                {
+                    bool deleteComplete = _directDebitService.DeleteDebit(debit_Id);
+
+                    if (deleteComplete)
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        return JsonConvert.SerializeObject(new Models.Success
+                        {
+                            SuccessTitle = "Delete Successful",
+                            SuccessDescription = $"DirectDebit: {debit_Id} was deleted"
+                        });
+                    }
+
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "Failed to delete",
+                        ErrorDescription = "DirectDebit was not deleted. Ensure DirectDebit exists."
+                    });
+                }
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "DirectDebit Unauthourized",
+                    ErrorDescription = "User does not have access to this DirectDebit. Check x-api-key if its for correct user."
+                });
+            }
+            catch
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error occured with request",
+                    ErrorDescription = "An error occured when deleting the DirectDebit."
+                });
+            }
+        }
+
     }
 }

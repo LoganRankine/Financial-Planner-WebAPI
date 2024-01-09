@@ -39,14 +39,6 @@ namespace webapi.Services
 
         }
 
-        public async Task<bool> UserAccess(string p_session_Id, string p_budget_Id)
-        {
-            bool response = await _directDebitDataCRUD.UserAccess(p_session_Id, p_budget_Id);
-
-            return response;
-        }
-
-
         public async Task<string> GetAllDebits(string p_budget_Id, string p_session_Id)
         {
             List<DirectDebit> response = await _directDebitDataCRUD.GetAllDebits(p_budget_Id, p_session_Id);
@@ -72,6 +64,25 @@ namespace webapi.Services
             }
 
             return "No DirectDebits";
+        }
+
+        public bool DeleteDebit(string p_debit_Id)
+        {
+            try
+            {
+                bool isDeleted = _directDebitDataCRUD.DeleteDebit(p_debit_Id);
+
+                if (isDeleted)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
     }
