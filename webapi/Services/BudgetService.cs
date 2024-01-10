@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using webapi.DataCRUD;
 using webapi.Models;
 using webapi.Models.BudgetObjects;
@@ -65,6 +66,167 @@ namespace webapi.Services
             catch { throw; }
         }
 
+        public async Task<string> EditBudgetItem(EditBudgetItem editBudgetItem)
+        {
+            try
+            {
+                BudgetItem temp_budgetItem;
+
+                switch (editBudgetItem)
+                {
+                    case null:
+                        break;
+
+                    case EditBudgetItem item when item.PurchaseDate != null && item.ItemName != null && item.ItemAmount != null:
+
+                        //Update budget total amount with new value
+                        if (UpdateBudgetAmountItem(editBudgetItem.ItemId, (decimal)editBudgetItem.ItemAmount))
+                        {
+                            //Get budget Item before update
+                            temp_budgetItem = _budgetDataCRUD.GetBudgetItem(editBudgetItem.ItemId);
+
+                            if (temp_budgetItem != null)
+                            {
+                                //Update BudgetItem with new values
+                                temp_budgetItem.PurchaseDate = (DateTime)editBudgetItem.PurchaseDate;
+                                temp_budgetItem.ItemName = editBudgetItem.ItemName;
+                                temp_budgetItem.ItemAmount = (decimal)editBudgetItem.ItemAmount;
+
+
+
+                                bool updateSuccessfull = await _budgetDataCRUD.EditBudgetItem(temp_budgetItem);
+
+                                if (!updateSuccessfull)
+                                {
+                                    return $"Unsuccessful";
+                                }
+                                return $"Success: Item:{temp_budgetItem.ItemId} was updated. Changes: Purchase name: {temp_budgetItem.ItemName}, Purchase date: {temp_budgetItem.PurchaseDate} and Amount: {temp_budgetItem.ItemAmount}";
+                            }
+
+                        }
+                        break;
+
+                    case EditBudgetItem item when item.PurchaseDate != null && item.ItemName != null:
+                        //Get budget Item before update
+                        temp_budgetItem = _budgetDataCRUD.GetBudgetItem(editBudgetItem.ItemId);
+
+                        if (temp_budgetItem != null)
+                        {
+                            temp_budgetItem.PurchaseDate = (DateTime)editBudgetItem.PurchaseDate;
+                            temp_budgetItem.ItemName = editBudgetItem.ItemName;
+                            bool updateSuccessfull = await _budgetDataCRUD.EditBudgetItem(temp_budgetItem);
+
+                            if (!updateSuccessfull)
+                            {
+                                return $"Unsuccessful";
+                            }
+                            return $"Success: Item:{temp_budgetItem.ItemId}, {temp_budgetItem.ItemName}, {temp_budgetItem.PurchaseDate} was changed.";
+                        }
+
+                        break;
+
+                    case EditBudgetItem item when item.ItemAmount != null:
+
+                        //Update budget total amount with new value
+                        if (UpdateBudgetAmountItem(editBudgetItem.ItemId, (decimal)editBudgetItem.ItemAmount))
+                        {
+                            //Get budget Item before update
+                            temp_budgetItem = _budgetDataCRUD.GetBudgetItem(editBudgetItem.ItemId);
+
+                            if (temp_budgetItem != null)
+                            {
+                                //update item with new amount
+                                temp_budgetItem.ItemAmount = (decimal)item.ItemAmount;
+
+                                bool updateSuccessfull = await _budgetDataCRUD.EditBudgetItem(temp_budgetItem);
+
+                                if (!updateSuccessfull)
+                                {
+                                    return $"Unsuccessful";
+                                }
+                                return $"Success: Item:{editBudgetItem.ItemId}, {temp_budgetItem.ItemAmount} was updated.";
+                            }
+
+                        }
+
+                        break;
+
+                    case EditBudgetItem item when item.PurchaseDate != null:
+                        //Get budget Item before update
+                        temp_budgetItem = _budgetDataCRUD.GetBudgetItem(editBudgetItem.ItemId);
+
+                        if (temp_budgetItem != null)
+                        {
+                            temp_budgetItem.PurchaseDate = (DateTime)editBudgetItem.PurchaseDate;
+
+                            bool updateSuccessfull = await _budgetDataCRUD.EditBudgetItem(temp_budgetItem);
+
+                            if (!updateSuccessfull)
+                            {
+                                return $"Unsuccessful";
+                            }
+                            return $"Success: Item:{temp_budgetItem.ItemId}, {temp_budgetItem.ItemName}, {temp_budgetItem.PurchaseDate} was changed.";
+                        }
+
+                        break;
+
+                    case EditBudgetItem item when item.ItemName != null:
+                        //Get budget Item before update
+                        temp_budgetItem = _budgetDataCRUD.GetBudgetItem(editBudgetItem.ItemId);
+
+                        if (temp_budgetItem != null)
+                        {
+                            //Update name
+                            temp_budgetItem.ItemName = editBudgetItem.ItemName;
+
+                            bool updateSuccessfull = await _budgetDataCRUD.EditBudgetItem(temp_budgetItem);
+
+                            if (!updateSuccessfull)
+                            {
+                                return $"Unsuccessful";
+                            }
+                            return $"Success: Item:{temp_budgetItem.ItemId}, {temp_budgetItem.ItemName}, {temp_budgetItem.PurchaseDate} was changed.";
+                        }
+
+                        break;
+
+                    default:
+                        return null;
+                        break;
+                }
+
+                return null;
+                
+            }
+            catch { throw; }
+        }
+
+        public bool UpdateBudgetAmountItem(string p_budgetItem_Id, decimal p_new_value)
+        {
+            //Get budget item that is needed
+            BudgetItem temp_budgetItem = _budgetDataCRUD.GetBudgetItem(p_budgetItem_Id);
+
+            if(temp_budgetItem != null)
+            {
+                //Get budget its assiocated with
+                Budget temp_budget = _budgetDataCRUD.GetBudget(temp_budgetItem.BudgetId);
+
+                if (temp_budget != null)
+                {
+                    //Add the budgetItem back to total budget amount
+                    decimal deductionValue = (decimal)temp_budgetItem.ItemAmount - p_new_value;
+                    decimal updatedBudgetAmount = temp_budget.BudgetAmount + deductionValue;
+
+                    if (_budgetDataCRUD.EditBudgetAmount(temp_budgetItem.BudgetId, updatedBudgetAmount))
+                    {
+                        //Reverted back to orignal state
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public async Task<string> GetAllBudgets(string p_session_Id)
         {
             try
@@ -96,7 +258,7 @@ namespace webapi.Services
 
         public async Task<string> GetBudgetString(string p_budget_Id)
         {
-            Budget budget = await _budgetDataCRUD.GetBudget(p_budget_Id);
+            Budget budget = _budgetDataCRUD.GetBudget(p_budget_Id);
 
             if(budget != null)
             {
@@ -165,7 +327,7 @@ namespace webapi.Services
         {
             try
             {
-                Budget budget = await _budgetDataCRUD.GetBudget(p_budget_Id);
+                Budget budget = _budgetDataCRUD.GetBudget(p_budget_Id);
 
                 return budget;
             }

@@ -206,7 +206,7 @@ namespace webapi.DataCRUD
             }
         }
 
-        public async Task<Budget> GetBudget(string p_budgetId)
+        public Budget GetBudget(string p_budgetId)
         {
             try
             {
@@ -342,6 +342,76 @@ namespace webapi.DataCRUD
             {
                 throw;
             }
+        }
+
+        public async Task<bool> EditBudgetItem(BudgetItem p_editbudgetItem)
+        {
+            try
+            {
+                if (p_editbudgetItem != null)
+                {
+                    BudgetItem updatedBudgetItem = new()
+                    {
+                        BudgetId = p_editbudgetItem.BudgetId,
+                        ItemAmount = (decimal)p_editbudgetItem.ItemAmount,
+                        ItemId = p_editbudgetItem.ItemId,
+                        ItemName = p_editbudgetItem.ItemName,
+                        PurchaseDate = (DateTime)p_editbudgetItem.PurchaseDate
+                    };
+
+                    _userContext.ChangeTracker.Clear();
+                    _userContext.BudgetItems.Update(updatedBudgetItem);
+                    _userContext.SaveChanges();
+
+                    return true;
+                }
+
+                return false;
+            }
+            catch { throw; }
+        }
+
+        public BudgetItem GetBudgetItem(string p_budgetItem_Id)
+        {
+            try
+            {
+                //find user using SessionID
+                BudgetItem p_budgetItem = _userContext.BudgetItems.Where(budgetItem => budgetItem.ItemId == p_budgetItem_Id).FirstOrDefault();
+
+                if (p_budgetItem != null)
+                {
+                    return p_budgetItem;
+                }
+                return null;
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public bool EditBudgetAmount(string p_budget_Id, decimal p_new_amount_value)
+        {
+            try
+            {
+
+                Budget budget = _userContext.Budgets.Where(temp_budget => temp_budget.BudgetId == p_budget_Id).FirstOrDefault();
+
+                if (budget != null)
+                {
+                    budget.BudgetAmount = p_new_amount_value;
+                    //Add to database
+                    _userContext.Budgets.Update(budget);
+
+                    _userContext.SaveChanges();
+
+                    return true;
+                }
+
+                return false;
+            }
+            catch { throw; }
         }
 
     }

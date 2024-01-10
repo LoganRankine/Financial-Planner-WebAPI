@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net;
 using System.Text;
+using System.Text.Json.Nodes;
 using webapi.Models.BudgetObjects;
 using webapi.Services;
 
@@ -237,7 +238,7 @@ namespace webapi.Controllers
                     //Does the user have access to the budget?
                     if (await _budgetService.UserAccess(sessionID, createBudgetItem.BudgetId))
                     {
-                        string response = await _budgetService.CreateBudgetItem(sessionID, createBudgetItem.BudgetId, createBudgetItem.ItemName, createBudgetItem.ItemAmount, createBudgetItem.PurchaseDate);
+                        string response = await _budgetService.CreateBudgetItem(sessionID, createBudgetItem.BudgetId, createBudgetItem.ItemName, (decimal)createBudgetItem.ItemAmount, (DateTime)createBudgetItem.PurchaseDate);
 
                         if (response.Contains("ItemName"))
                         {
@@ -384,5 +385,87 @@ namespace webapi.Controllers
                 });
             }
         }
+
+        [Authorize]
+        [HttpPut("EditBudgetItem")]
+        async public Task<string> EditBudgetItem()
+        {
+            try
+            {
+                //Get request body into a string
+                StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
+                string getBody = await reader.ReadToEndAsync();
+
+                //Parse request string into budgetitem object
+                EditBudgetItem editBudgetItem = JsonConvert.DeserializeObject<EditBudgetItem>(getBody);
+
+                string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                //Ensure the ItemId is included
+                if(editBudgetItem.ItemId == null)
+                {
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "Error updating budget item",
+                        ErrorDescription = "Missing ItemId, include and try again"
+                    });
+                }
+
+                //Ensure object has been parsed
+                if (editBudgetItem != null && editBudgetItem.BudgetId != null)
+                {
+                    //Does the user have access to the budget?
+                    if (await _budgetService.UserAccess(sessionID, editBudgetItem.BudgetId))
+                    {
+                        string response = await _budgetService.EditBudgetItem(editBudgetItem);
+
+                        if (response.Contains("Success"))
+                        {
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                            return JsonConvert.SerializeObject(new Models.Success
+                            {
+                                SuccessTitle = "Update was successful",
+                                SuccessDescription = response
+                            });
+                        }
+
+                        if (response.Contains("Unsuccessful"))
+                        {
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                            return JsonConvert.SerializeObject(new Models.Error
+                            {
+                                ErrorTitle = "Error updating budget item",
+                                ErrorDescription = response
+                            });
+                        }
+                    }
+
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "BudgetItem forbidden",
+                        ErrorDescription = "User does not have access to this BudgetItem. Check you have included the correct SessionID."
+                    });
+                }
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error parsing BudgetItem",
+                    ErrorDescription = "The budgetItem object sent in request could not be parsed. Check whether budget item is created correctly."
+                });
+            }
+            catch
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error decoding body",
+                    ErrorDescription = "Error occured getting request body "
+                });
+            }
+        }
+
     }
 }
