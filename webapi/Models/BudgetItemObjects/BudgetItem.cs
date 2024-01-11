@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using webapi.Models.BudgetObjects;
 
-namespace webapi.Models.BudgetObjects
+namespace webapi.Models.BudgetItemObjects
 {
     public class BudgetItem
     {

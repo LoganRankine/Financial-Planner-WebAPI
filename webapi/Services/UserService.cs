@@ -34,9 +34,12 @@ namespace webapi.Services
 
         public async Task<bool> CheckAuthStatus(string p_sessionID)
         {
-            bool response = await _userDataCRUD.CheckAuthStatus(p_sessionID);
+            if(await _userDataCRUD.CheckAuthStatus(p_sessionID) != null)
+            {
+                return true;
+            }
 
-            return response;
+            return false; ;
         }
         public async Task<string> UserName(string p_sessionID)
         {

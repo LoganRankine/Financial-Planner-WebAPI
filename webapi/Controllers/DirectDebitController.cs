@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using webapi.Models;
+using webapi.Models.BudgetItemObjects;
 using webapi.Models.DirectDebitObjects;
 using webapi.Services;
 
@@ -181,6 +183,87 @@ namespace webapi.Controllers
                 });
             }
         }
+
+        [Authorize]
+        [HttpPut("EditDirectDebit")]
+        async public Task<string> EditDirectDebit()
+        {
+            try
+            {
+                //Get userId
+                string userId = User.Claims.Where(claim => claim.Type == "UserId").Select(c => c.Value).SingleOrDefault();
+
+                //Get request body into a string
+                StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
+                string getBody = await reader.ReadToEndAsync();
+
+                //Parse request string into budgetitem object
+                EditDirectDebit editDirectDebit = JsonConvert.DeserializeObject<EditDirectDebit>(getBody);
+
+                string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                //Ensure the DebitId is included
+                if (editDirectDebit.DebitId == null)
+                {
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "Error updating direct debit",
+                        ErrorDescription = "Missing DebitId, include and try again"
+                    });
+                }
+
+                //Ensure object has been parsed
+                if (editDirectDebit != null && editDirectDebit.BudgetId != null)
+                {
+                    //Does the user have access to the budget?
+                    if (_directDebitService.DebitAuthourised(userId, editDirectDebit.DebitId))
+                    {
+                        bool response = await _directDebitService.EditDirectDebit(editDirectDebit);
+
+                        if (response)
+                        {
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+                            return JsonConvert.SerializeObject(new Models.Success
+                            {
+                                SuccessTitle = "Update was successful",
+                                SuccessDescription = "Change to direct debit was successful"
+                            });
+                        }
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        return JsonConvert.SerializeObject(new Models.Error
+                        {
+                            ErrorTitle = "Error updating direct debit",
+                            ErrorDescription = "Changes to direct debit was not made"
+                        });
+                    }
+
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "BudgetItem forbidden",
+                        ErrorDescription = "User does not have access to this BudgetItem. Check you have included the correct SessionID."
+                    });
+                }
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error parsing BudgetItem",
+                    ErrorDescription = "The budgetItem object sent in request could not be parsed. Check whether budget item is created correctly."
+                });
+            }
+            catch
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error decoding body",
+                    ErrorDescription = "Error occured getting request body "
+                });
+            }
+        }
+
 
     }
 }

@@ -46,19 +46,22 @@ namespace webapi.Auth
             #endregion
             //APIKEY exists
             var ApiKey = Request.Headers["x-api-key"];
-            if (_dbAccess.CheckAuthStatus(ApiKey).Result)
+
+            Models.User user = _dbAccess.CheckAuthStatus(ApiKey).Result;
+            if (user != null)
             {
                 Claim[] claims = new Claim[]
                 {
                     new Claim(ClaimTypes.Name, ApiKey),
+                    new Claim(type: "UserId", value: user.Id)
                 };
                 ClaimsIdentity Identity = new ClaimsIdentity(claims, "ApiKey");
+
                 ClaimsPrincipal principal = new ClaimsPrincipal(Identity);
 
                 var ticket = new AuthenticationTicket(principal, this.Scheme.Name);
 
                 return Task.FromResult(AuthenticateResult.Success(ticket));
-
             }
 
             return Task.FromResult(AuthenticateResult.Fail("Unauthorized.Check ApiKey in Header is correct."));

@@ -17,6 +17,5 @@ namespace webapi.Models.DirectDebitObjects
         public DateTime DebitDate { get; set; }
         public int Frequency { get; set; }
         public DateTime DebitDueDate { get; set; }
-
     }
 }

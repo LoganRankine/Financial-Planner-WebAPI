@@ -14,7 +14,7 @@ namespace webapi.DataAccess
             _userContext = userContext;
         }
 
-        public async Task<DirectDebitResponse> CreateDebit(string p_budget_Id, string p_debit_name, decimal p_debit_amount, DateTime p_debit_date, int p_frequency, DateTime p_due_date)
+        public async Task<DirectDebit> CreateDebit(string p_budget_Id, string p_debit_name, decimal p_debit_amount, DateTime p_debit_date, int p_frequency, DateTime p_due_date)
         {
             try
             {
@@ -40,15 +40,7 @@ namespace webapi.DataAccess
                     _userContext.DirectDebits.Add(directDebit);
                     _userContext.SaveChanges();
 
-                    return new DirectDebitResponse()
-                    {
-                        DebitId = directDebit.DebitId,
-                        DebitName = directDebit.DebitName,
-                        DebitDate = directDebit.DebitDate,
-                        DebitAmount = directDebit.DebitAmount,
-                        Frequency = directDebit.Frequency,
-                        DebitDueDate= directDebit.DebitDueDate
-                    };
+                    return directDebit;
 
                 }
                 return null;
@@ -122,5 +114,73 @@ namespace webapi.DataAccess
             }
         }
 
+        public DirectDebit GetDirecDebit(string p_direct_debit_id)
+        {
+            try
+            {
+                DirectDebit directDebit = _userContext.DirectDebits.Where(debit => debit.DebitId == p_direct_debit_id ).FirstOrDefault();
+                if (directDebit != null)
+                {
+                    return directDebit;
+                }
+                return null;
+            }
+            catch
+            { throw; }
+        }
+
+        public bool UpdateDebitTotal(DirectDebit p_debit_id)
+        {
+
+            return false;
+        }
+
+        /// <summary>
+        /// Update direct debit using object
+        /// </summary>
+        /// <param name="p_direct_debit"></param>
+        /// <returns>Returns the direct debit object if changes were successful. Null if changes were unsuccessful</returns>
+        public DirectDebit UpdateDirectDebit (DirectDebit p_direct_debit)
+        {
+            try
+            {
+                if (p_direct_debit != null)
+                {
+                    _userContext.ChangeTracker.Clear();
+                    _userContext.Update(p_direct_debit);
+                    _userContext.SaveChanges();
+
+                    return p_direct_debit;
+                }
+                return null;
+
+            }
+            catch { throw; }
+        }
+
+        //Check user has accesas to this direct debit
+        public bool DebitAuthourised(string p_user_id, string p_debit_id)
+        {
+            try
+            {
+                //Get direct debit
+                DirectDebit debit = _userContext.DirectDebits.Where(debit => debit.DebitId == p_debit_id).FirstOrDefault();
+
+                //The budget direct debit is assiociated to
+                Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == debit.BudgetId).FirstOrDefault();
+
+                //Ensure the budgets user Id is same as provided
+                if(p_user_id == budget.Id)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

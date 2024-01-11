@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System.Diagnostics;
 using webapi.DataAccess;
 using webapi.DataCRUD;
+using webapi.Models;
+using webapi.Models.BudgetObjects;
 using webapi.Models.DirectDebitObjects;
 
 namespace webapi.Services
@@ -23,13 +26,21 @@ namespace webapi.Services
             debit_date_due = debit_date_due.AddDays(p_frequency);
 
             //Ensure it has been successfully added
-            DirectDebitResponse response = await _directDebitDataCRUD.CreateDebit(p_budget_Id, p_debit_name, p_debit_amount, p_debit_date, p_frequency, debit_date_due);
+            DirectDebit directDebit = await _directDebitDataCRUD.CreateDebit(p_budget_Id, p_debit_name, p_debit_amount, p_debit_date, p_frequency, debit_date_due);
 
-            bool updateSuccessfull = await _budgetService.UpdateBudgetAmount(p_budget_Id, response);
+            bool updateSuccessfull = await _budgetService.UpdateBudgetAmount(p_budget_Id, directDebit);
 
             if(updateSuccessfull)
             {
-                return JsonConvert.SerializeObject(response);
+                return JsonConvert.SerializeObject(new DirectDebitResponse()
+                {
+                    DebitId = directDebit.DebitId,
+                    DebitName = directDebit.DebitName,
+                    DebitDate = directDebit.DebitDate,
+                    DebitAmount = directDebit.DebitAmount,
+                    Frequency = directDebit.Frequency,
+                    DebitDueDate = directDebit.DebitDueDate
+                });
             }
 
             return "Creation Failure";
@@ -85,6 +96,153 @@ namespace webapi.Services
                 throw;
             }
         }
+
+        /// <summary>
+        /// Finds how much the direct debit will cost in total
+        /// </summary>
+        /// <param name="p_direct_debit"></param>
+        /// <returns></returns>
+        public async Task<decimal> CalculateDirectDebit(DirectDebit p_direct_debit)
+        {
+            Budget budget = await _budgetService.GetBudget(p_direct_debit.BudgetId);
+
+            DateTime debitDate = p_direct_debit.DebitDate;
+            int count = 0;
+            while (debitDate.CompareTo(budget.EndDate) < 0)
+            {
+                debitDate = debitDate.AddDays(p_direct_debit.Frequency);
+                count++;
+            }
+
+            decimal deducation_value = count * p_direct_debit.DebitAmount;
+
+            return deducation_value;
+            ////Get budget object
+            //Budget budget = await GetBudget(p_budget_id);
+
+            ////DateTime debitDate = p_direct_debit.DebitDate;
+            ////int count = 0;
+            ////while (debitDate.CompareTo(budget.EndDate) < 0)
+            ////{
+            ////    debitDate = debitDate.AddDays(p_direct_debit.Frequency);
+            ////    count++;
+            ////}
+
+            ////decimal deducation_value = count * p_direct_debit.DebitAmount;
+
+            //bool updateSuccessful = await _budgetDataCRUD.UpdateBudgetAmount(p_budget_id, deducation_value, p_direct_debit);
+
+            //return updateSuccessful;
+        }
+
+        public async Task<bool> EditDirectDebit(EditDirectDebit p_edit_direct_debit)
+        {
+            try
+            {
+                bool recalculateCost = false;
+                if (p_edit_direct_debit != null)
+                {
+                    //Get direct debit that is being updated
+                    DirectDebit temp_directDebit = _directDebitDataCRUD.GetDirecDebit(p_edit_direct_debit.DebitId);
+
+                    //Update debit name
+                    if (p_edit_direct_debit.DebitName != null)
+                    {
+                        temp_directDebit.DebitName = p_edit_direct_debit.DebitName;
+                    }
+
+                    //Update debit frequency
+                    if (p_edit_direct_debit.Frequency != null)
+                    {
+                        temp_directDebit.Frequency = (int)p_edit_direct_debit.Frequency;
+
+                        recalculateCost = true;
+                    }
+
+                    //Update debit date
+                    if (p_edit_direct_debit.DebitDate != null)
+                    {
+                        temp_directDebit.DebitDate = (DateTime)p_edit_direct_debit.DebitDate;
+
+                        //Calculate the due date
+                        DateTime newDebitDueDate = temp_directDebit.DebitDate;
+                        newDebitDueDate = newDebitDueDate.AddDays(temp_directDebit.Frequency);
+
+                        //Update directDebit with new due date
+                        temp_directDebit.DebitDueDate = newDebitDueDate;
+
+                        recalculateCost = true;
+                    }
+
+                    //Update debit amount
+                    if (p_edit_direct_debit.DebitAmount != null)
+                    {
+                        temp_directDebit.DebitAmount = (decimal)p_edit_direct_debit.DebitAmount;
+
+                        recalculateCost = true;
+                    }
+
+                    if (recalculateCost)
+                    {
+                        //Recalculate the cost of direct debit
+                        decimal newDebitTotal = await CalculateDirectDebit(temp_directDebit);
+
+                        decimal deductionValue = decimal.Subtract(temp_directDebit.DebitTotalAmount, newDebitTotal);
+
+                        //Update Total Debit Amount
+                        temp_directDebit.DebitTotalAmount = newDebitTotal;
+
+                        if (!await _budgetService.DeductBudgetAmount(temp_directDebit.BudgetId, deductionValue))
+                        {
+                            return false;
+                        }
+                    }
+
+                    //Update Direct Debit with new values
+                    DirectDebit UpdateDirectDebit = new()
+                    {
+                        DebitAmount = temp_directDebit.DebitAmount,
+                        DebitDate = temp_directDebit.DebitDate,
+                        DebitName = temp_directDebit.DebitName,
+                        Frequency = temp_directDebit.Frequency,
+
+                        BudgetId = temp_directDebit.BudgetId,
+                        DebitId = temp_directDebit.DebitId,
+                        DebitDueDate = temp_directDebit.DebitDueDate,
+                        DebitTotalAmount = temp_directDebit.DebitTotalAmount,
+                    };
+
+                    if (_directDebitDataCRUD.UpdateDirectDebit(UpdateDirectDebit) != null)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public bool DebitAuthourised(string p_user_id, string p_debit_id)
+        {
+            try
+            {
+                if(p_user_id != null && p_debit_id != null)
+                {
+                    _directDebitDataCRUD.DebitAuthourised(p_user_id, p_debit_id); 
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
 
     }
 }

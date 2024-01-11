@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using webapi.DataCRUD;
 using webapi.Models;
+using webapi.Models.BudgetItemObjects;
 using webapi.Models.BudgetObjects;
 using webapi.Models.DirectDebitObjects;
 
@@ -303,7 +304,7 @@ namespace webapi.Services
             catch { throw; }
         }
 
-        public async Task<bool> UpdateBudgetAmount(string p_budget_id, DirectDebitResponse p_direct_debit)
+        public async Task<bool> UpdateBudgetAmount(string p_budget_id, DirectDebit p_direct_debit)
         {
             //Get budget object
             Budget budget = await GetBudget(p_budget_id);
@@ -375,6 +376,31 @@ namespace webapi.Services
             {
                 throw;
             }
+        }
+
+        public async Task<bool> DeductBudgetAmount(string p_budget_id, decimal p_amount)
+        {
+            if(p_budget_id != null)
+            {
+                //GetBudget
+                Budget budget = await GetBudget(p_budget_id);
+
+                if(p_amount > 0)
+                {
+                    budget.BudgetAmount = decimal.Add(budget.BudgetAmount, p_amount);
+                }
+                if(p_amount < 0)
+                {
+                    budget.BudgetAmount = decimal.Subtract(budget.BudgetAmount, -p_amount);
+                }
+
+                if (_budgetDataCRUD.UpdateBudget(budget))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

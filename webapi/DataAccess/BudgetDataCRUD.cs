@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using webapi.Models;
+using webapi.Models.BudgetItemObjects;
 using webapi.Models.BudgetObjects;
 using webapi.Models.DirectDebitObjects;
 using webapi.Services;
@@ -225,7 +226,7 @@ namespace webapi.DataCRUD
             }
         }
 
-        public async Task<bool> UpdateBudgetAmount(string p_budget_Id, decimal p_deduction_value, DirectDebitResponse p_direct_debit)
+        public async Task<bool> UpdateBudgetAmount(string p_budget_Id, decimal p_deduction_value, DirectDebit p_direct_debit)
         {
             Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId == p_budget_Id).FirstOrDefault();
 
@@ -412,6 +413,25 @@ namespace webapi.DataCRUD
                 return false;
             }
             catch { throw; }
+        }
+
+        public bool UpdateBudget(Budget p_budget)
+        {
+            try
+            {
+
+                if (p_budget != null)
+                {
+                    _userContext.Budgets.Update(p_budget);
+                    _userContext.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
     }
