@@ -22,6 +22,8 @@ namespace webapi.Services
                 //Check that request information
                 Budget budget = await _budgetDataCRUD.CreateBudget(p_session_Id, p_budget_name, p_budget_amount, p_start_date, p_end_date);
 
+                await CalculateWeekly(budget.BudgetId);
+
                 if (budget != null)
                 {
                     return JsonConvert.SerializeObject(new BudgetResponse()

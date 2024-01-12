@@ -33,6 +33,7 @@ namespace webapi.Services
 
             if(updateSuccessfull)
             {
+                await _budgetService.CalculateWeekly(p_budget_Id);
                 return JsonConvert.SerializeObject(new DirectDebitResponse()
                 {
                     DebitId = directDebit.DebitId,
