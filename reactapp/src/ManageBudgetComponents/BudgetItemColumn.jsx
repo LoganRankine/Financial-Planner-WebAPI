@@ -10,6 +10,7 @@ import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 
 import '../css/Budget.css'
+import EditBudgetItem from './EditBudgetItem';
 function BudgetItemColumn(budgetItem) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [itemId, setItemId] = useState("");
@@ -19,6 +20,7 @@ function BudgetItemColumn(budgetItem) {
     const [formattedPurchaseDate, setFormattedPurchaseDate] = useState("");
 
     const [showDelete, setShowDelete] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
     const [deleteStatus, setDeleteStatus] = useState(false);
     const [deleteStatusText, setDeleteStatusText] = useState(null);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -26,6 +28,7 @@ function BudgetItemColumn(budgetItem) {
     const toggleDeleteStatus = () => setDeleteStatus(!deleteStatus);
     const handleClose = () => setShowDelete(false);
     const handleDelete = () => setShowDelete(true);
+    const handleEdit = () => setShowEdit(true);
 
     const deleteBudget = async () => {
         let sessionId = cookies.SessionID
@@ -67,7 +70,6 @@ function BudgetItemColumn(budgetItem) {
         let date = format(purchaseDate, "EEEE do LLLL yyyy")
         let time = format(purchaseDate, "p")
         setFormattedPurchaseDate(`${date} at ${time}`)
-
     }, []);
 
     return (
@@ -80,11 +82,12 @@ function BudgetItemColumn(budgetItem) {
                 <div className="budget-item-right">
                     <a className="budget-item-price">&#163;{budgetItem.budgetItem.ItemAmount}</a>
                     <div className="list-content-option">
-                        <span class="material-symbols-outlined">edit</span>
+                        <span class="material-symbols-outlined" onClick={handleEdit}>edit</span>
                         <span id="delete-icon" class="material-symbols-outlined" onClick={handleDelete}>delete</span>
                     </div>
                 </div>
             </div>
+            <EditBudgetItem showEdit={showEdit} setShowEdit={setShowEdit} budgetItem={budgetItem.budgetItem}></EditBudgetItem>
             <Modal show={showDelete} onHide={handleClose} animation={true} centered >
                 <Modal.Header closeButton>
                     <Modal.Title>Delete Purchase</Modal.Title>

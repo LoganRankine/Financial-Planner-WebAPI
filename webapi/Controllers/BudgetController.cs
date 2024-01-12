@@ -423,7 +423,7 @@ namespace webapi.Controllers
 
                         if (response.Contains("Success"))
                         {
-                            HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
                             return JsonConvert.SerializeObject(new Models.Success
                             {
                                 SuccessTitle = "Update was successful",
@@ -500,25 +500,21 @@ namespace webapi.Controllers
                     //Does the user have access to the budget?
                     if (await _budgetService.UserAccess(sessionID, editBudget.BudgetId))
                     {
-                        string response = await _budgetService.EditBudget(editBudget);
+                        UpdateBudgetResponse updateBudgetResponse = await _budgetService.EditBudget(editBudget);
 
-                        if (response.Contains("Success"))
+                        if (updateBudgetResponse.Success)
                         {
-                            HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                            return JsonConvert.SerializeObject(new Models.Success
-                            {
-                                SuccessTitle = "Update was successful",
-                                SuccessDescription = response
-                            });
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+                            return JsonConvert.SerializeObject(updateBudgetResponse);
                         }
 
-                        if (response.Contains("Unsuccessful"))
+                        if (!updateBudgetResponse.Success)
                         {
                             HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                             return JsonConvert.SerializeObject(new Models.Error
                             {
                                 ErrorTitle = "Error updating budget item",
-                                ErrorDescription = response
+                                ErrorDescription = updateBudgetResponse.Description
                             });
                         }
                     }
@@ -526,7 +522,7 @@ namespace webapi.Controllers
                     HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                     return JsonConvert.SerializeObject(new Models.Error
                     {
-                        ErrorTitle = "BudgetItem forbidden",
+                        ErrorTitle = "Budget forbidden",
                         ErrorDescription = "User does not have access to this BudgetItem. Check you have included the correct SessionID."
                     });
                 }

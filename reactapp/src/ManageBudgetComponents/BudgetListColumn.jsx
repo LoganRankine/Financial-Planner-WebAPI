@@ -9,13 +9,14 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
-
+import EditBudget from './EditBudget';
 
 function BudgetListColumn(budgets) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [budgetId, setBudgetId] = useState("");
     const [budgetName, setBudgetName] = useState("");
 
+    const [show, setShow] = useState(false);
     const [formattedStartDate, setformattedStartDate] = useState("");
     const [formattedEndDate, setformattedEndDate] = useState("");
     const [showDelete, setShowDelete] = useState(false);
@@ -67,6 +68,8 @@ function BudgetListColumn(budgets) {
         setformattedEndDate(format(endDate, "dd-MM-yyyy"))
     }, []);
 
+    const handleEdit = () => setShow(true);
+
     const getBudgetId = async (event) => {
         console.log(budgetId)
     }
@@ -77,13 +80,14 @@ function BudgetListColumn(budgets) {
 
     return (
         <div className="list-content-column" >
+            <EditBudget showEdit={show} setShowEdit={setShow} budget={budgets.budgets}></EditBudget>
             <div className="list-content-item" onClick={directBudget}>{budgetName}</div>
             <div className="list-content-item" onClick={directBudget}>{formattedStartDate}</div>
             <div className="list-content-item" onClick={directBudget}>{formattedEndDate}</div>
             <div className="list-content-item" onClick={directBudget}>&#163;{budgets.budgets.AvailableAmount.toFixed(2)}</div>
             <div className="list-content-item">&#163;{budgets.budgets.WeeklyAmount.toFixed(2)}</div>
             <div className="list-content-option">
-                <span class="material-symbols-outlined" onClick={getBudgetId}>edit</span>
+                <span class="material-symbols-outlined" style={{ cursor: 'pointer' } } onClick={handleEdit}>edit</span>
                 <span id="delete-icon" class="material-symbols-outlined" onClick={handleDelete}>delete</span>
             </div>
             <Modal show={showDelete} onHide={handleClose} animation={true} centered >

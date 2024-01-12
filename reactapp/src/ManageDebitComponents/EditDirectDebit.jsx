@@ -1,40 +1,40 @@
-import React, { Children, Component, useState } from 'react';
+import React, { Children, Component, useState, useEffect } from 'react';
 import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 
+import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
-import Modal from 'react-bootstrap/Modal';
 
-function CreateDebitForm({ budget_id, show, setShow }) {
+function EditDirectForm({ showEdit, setShowEdit, debit }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [directDebitName, setDirectDebitName] = useState("");
-    const [createdDebit, setCreatedDebit] = useState(null);
     const [paymentDate, setPaymentDate] = useState("");
     const [interval, setInterval] = useState("");
-    const [directDebitAmount, setDebitAmount] = useState("");
+    const [directDebitAmount, setDebitAmount] = useState(null);
 
-    const [createStatus, setCreateStatus] = useState(false);
-    const [createStatusText, setCreateStatusText] = useState(null);
+    const [deleteStatus, setDeleteStatus] = useState(false);
+    const [deleteStatusText, setDeleteStatusText] = useState(null);
     const [isSuccess, setIsSuccess] = useState(false);
 
-    const toggleDeleteStatus = () => setCreateStatus(!createStatus);
+    const toggleDeleteStatus = () => setDeleteStatus(!deleteStatus);
 
-    const handleClose = () => setShow(false);
+    const handleCloseEdit = () => setShowEdit(false);
+    const handleEdit = () => setShowEdit(true);
 
-    //Add direct debits
-    const saveDebit = async (event) => {
-        const budgetId = budget_id
+    const edit = (event) => {
+        const budgetId = debit.BudgetId
 
-        const createDebit = {
+        const editDebit = {
             BudgetId: budgetId,
+            DebitId: debit.DebitId,
             DebitName: directDebitName,
             DebitAmount: directDebitAmount,
             DebitDate: paymentDate,
             Frequency: interval
         }
-        console.log("Add inputs to JSON object", createDebit)
+        console.log("Add inputs to JSON object", editDebit)
 
         //Send data to create budget
         let sessionId = cookies.SessionID
@@ -42,28 +42,34 @@ function CreateDebitForm({ budget_id, show, setShow }) {
 
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
-
-        let createUserRequest = await fetch("https://localhost:7073/api/DirectDebit/CreateDebit",
+        fetch("https://localhost:7073/api/DirectDebit/EditDirectDebit",
             {
-                method: 'POST', body: JSON.stringify(createDebit),
+                method: 'PUT', body: JSON.stringify(editDebit),
                 mode: 'cors',
                 headers: myHeaders,
             }
-        )
-        if (createUserRequest.status == 201) {
-            const newBudget = await createUserRequest.json()
-            setCreatedDebit(newBudget)
-            setIsSuccess(true)
-            setCreateStatus(true)
-            console.log("added direct debit successfully")
-        }
+        ).then(response => {
+            if (response.status == 201) {
+
+                response.json().then(data => {
+                    setDeleteStatus(true)
+                    setDeleteStatusText(data.SuccessDescription)
+                    setIsSuccess(true)
+                    setShowEdit(false)
+                    console.log("added direct budgetItem successfully")
+                })
+            }
+        })
+
     }
+
+    //Add direct debits
 
     return (
         <div>
-            <Modal show={show} onHide={handleClose} animation={true} centered >
+            <Modal show={showEdit} onHide={handleCloseEdit} animation={true} centered >
                 <Modal.Header closeButton>
-                    <Modal.Title>Add Direct Debit</Modal.Title>
+                    <Modal.Title>Edit <b>{debit.DebitName}</b> Information</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div class="debit-creation-content">
@@ -72,54 +78,65 @@ function CreateDebitForm({ budget_id, show, setShow }) {
                                 <label>Direct Debit Name</label><br />
                                 <input type="text" value={directDebitName}
                                     onChange={(e) => setDirectDebitName(e.target.value)}
-                                    class="input-box" />
+                                    class="input-box"
+                                    placeholder={debit.DebitName}
+                                />
                             </div>
                             <div class="input-container">
                                 <label>Payment Date</label><br />
-                                <input type="date" value={paymentDate}
+                                <input type="text" value={paymentDate}
                                     onChange={(e) => setPaymentDate(e.target.value)}
-                                    class="input-box" />
+                                    class="input-box"
+                                    onFocus={(e) => (e.target.type = "date")}
+                                    placeholder={debit.DebitDate}
+                                />
                             </div>
                             <div class="input-container">
                                 <label>Interval</label><br />
                                 <input type="number" value={interval}
                                     onChange={(e) => setInterval(e.target.value)}
-                                    class="input-box" />
+                                    class="input-box"
+                                    placeholder={debit.Frequency}
+                                />
                             </div>
                             <div class="input-container">
                                 <label>Amount</label><br />
                                 <input type="number" value={directDebitAmount}
                                     onChange={(e) => setDebitAmount(e.target.value)}
-                                    class="input-box" />
+                                    class="input-box"
+                                    placeholder={debit.DebitAmount}
+                                />
                             </div>
                         </div>
                     </div>
+
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="success" onClick={saveDebit}>
-                        Create
+                    <Button variant="success" onClick={edit}>
+                        Update
                     </Button>
-                    <Button variant="secondary" onClick={handleClose} >
+                    <Button variant="secondary" onClick={handleCloseEdit} >
                         Cancel
                     </Button>
                 </Modal.Footer>
             </Modal>
             <ToastContainer position="top-center" >
-                <Toast show={createStatus} onClose={toggleDeleteStatus} animation={true} bg={isSuccess ? "success" : "warning"} delay={3000} autohide>
+                <Toast show={deleteStatus} onClose={toggleDeleteStatus} animation={true} bg={isSuccess ? "success" : "warning"} delay={3000} autohide>
                     <Toast.Header>
                         <img
                             src="holder.js/20x20?text=%20"
                             className="rounded me-2"
                             alt=""
                         />
-                        <strong className="me-auto">{!createdDebit ? "Error occured" : `${createdDebit.DebitName} created`}</strong>
+                        <strong className="me-auto">{!debit.debitName ? "Error occured" : `${debit.debitName} updated`}</strong>
                         <small>Just now</small>
                     </Toast.Header>
-                    <Toast.Body>{createStatusText}</Toast.Body>
+                    <Toast.Body>{deleteStatusText}</Toast.Body>
                 </Toast>
             </ToastContainer>
+
         </div>
     );
 }
 
-export default CreateDebitForm
+export default EditDirectForm

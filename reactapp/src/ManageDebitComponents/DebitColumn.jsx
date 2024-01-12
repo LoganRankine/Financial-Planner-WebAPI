@@ -9,6 +9,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
+import EditDirectForm from './EditDirectDebit';
 
 
 function DebitColumn({ directDebit }) {
@@ -16,16 +17,20 @@ function DebitColumn({ directDebit }) {
     const [debitId, setDebitId] = useState("");
     const [budgetId, setBudgetId] = useState("");
     const [debitName, setDebitName] = useState(null);
+    const [sendRequest, setSendRequest] = useState(false);
 
     const [formatedDueDate, setFormattedDueDate] = useState("");
     const [showDelete, setShowDelete] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
     const [deleteStatus, setDeleteStatus] = useState(false);
     const [deleteStatusText, setDeleteStatusText] = useState(null);
     const [isSuccess, setIsSuccess] = useState(false);
 
     const toggleDeleteStatus = () => setDeleteStatus(!deleteStatus);
     const handleClose = () => setShowDelete(false);
+    const handleCloseEdit = () => setShowEdit(false);
     const handleDelete = () => setShowDelete(true);
+    const handleEdit = () => setShowEdit(true);
 
     useEffect(() => {
         setDebitId(directDebit.DebitId)
@@ -77,7 +82,6 @@ function DebitColumn({ directDebit }) {
                     <div className="debit-item-left-box">
                         <div>
                             <a className="debit-item-date">Due: {formatedDueDate}</a>
-
                         </div>
                         <div>
                             <a id="debit-item-frequency" className="debit-item-date">Every {directDebit.Frequency} days</a>
@@ -87,7 +91,7 @@ function DebitColumn({ directDebit }) {
                 <div className="debit-item-right">
                     <a className="debit-item-price">&#163;{directDebit.DebitAmount}</a>
                     <div className="list-content-option">
-                        <span class="material-symbols-outlined">edit</span>
+                        <span class="material-symbols-outlined" onClick={handleEdit}>edit</span>
                         <span id="delete-icon" class="material-symbols-outlined" onClick={handleDelete}>delete</span>
                     </div>
                 </div>
@@ -103,27 +107,13 @@ function DebitColumn({ directDebit }) {
                     <Button variant="danger" onClick={deleteDebit}>
                         Delete
                     </Button>
-                    <Button variant="secondary">
+                    <Button variant="secondary" onClick={handleClose}>
                         Cancel
                     </Button>
 
                 </Modal.Footer>
             </Modal>
-            <ToastContainer position="top-center" >
-                <Toast show={deleteStatus} onClose={toggleDeleteStatus} animation={true} bg={isSuccess ? "success" : "warning"} delay={3000} autohide>
-                    <Toast.Header>
-                        <img
-                            src="holder.js/20x20?text=%20"
-                            className="rounded me-2"
-                            alt=""
-                        />
-                        <strong className="me-auto">{!debitName ? "Error occured" : `${debitName} successfully deleted`}</strong>
-                        <small>Just now</small>
-                    </Toast.Header>
-                    <Toast.Body>{deleteStatusText}</Toast.Body>
-                </Toast>
-            </ToastContainer>
-
+            <EditDirectForm showEdit={showEdit} setShowEdit={setShowEdit} debit={directDebit}></EditDirectForm>
         </div>
     );
 }

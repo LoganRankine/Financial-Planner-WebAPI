@@ -15,7 +15,6 @@ function BudgetDisplay({Sidebar }) {
     const [p_budgetId, setBudgetId] = useState("");
     const [p_budget, setBudget] = useState("");
 
-    const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     useEffect(() => {
@@ -56,20 +55,8 @@ function BudgetDisplay({Sidebar }) {
     return (
         <div className="base-content">
             <Sidebar budget_id={p_budgetId}></Sidebar>
+            <PurchaseForm budget_id={p_budgetId} show={show} setShow={setShow}></PurchaseForm>
             <div className="budget-display">
-                <Modal show={show} onHide={handleClose} animation={true} centered >
-                    <Modal.Header closeButton>
-                        <Modal.Title>Add Purchase</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <PurchaseForm budget_id={p_budgetId}></PurchaseForm>
-                    </Modal.Body>
-                    {/*    <Modal.Footer>*/}
-                    {/*        <Button variant="secondary" onClick={handleClose}>*/}
-                    {/*            Close*/}
-                    {/*        </Button>*/}
-                    {/*    </Modal.Footer>*/}
-                </Modal>
                 <div className="budget-header">
                     {/*left header*/}
                     <div className="budget-header-right">

@@ -1,29 +1,38 @@
-import React, { Children, Component, useState } from 'react';
+import React, { Children, Component, useState, useEffect } from 'react';
 import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
-import Alert from 'react-bootstrap/Alert';
 
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 
-function PurchaseForm({ budget_id, show, setShow }) {
+function EditBudgetItem({ showEdit, setShowEdit, budgetItem }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [itemName, setItemName] = useState("");
     const [purchaseDate, setPurchaseDate] = useState("");
     const [itemAmount, setItemAmount] = useState("");
 
-    const handleClose = () => setShow(false);
+    const [deleteStatus, setDeleteStatus] = useState(false);
+    const [deleteStatusText, setDeleteStatusText] = useState(null);
+    const [isSuccess, setIsSuccess] = useState(false);
 
-    const addPurchase = async (event) => {
-        const createPurchase = {
-            BudgetId: budget_id,
+    const toggleDeleteStatus = () => setDeleteStatus(!deleteStatus);
+
+    const handleCloseEdit = () => setShowEdit(false);
+    const handleEdit = () => setShowEdit(true);
+
+    const editBudgetItem = (event) => {
+        const budgetId = budgetItem.BudgetId
+
+        const editBudgetItem = {
+            BudgetId: budgetId,
+            ItemId: budgetItem.ItemId,
             ItemName: itemName,
             ItemAmount: itemAmount,
             PurchaseDate: purchaseDate,
         }
-        console.log("Add inputs to JSON object", createPurchase)
+        console.log("Add inputs to JSON object", editBudgetItem)
 
         //Send data to create budget
         let sessionId = cookies.SessionID
@@ -31,38 +40,31 @@ function PurchaseForm({ budget_id, show, setShow }) {
 
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
-
-        let createPurchaseRequest = await fetch("https://localhost:7073/api/Budget/CreateBudgetItem",
+        fetch("https://localhost:7073/api/Budget/EditBudgetItem",
             {
-                method: 'POST', body: JSON.stringify(createPurchase),
+                method: 'PUT', body: JSON.stringify(editBudgetItem),
                 mode: 'cors',
                 headers: myHeaders,
             }
-        )
+        ).then(response => {
+            if (response.status == 201) {
 
-        let response = await createPurchaseRequest.json();
-
-        if (createPurchaseRequest.ok) {
-            try {
-                //Get BudgetId from response
-                const BudgetItemObject = JSON.parse(response)
-                console.log(BudgetItemObject)
-                handleClose()
-                //sessionStorage.setItem("BudgetId", budgetObject.BudgetId)
-                //console.log(budgetObject.BudgetName, "created, budgetID added to session storage")
-                //console.log(this.state.isBudgetDetail)
+                response.json().then(data => {
+                    setDeleteStatus(true)
+                    setDeleteStatusText(data.SuccessDescription)
+                    setIsSuccess(true)
+                    setShowEdit(false)
+                    console.log("added direct budget successfully")
+                })
             }
-            catch (err) {
-                console.error(err)
-            }
-        }
+        })
     }
 
     return (
         <div>
-            <Modal show={show} onHide={handleClose} animation={true} centered >
+            <Modal show={showEdit} onHide={handleCloseEdit} animation={true} centered >
                 <Modal.Header closeButton>
-                    <Modal.Title>Add Purchase</Modal.Title>
+                    <Modal.Title>Edit <b>{budgetItem.ItemName}</b> Information</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div class="purchase-creation-content">
@@ -85,18 +87,33 @@ function PurchaseForm({ budget_id, show, setShow }) {
                                 class="input-box" />
                         </div>
                     </div>
-
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="success" onClick={addPurchase}>
+                    <Button variant="success" onClick={editBudgetItem}>
                         Update
                     </Button>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" onClick={handleCloseEdit} >
                         Cancel
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <ToastContainer position="top-center" >
+                <Toast show={deleteStatus} onClose={toggleDeleteStatus} animation={true} bg={isSuccess ? "success" : "warning"} delay={5000} autohide>
+                    <Toast.Header>
+                        <img
+                            src="holder.js/20x20?text=%20"
+                            className="rounded me-2"
+                            alt=""
+                        />
+                        <strong className="me-auto">{!isSuccess ? "Error occured" : `${budgetItem.ItemName} updated`}</strong>
+                        <small>Just now</small>
+                    </Toast.Header>
+                    <Toast.Body>{deleteStatusText}</Toast.Body>
+                </Toast>
+            </ToastContainer>
+
         </div>
     );
 }
-export default PurchaseForm
+
+export default EditBudgetItem

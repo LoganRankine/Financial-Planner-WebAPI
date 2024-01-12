@@ -11,12 +11,12 @@ import Modal from 'react-bootstrap/Modal';
 function DirectDebitsDisplay({Sidebar}) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [directDebits, setDirectDebits] = useState(null);
-    const [show, setShow] = useState(false);
     const [p_budgetId, setBudgetId] = useState("");
     const [p_budget, setBudget] = useState("");
+    const [show, setShow] = useState(false);
 
-    const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
 
     useEffect(() => {
         let sessionId = cookies.SessionID
@@ -46,15 +46,7 @@ function DirectDebitsDisplay({Sidebar}) {
         <div className="base-content">
             <Sidebar budget_id={p_budgetId}></Sidebar>
             <div className="budget-display">
-                <Modal show={show} onHide={handleClose} animation={true} centered >
-                    <Modal.Header closeButton>
-                        <Modal.Title>Add Direct Debit</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <CreateDebitForm budget_id={p_budgetId}></CreateDebitForm>
-                    </Modal.Body>
-                </Modal>
-
+                <CreateDebitForm budget_id={p_budgetId} show={show} setShow={setShow }></CreateDebitForm>
                 <div className="budget-header">
                     {/*right header*/}
                     <div className="budget-header-right">

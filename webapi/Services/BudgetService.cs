@@ -203,7 +203,7 @@ namespace webapi.Services
             catch { throw; }
         }
 
-        public async Task<string> EditBudget(EditBudget editBudget)
+        public async Task<UpdateBudgetResponse> EditBudget(EditBudget editBudget)
         {
             try
             {
@@ -213,90 +213,130 @@ namespace webapi.Services
                     //Get p_budget that is being updated
                     Budget temp_budget = _budgetDataCRUD.GetBudget(editBudget.BudgetId);
 
-                    if (editBudget.BudgetName != null)
+                    if (temp_budget != null)
                     {
-                        temp_budget.BudgetName = editBudget.BudgetName;
-                    }
-
-                    if (editBudget.BudgetAmount != null)
-                    {
-                        //Ensure new p_budget amount is more than available amount
-                        if(editBudget.BudgetAmount > temp_budget.AvailableAmount)
+                        if (editBudget.BudgetName != null)
                         {
+                            //Check Budget name has a string
+                            if(editBudget.BudgetName == "")
+                            {
+                                return new UpdateBudgetResponse 
+                                { 
+                                    Success = false, 
+                                    Description = "BudgetName contained an empty string. BudgetName must not be null or empty."
+                                };
+                            }
+
+                            temp_budget.BudgetName = editBudget.BudgetName;
+                        }
+
+                        if (editBudget.BudgetAmount != null)
+                        {
+                            //Ensure new p_budget amount is more than available amount
+                            if (temp_budget.AvailableAmount > editBudget.BudgetAmount) 
+                            {
+                                return new UpdateBudgetResponse
+                                {
+                                    Success = false,
+                                    Description = "BudgetAmount was less than available amount. BudgetAmount MUST be more than available!."
+                                };
+                            }
                             //BudgetAmount(Original Budget)- 100 AvailableBudget(AmountAvailable to spend)- 60
                             //New amount- 120. NewAvailable = 120 - 100 = 20 + 60= NEWAVAILABLE- 80
 
                             //Find difference between original amount and new amount
                             decimal difference = decimal.Subtract((decimal)editBudget.BudgetAmount, temp_budget.BudgetAmount);
-                            
+
                             //Add difference to available amount
                             temp_budget.AvailableAmount = decimal.Add(temp_budget.AvailableAmount, difference);
-                            
+
                             //Update amount with new amount
                             temp_budget.BudgetAmount = (decimal)editBudget.BudgetAmount;
+
                         }
-                    }
 
-                    if (editBudget.StartDate != null)
-                    {
-                        temp_budget.StartDate = (DateTime)editBudget.StartDate;
-                        recalculateTotal = true;
-                    }
-
-                    if(editBudget.EndDate != null)
-                    {
-                        temp_budget.EndDate = (DateTime)editBudget.EndDate;
-                        recalculateTotal = true;
-                    }
-
-                    //Recalculate total p_budget
-                    if (recalculateTotal)
-                    {
-                        //Get direct debits
-                        List<DirectDebit> debits = await GetDirectDebits(temp_budget.BudgetId);
-
-                        //Update debits
-                        debits.ForEach(async debit =>
+                        if (editBudget.StartDate != null)
                         {
-                            decimal oldTotal = debit.DebitTotalAmount;
-                            decimal newTotal = await CalculateDirectDebit(debit, temp_budget);
+                            temp_budget.StartDate = (DateTime)editBudget.StartDate;
+                            recalculateTotal = true;
+                        }
 
-                            //Update value
-                            debit.DebitTotalAmount = newTotal;
+                        if (editBudget.EndDate != null)
+                        {
+                            temp_budget.EndDate = (DateTime)editBudget.EndDate;
+                            recalculateTotal = true;
+                        }
 
-                            //Add b
-                            temp_budget.AvailableAmount = decimal.Add(temp_budget.AvailableAmount, oldTotal);
+                        //Recalculate total p_budget
+                        if (recalculateTotal)
+                        {
+                            //Get direct debits
+                            List<DirectDebit> debits = await GetDirectDebits(temp_budget.BudgetId);
 
-                            //Remove new value
-                            temp_budget.AvailableAmount = decimal.Subtract(temp_budget.AvailableAmount, newTotal);
-                        });
+                            //Update debits
+                            debits.ForEach(async debit =>
+                            {
+                                decimal oldTotal = debit.DebitTotalAmount;
+                                decimal newTotal = await CalculateDirectDebit(debit, temp_budget);
 
-                        await UpdateDirectDebits(debits);
+                                //Update value
+                                debit.DebitTotalAmount = newTotal;
+
+                                //Add b
+                                temp_budget.AvailableAmount = decimal.Add(temp_budget.AvailableAmount, oldTotal);
+
+                                //Remove new value
+                                temp_budget.AvailableAmount = decimal.Subtract(temp_budget.AvailableAmount, newTotal);
+                            });
+
+                            await UpdateDirectDebits(debits);
+                        }
+
+                        //Budget populdated wit new values
+                        Budget updatedBudget = new()
+                        {
+                            BudgetName = temp_budget.BudgetName,
+                            AvailableAmount = temp_budget.AvailableAmount,
+                            StartDate = temp_budget.StartDate,
+                            EndDate = temp_budget.EndDate,
+
+                            BudgetId = temp_budget.BudgetId,
+                            BudgetAmount = temp_budget.BudgetAmount,
+                            Id = temp_budget.Id,
+                            WeeklyAmount = temp_budget.WeeklyAmount
+                        };
+
+                        //Update p_budget with new available total
+                        if (_budgetDataCRUD.UpdateBudget(updatedBudget))
+                        {
+
+                            return new UpdateBudgetResponse
+                            {
+                                Success = true,
+                                Description = "Budget was updated",
+                                Budget = updatedBudget,
+                            };
+                        }
+
+                        return new UpdateBudgetResponse
+                        {
+                            Success = false,
+                            Description = "Budget was not updated",
+                        };
                     }
 
-                    Budget updatedBudget = new()
+                    return new UpdateBudgetResponse
                     {
-                        BudgetName = temp_budget.BudgetName,
-                        AvailableAmount = temp_budget.AvailableAmount,
-                        StartDate = temp_budget.StartDate,
-                        EndDate = temp_budget.EndDate,
-
-                        BudgetId = temp_budget.BudgetId,
-                        BudgetAmount = temp_budget.BudgetAmount,
-                        Id = temp_budget.Id,
-                        WeeklyAmount = temp_budget.WeeklyAmount
+                        Success = false,
+                        Description = "Budget not found, check included budgetId is correct",
                     };
-
-                    //Update p_budget with new available total
-                    if (_budgetDataCRUD.UpdateBudget(updatedBudget))
-                    {
-                        return "Success";
-                    }
-
-                    return "Success";
                 }
 
-                return null;
+                return new UpdateBudgetResponse
+                {
+                    Success = false,
+                    Description = "Edit budget object is null.",
+                };
             }
             catch { throw; }
         }
@@ -346,6 +386,7 @@ namespace webapi.Services
                             StartDate = temp_budget.StartDate,
                             EndDate = temp_budget.EndDate,
                             WeeklyAmount = temp_budget.WeeklyAmount,
+                            BudgetAmount = temp_budget.BudgetAmount,
                         });
                     }
                     return JsonConvert.SerializeObject(budgetResponses);

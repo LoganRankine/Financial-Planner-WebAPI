@@ -94,7 +94,7 @@ namespace webapi.Controllers
 
                     if (response.Contains("DebitName"))
                     {
-                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
                         return JsonConvert.SerializeObject(response);
                     }
                     if(response.Contains("Creation Failure"))
