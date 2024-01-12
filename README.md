@@ -23,9 +23,9 @@ The secondary objective of this project is to learn and develop my front-end ski
 - View all budgets
 - Add purchases to budgets
 - Calculate weekly budget
+- Calculate weekly budget
 ### Features to be added
 - Create first budget upon account creation
-- Calculate weekly budget
 ### Future updates 
 - Option to aid in calculating and how much you can save
 - Connect to bank in future
