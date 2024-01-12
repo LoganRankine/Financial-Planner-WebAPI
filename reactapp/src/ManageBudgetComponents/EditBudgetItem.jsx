@@ -72,6 +72,7 @@ function EditBudgetItem({ showEdit, setShowEdit, budgetItem }) {
                             <label>Purchase Name</label><br />
                             <input type="text" value={itemName}
                                 onChange={(e) => setItemName(e.target.value)}
+                                placeholder={budgetItem.ItemName}
                                 class="input-box" />
                         </div>
                         <div class="input-container">
@@ -84,6 +85,7 @@ function EditBudgetItem({ showEdit, setShowEdit, budgetItem }) {
                             <label>Purchase Amount</label><br />
                             <input type="number" value={itemAmount}
                                 onChange={(e) => setItemAmount(e.target.value)}
+                                placeholder={budgetItem.ItemAmount}
                                 class="input-box" />
                         </div>
                     </div>

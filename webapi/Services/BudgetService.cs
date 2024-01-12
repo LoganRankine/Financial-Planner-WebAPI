@@ -375,7 +375,7 @@ namespace webapi.Services
             {
                 List<Budget> budgets = await _budgetDataCRUD.GetAllBudgets(p_session_Id);
 
-                if (budgets.Count > 0)
+                if (budgets != null && budgets.Count > 0)
                 {
                     List<BudgetResponse> budgetResponses = new();
                     foreach (Budget temp_budget in budgets)

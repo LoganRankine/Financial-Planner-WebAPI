@@ -105,9 +105,13 @@ namespace webapi.DataCRUD
                 {
                     //Get all budgets for user
                     List<Budget> budgets = _userContext.Budgets.Where(budget => budget.Id == user.Id).ToList();
-                    if (budgets.Count > 0)
+
+                    if(budgets != null)
                     {
-                        return budgets;
+                        if (budgets.Count > 0)
+                        {
+                            return budgets;
+                        }
                     }
                 }
                 return null;
