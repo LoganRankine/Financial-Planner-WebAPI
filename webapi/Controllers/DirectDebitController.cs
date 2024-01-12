@@ -72,7 +72,7 @@ namespace webapi.Controllers
         }
 
         /// <summary>
-        /// Creates a budget- Request must contain JSON body with BudgetName(string), BudgetAmount(decimal),
+        /// Creates a budget- Request must contain JSON body with BudgetName(string), AvailableAmount(decimal),
         /// StartDate(DateTime) EndDate(DateTime). Must include SessionId as header.
         /// </summary>
         /// <returns> Successful- Created Budget in JSON with BudgetId. Unsuccessful- Reason why it failed</returns>

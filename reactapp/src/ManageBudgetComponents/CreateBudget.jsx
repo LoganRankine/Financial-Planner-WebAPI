@@ -12,7 +12,7 @@ function CreateBudget() {
         const saveBudget = async (event) => {
             const createBudget = {
                 BudgetName: budgetName,
-                BudgetAmount: budgetAmount,
+                AvailableAmount: budgetAmount,
                 StartDate: startDate,
                 EndDate: endDate,
             }

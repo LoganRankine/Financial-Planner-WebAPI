@@ -12,9 +12,11 @@ namespace webapi.Models.BudgetObjects
         public string Id { get; set; }
         public string BudgetName { get; set; }
         [Column(TypeName = "decimal(19,4)")]
-        public decimal BudgetAmount { get; set; }
+        public decimal AvailableAmount { get; set; }
         [Column(TypeName = "decimal(19,4)")]
         public decimal WeeklyAmount { get; set; }
+        [Column(TypeName = "decimal(19,4)")]
+        public decimal BudgetAmount { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public ICollection<BudgetItem> BudgetItems { get; set; }

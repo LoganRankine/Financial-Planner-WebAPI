@@ -30,7 +30,7 @@ namespace webapi.Migrations
                     b.Property<string>("BudgetId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal>("BudgetAmount")
+                    b.Property<decimal>("AvailableAmount")
                         .HasColumnType("decimal(19,4)");
 
                     b.Property<string>("BudgetName")

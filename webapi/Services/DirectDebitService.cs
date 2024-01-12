@@ -11,6 +11,7 @@ namespace webapi.Services
     public class DirectDebitService
     {
         private readonly DirectDebitCRUD _directDebitDataCRUD;
+
         private readonly BudgetService _budgetService;
 
         public DirectDebitService(DirectDebitCRUD directDebitDataCRUD, BudgetService budgetService)
@@ -243,6 +244,70 @@ namespace webapi.Services
             }
         }
 
+        public async Task<DirectDebit> UpdateDirectDebit(DirectDebit p_directDebit)
+        {
+            try
+            {
+                if(p_directDebit != null)
+                {
+                    DirectDebit updatedDebit = _directDebitDataCRUD.UpdateDirectDebit(p_directDebit);
+                    if (updatedDebit != null)
+                    {
+                        return updatedDebit;
+                    }
+                }
 
+                return null;
+            }
+            catch
+            {
+                throw;
+            }
+            return null;
+        }
+
+        public async Task<List<DirectDebit>> GetDirectDebits(string p_budget_id)
+        {
+            try
+            {
+                //Get direct debits
+                if (p_budget_id != null)
+                {
+                    List<DirectDebit> debits = _directDebitDataCRUD.GetDirectDebits(p_budget_id);
+
+                    if(debits != null)
+                    {
+                        return debits;
+                    }
+                }
+
+                return null;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<DirectDebit>> UpdateDirectDebits(List<DirectDebit> p_directDebits)
+        {
+            try
+            {
+                if(p_directDebits != null && p_directDebits.Count != 0)
+                {
+                    List<DirectDebit> debits = _directDebitDataCRUD.UpdateDirectDebits(p_directDebits);
+
+                    if(debits != null)
+                    {
+                        return debits;
+                    }
+                }
+                return null;
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

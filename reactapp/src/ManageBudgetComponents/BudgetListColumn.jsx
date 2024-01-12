@@ -80,7 +80,7 @@ function BudgetListColumn(budgets) {
             <div className="list-content-item" onClick={directBudget}>{budgetName}</div>
             <div className="list-content-item" onClick={directBudget}>{formattedStartDate}</div>
             <div className="list-content-item" onClick={directBudget}>{formattedEndDate}</div>
-            <div className="list-content-item" onClick={directBudget}>&#163;{budgets.budgets.BudgetAmount.toFixed(2)}</div>
+            <div className="list-content-item" onClick={directBudget}>&#163;{budgets.budgets.AvailableAmount.toFixed(2)}</div>
             <div className="list-content-item">&#163;{budgets.budgets.WeeklyAmount.toFixed(2)}</div>
             <div className="list-content-option">
                 <span class="material-symbols-outlined" onClick={getBudgetId}>edit</span>

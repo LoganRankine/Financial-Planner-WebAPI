@@ -93,7 +93,7 @@ namespace webapi.DataAccess
                     {
                         //Add the debit value back to budget
                         Budget updateBudget = budget;
-                        updateBudget.BudgetAmount = budget.BudgetAmount + directDebit.DebitTotalAmount;
+                        updateBudget.AvailableAmount = budget.AvailableAmount + directDebit.DebitTotalAmount;
 
                         //Update budget amount and remove debit
                         _userContext.DirectDebits.Remove(directDebit);
@@ -176,6 +176,49 @@ namespace webapi.DataAccess
                 }
 
                 return false;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public List<DirectDebit> GetDirectDebits(string p_budget_id)
+        {
+            try
+            {
+                //Get direct debits
+                List<DirectDebit> directDebits = _userContext.DirectDebits.Where(debit => debit.BudgetId == p_budget_id).ToList();
+
+                if(directDebits.Count != 0)
+                {
+                    return directDebits;
+                }
+
+                return null;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public List<DirectDebit> UpdateDirectDebits(List<DirectDebit> p_directDebits)
+        {
+            try
+            {
+                if(p_directDebits != null && p_directDebits.Count != 0)
+                {
+                    foreach (DirectDebit debit in p_directDebits)
+                    {
+                        _userContext.Update(debit);
+                    }
+
+                    _userContext.SaveChanges();
+                    return p_directDebits;
+                }
+
+                return null;
             }
             catch
             {

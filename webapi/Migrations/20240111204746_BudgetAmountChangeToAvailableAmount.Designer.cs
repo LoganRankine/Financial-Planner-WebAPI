@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using webapi.Models;
 
@@ -11,9 +12,11 @@ using webapi.Models;
 namespace webapi.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20240111204746_BudgetAmountChangeToAvailableAmount")]
+    partial class BudgetAmountChangeToAvailableAmount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,9 +57,6 @@ namespace webapi.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("AvailableAmount")
-                        .HasColumnType("decimal(19,4)");
-
-                    b.Property<decimal>("BudgetAmount")
                         .HasColumnType("decimal(19,4)");
 
                     b.Property<string>("BudgetName")

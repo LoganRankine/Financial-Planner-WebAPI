@@ -139,7 +139,7 @@ namespace webapi.Controllers
 
                 if (createBudget != null)
                 {
-                    string response = await _budgetService.CreateBudget(sessionID, createBudget.BudgetName, createBudget.BudgetAmount, createBudget.StartDate, createBudget.EndDate);
+                    string response = await _budgetService.CreateBudget(sessionID, createBudget.BudgetName, createBudget.AvailableAmount, createBudget.StartDate, createBudget.EndDate);
                     
                     if (response.Contains("BudgetName"))
                     {
@@ -420,6 +420,87 @@ namespace webapi.Controllers
                     if (await _budgetService.UserAccess(sessionID, editBudgetItem.BudgetId))
                     {
                         string response = await _budgetService.EditBudgetItem(editBudgetItem);
+
+                        if (response.Contains("Success"))
+                        {
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                            return JsonConvert.SerializeObject(new Models.Success
+                            {
+                                SuccessTitle = "Update was successful",
+                                SuccessDescription = response
+                            });
+                        }
+
+                        if (response.Contains("Unsuccessful"))
+                        {
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                            return JsonConvert.SerializeObject(new Models.Error
+                            {
+                                ErrorTitle = "Error updating budget item",
+                                ErrorDescription = response
+                            });
+                        }
+                    }
+
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "BudgetItem forbidden",
+                        ErrorDescription = "User does not have access to this BudgetItem. Check you have included the correct SessionID."
+                    });
+                }
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error parsing BudgetItem",
+                    ErrorDescription = "The budgetItem object sent in request could not be parsed. Check whether budget item is created correctly."
+                });
+            }
+            catch
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return JsonConvert.SerializeObject(new Models.Error
+                {
+                    ErrorTitle = "Error decoding body",
+                    ErrorDescription = "Error occured getting request body "
+                });
+            }
+        }
+
+        [Authorize]
+        [HttpPut("EditBudget")]
+        async public Task<string> EditBudget()
+        {
+            try
+            {
+                //Get request body into a string
+                StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
+                string getBody = await reader.ReadToEndAsync();
+
+                //Parse request string into budgetitem object
+                EditBudget editBudget = JsonConvert.DeserializeObject<EditBudget>(getBody);
+
+                string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();
+
+                //Ensure the BudgetId is included
+                if (editBudget.BudgetId == null)
+                {
+                    HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return JsonConvert.SerializeObject(new Models.Error
+                    {
+                        ErrorTitle = "Error updating budget item",
+                        ErrorDescription = "Missing ItemId, include and try again"
+                    });
+                }
+
+                //Ensure object has been parsed
+                if (editBudget != null && editBudget.BudgetId != null)
+                {
+                    //Does the user have access to the budget?
+                    if (await _budgetService.UserAccess(sessionID, editBudget.BudgetId))
+                    {
+                        string response = await _budgetService.EditBudget(editBudget);
 
                         if (response.Contains("Success"))
                         {

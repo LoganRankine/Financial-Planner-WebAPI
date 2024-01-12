@@ -33,9 +33,10 @@ namespace webapi.DataCRUD
                         BudgetId = budgetId.ToString(),
                         Id = user.Id,
                         BudgetName = p_budget_name,
-                        BudgetAmount = p_budget_amount,
+                        AvailableAmount = p_budget_amount,
                         StartDate = p_start_date,
-                        EndDate = p_end_date
+                        EndDate = p_end_date,
+                        BudgetAmount = p_budget_amount
                     };
 
                     _userContext.Budgets.Add(budget);
@@ -77,7 +78,7 @@ namespace webapi.DataCRUD
 
                         //Deduct item amount form budget total
                         Budget updatedBudget = budget;
-                        updatedBudget.BudgetAmount -= budgetItem.ItemAmount;
+                        updatedBudget.AvailableAmount -= budgetItem.ItemAmount;
 
                         //Add to database
                         _userContext.BudgetItems.Add(budgetItem);
@@ -237,8 +238,8 @@ namespace webapi.DataCRUD
                 if(debit != null)
                 {
                     //Update budget value
-                    decimal updatedAmount = budget.BudgetAmount - p_deduction_value;
-                    budget.BudgetAmount = updatedAmount;
+                    decimal updatedAmount = budget.AvailableAmount - p_deduction_value;
+                    budget.AvailableAmount = updatedAmount;
 
                     _userContext.Budgets.Update(budget);
 
@@ -259,7 +260,7 @@ namespace webapi.DataCRUD
             Budget budget = _userContext.Budgets.Where(budget => budget.BudgetId==p_budget_id).FirstOrDefault();
 
             double weeks = (budget.EndDate -  budget.StartDate).TotalDays/7;
-            decimal totalAmount = budget.BudgetAmount;
+            decimal totalAmount = budget.AvailableAmount;
             decimal weeklyAmount = totalAmount / (decimal)weeks;
 
             budget.WeeklyAmount = weeklyAmount;
@@ -324,7 +325,7 @@ namespace webapi.DataCRUD
                     {
                         //Add the budgetItem value back to budget
                         Budget updateBudget = budget;
-                        updateBudget.BudgetAmount = budget.BudgetAmount + budgetItem.ItemAmount;
+                        updateBudget.AvailableAmount = budget.AvailableAmount + budgetItem.ItemAmount;
 
                         //Update budget amount and remove bugdetItem
                         _userContext.BudgetItems.Remove(budgetItem);
@@ -401,7 +402,7 @@ namespace webapi.DataCRUD
 
                 if (budget != null)
                 {
-                    budget.BudgetAmount = p_new_amount_value;
+                    budget.AvailableAmount = p_new_amount_value;
                     //Add to database
                     _userContext.Budgets.Update(budget);
 
@@ -422,11 +423,55 @@ namespace webapi.DataCRUD
 
                 if (p_budget != null)
                 {
+                    _userContext.ChangeTracker.Clear();
                     _userContext.Budgets.Update(p_budget);
                     _userContext.SaveChanges();
                     return true;
                 }
                 return false;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public List<DirectDebit> UpdateDirectDebits(List<DirectDebit> p_directDebits)
+        {
+            try
+            {
+                if (p_directDebits != null && p_directDebits.Count != 0)
+                {
+                    foreach (DirectDebit debit in p_directDebits)
+                    {
+                        _userContext.Update(debit);
+                    }
+
+                    _userContext.SaveChanges();
+                    return p_directDebits;
+                }
+
+                return null;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public List<DirectDebit> GetDirectDebits(string p_budget_id)
+        {
+            try
+            {
+                //Get direct debits
+                List<DirectDebit> directDebits = _userContext.DirectDebits.Where(debit => debit.BudgetId == p_budget_id).ToList();
+
+                if (directDebits.Count != 0)
+                {
+                    return directDebits;
+                }
+
+                return null;
             }
             catch
             {
