@@ -3,6 +3,7 @@ import React, { Component, useState } from 'react';
 import { CookiesProvider, useCookies } from "react-cookie";
 import FirstPage from '../FirstPage'
 import { Link } from "react-router-dom";
+import serverConfig from "../../server-config.json"
 
 function Register() {
     const [username, setUsername] = useState("");
@@ -20,7 +21,7 @@ function Register() {
         console.log("Add inputs to JSON object", createUser)
 
         //Send data to create user
-        let createUserRequest = await fetch("https://localhost:7073/api/User/CreateUser",
+        let createUserRequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/User/CreateUser`,
             { method: 'POST', body: JSON.stringify(createUser), mode: 'cors' }
         )
 

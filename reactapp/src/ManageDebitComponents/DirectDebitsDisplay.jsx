@@ -7,6 +7,7 @@ import DebitColumn from './DebitColumn'
 import CreateDebitForm from './CreateDebitForm'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import serverConfig from "../../server-config.json"
 
 function DirectDebitsDisplay({Sidebar}) {
     const [cookies, setCookie] = useCookies(['SessionID']);
@@ -25,7 +26,7 @@ function DirectDebitsDisplay({Sidebar}) {
         setBudgetId(query)
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
-        fetch(`https://localhost:7073/api/DirectDebit/AllDirectDebits?budget_Id=${query}`,
+        fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/DirectDebit/AllDirectDebits?budget_Id=${query}`,
             {
                 method: 'GET',
                 mode: 'cors',

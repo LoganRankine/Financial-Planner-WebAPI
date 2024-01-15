@@ -13,8 +13,8 @@ function DisplayBudgetsSidebar() {
 
     return (
         <div className="sidebar">
-            <div>
-                <Link className="navbar-item" to="/Account/CreateBudget">
+            <div className="button">
+                <Link className="navbar-item middle-item" to="/Account/CreateBudget">
                     <span id="icon" class="material-symbols-outlined">add</span>
                     <a id="nav-title">New Budget</a>
                 {/*    <Link id="nav-title" to="/Account/CreateBudget">New Budget</Link>*/}
@@ -26,7 +26,7 @@ function DisplayBudgetsSidebar() {
                 </Link>
 
             </div>
-            <div>
+            <div className="account-settings" >
                 <div id="bottom-navbar" className="navbar-item">
                     <span id="icon" class="material-symbols-outlined">settings</span>
                     <a id="nav-title">Account Settings</a>

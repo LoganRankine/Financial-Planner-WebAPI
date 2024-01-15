@@ -1,6 +1,7 @@
 import React, { Children, Component, useState } from 'react';
 import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
+import serverConfig from "../../server-config.json"
 
 function CreateDebit() {
     const [cookies, setCookie] = useCookies(['SessionID']);
@@ -33,7 +34,7 @@ function CreateDebit() {
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
 
-        let createUserRequest = await fetch("https://localhost:7073/api/DirectDebit/CreateDebit",
+        let createUserRequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/DirectDebit/CreateDebit`,
             {
                 method: 'POST', body: JSON.stringify(createDebit),
                 mode: 'cors',

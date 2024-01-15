@@ -3,6 +3,7 @@ import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 import Sidebar from '../AccountComponents/BudgetSidebar';
+import serverConfig from "../../server-config.json"
 
 function ManageBudget({ child }) {
 

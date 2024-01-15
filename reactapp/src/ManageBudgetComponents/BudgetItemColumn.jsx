@@ -8,6 +8,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
+import serverConfig from "../../server-config.json"
 
 import '../css/Budget.css'
 import EditBudgetItem from './EditBudgetItem';
@@ -37,7 +38,7 @@ function BudgetItemColumn(budgetItem) {
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
 
-        const deleteItemRequest = await fetch(`https://localhost:7073/api/Budget/DeleteBudgetItem?budget_Id=${budgetId}&budgetItem_Id=${itemId}`, {
+        const deleteItemRequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/DeleteBudgetItem?budget_Id=${budgetId}&budgetItem_Id=${itemId}`, {
             method: 'DELETE',
             headers: myHeaders,
             mode: 'cors'

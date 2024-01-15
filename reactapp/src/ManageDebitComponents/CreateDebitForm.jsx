@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import Modal from 'react-bootstrap/Modal';
+import serverConfig from "../../server-config.json"
 
 function CreateDebitForm({ budget_id, show, setShow }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
@@ -43,7 +44,7 @@ function CreateDebitForm({ budget_id, show, setShow }) {
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
 
-        let createUserRequest = await fetch("https://localhost:7073/api/DirectDebit/CreateDebit",
+        let createUserRequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/DirectDebit/CreateDebit`,
             {
                 method: 'POST', body: JSON.stringify(createDebit),
                 mode: 'cors',

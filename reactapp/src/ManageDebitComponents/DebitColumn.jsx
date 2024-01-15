@@ -10,7 +10,7 @@ import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import EditDirectForm from './EditDirectDebit';
-
+import serverConfig from "../../server-config.json"
 
 function DebitColumn({ directDebit }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
@@ -50,7 +50,7 @@ function DebitColumn({ directDebit }) {
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
 
-        const deleteDebitRequest = await fetch(`https://localhost:7073/api/DirectDebit/DeleteDirectDebit?budget_Id=${budgetId}&debit_Id=${debitId}`, {
+        const deleteDebitRequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/DirectDebit/DeleteDirectDebit?budget_Id=${budgetId}&debit_Id=${debitId}`, {
             method: 'DELETE',
             headers: myHeaders,
             mode: 'cors'

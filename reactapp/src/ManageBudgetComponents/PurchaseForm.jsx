@@ -7,6 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
+import serverConfig from "../../server-config.json"
 
 function PurchaseForm({ budget_id, show, setShow }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
@@ -32,7 +33,7 @@ function PurchaseForm({ budget_id, show, setShow }) {
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
 
-        let createPurchaseRequest = await fetch("https://localhost:7073/api/Budget/CreateBudgetItem",
+        let createPurchaseRequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/CreateBudgetItem`,
             {
                 method: 'POST', body: JSON.stringify(createPurchase),
                 mode: 'cors',

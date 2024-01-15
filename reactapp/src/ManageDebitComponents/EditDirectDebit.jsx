@@ -6,6 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
+import serverConfig from "../../server-config.json"
 
 function EditDirectForm({ showEdit, setShowEdit, debit }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
@@ -42,7 +43,7 @@ function EditDirectForm({ showEdit, setShowEdit, debit }) {
 
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
-        fetch("https://localhost:7073/api/DirectDebit/EditDirectDebit",
+        fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/DirectDebit/EditDirectDebit`,
             {
                 method: 'PUT', body: JSON.stringify(editDebit),
                 mode: 'cors',

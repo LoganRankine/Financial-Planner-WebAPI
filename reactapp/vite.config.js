@@ -30,6 +30,7 @@ export default defineConfig({
         }
     },
     server: {
+        host: true,
         proxy: {
             '^/weatherforecast': {
                 target: 'https://localhost:7073/',

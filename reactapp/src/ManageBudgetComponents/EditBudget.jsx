@@ -6,6 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
+import serverConfig from "../../server-config.json"
 
 function EditBudget({ showEdit, setShowEdit, budget }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
@@ -41,7 +42,7 @@ function EditBudget({ showEdit, setShowEdit, budget }) {
 
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
-        fetch("https://localhost:7073/api/Budget/EditBudget",
+        fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/EditBudget`,
             {
                 method: 'PUT', body: JSON.stringify(editBudget),
                 mode: 'cors',

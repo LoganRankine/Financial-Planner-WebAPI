@@ -10,11 +10,14 @@ import Button from 'react-bootstrap/Button';
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import EditBudget from './EditBudget';
+import serverConfig from "../../server-config.json"
 
 function BudgetListColumn(budgets) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [budgetId, setBudgetId] = useState("");
     const [budgetName, setBudgetName] = useState("");
+    const [extendDetail, setExtendDetail] = useState("120px");
+    const [extendDetailText, setExtendDetailText] = useState(false);
 
     const [show, setShow] = useState(false);
     const [formattedStartDate, setformattedStartDate] = useState("");
@@ -35,7 +38,7 @@ function BudgetListColumn(budgets) {
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
 
-        const deleteRequest = await fetch(`https://localhost:7073/api/Budget/DeleteBudget?budget_Id=${budgetId}`, {
+        const deleteRequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/DeleteBudget?budget_Id=${budgetId}`, {
             method: 'DELETE',
             headers: myHeaders,
             mode: 'cors'
@@ -78,18 +81,38 @@ function BudgetListColumn(budgets) {
         window.location.href = `/Account/Display/Budget/budget_id=${budgetId}`
     }
 
+    const handleExpansion = async (event) => {
+        setExtendDetail("100px")
+        if (!extendDetailText) {
+            setExtendDetailText(true)
+        }
+        else {
+            setExtendDetailText(false)
+
+        }
+        console.log("clicked")
+    }
+
     return (
-        <div className="list-content-column" >
-            <EditBudget showEdit={show} setShowEdit={setShow} budget={budgets.budgets}></EditBudget>
-            <div className="list-content-item" onClick={directBudget}>{budgetName}</div>
-            <div className="list-content-item" onClick={directBudget}>{formattedStartDate}</div>
-            <div className="list-content-item" onClick={directBudget}>{formattedEndDate}</div>
-            <div className="list-content-item" onClick={directBudget}>&#163;{budgets.budgets.AvailableAmount.toFixed(2)}</div>
-            <div className="list-content-item">&#163;{budgets.budgets.WeeklyAmount.toFixed(2)}</div>
+        <div className={extendDetailText ? "list-content-column-expand" : "list-content-column"}>
+            <div className="list-content-item">
+                <a onClick={directBudget} id="budget-title">{budgetName}</a>
+                <div className="desktop-hide" onClick={handleExpansion}>
+                    <a id="more-detail" >{extendDetailText ? "Less detail" : "More Detail"} <span class="material-symbols-outlined">arrow_drop_down</span></a>
+                </div>
+            </div>
+            <div className="list-content-item mobile-hide" onClick={directBudget}>{formattedStartDate}</div>
+            <div className="list-content-item mobile-hide" onClick={directBudget}>{formattedEndDate}</div>
+            <div id="avaliable-content" className="list-content-item" onClick={directBudget}>
+                <a id="available-text">Available amout:</a>
+                <a id="avaliable">&#163;{budgets.budgets.AvailableAmount.toFixed(2)}</a>
+            </div>
+            <div id="available-amount" className="mobile-hide list-content-item">&#163;{budgets.budgets.WeeklyAmount.toFixed(2)}</div>
             <div className="list-content-option">
                 <span class="material-symbols-outlined" style={{ cursor: 'pointer' } } onClick={handleEdit}>edit</span>
                 <span id="delete-icon" class="material-symbols-outlined" onClick={handleDelete}>delete</span>
             </div>
+            <EditBudget showEdit={show} setShowEdit={setShow} budget={budgets.budgets}></EditBudget>
             <Modal show={showDelete} onHide={handleClose} animation={true} centered >
                 <Modal.Header closeButton>
                     <Modal.Title>Delete Budget</Modal.Title>

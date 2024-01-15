@@ -3,7 +3,7 @@ import React, { Component, useState } from 'react';
 import { CookiesProvider, useCookies } from "react-cookie";
 import FirstPage from '../FirstPage';
 import { Link } from "react-router-dom";
-
+import serverConfig from "../../server-config.json"
 
 
 function login() {
@@ -19,7 +19,7 @@ function login() {
         console.log("add inputs to json object", user)
 
         //send data to create user
-        let createuserrequest = await fetch("https://localhost:7073/api/user/authenticateuser",
+        let createuserrequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/user/authenticateuser`,
             { method: 'post', body: JSON.stringify(user), mode: 'cors' }
         )
 

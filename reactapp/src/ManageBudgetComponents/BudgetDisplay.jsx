@@ -7,6 +7,7 @@ import BudgetItemColumn from './BudgetItemColumn'
 import PurchaseForm from './PurchaseForm'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import serverConfig from "../../server-config.json"
 
 function BudgetDisplay({Sidebar }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
@@ -24,7 +25,7 @@ function BudgetDisplay({Sidebar }) {
         let sessionId = cookies.SessionID
 
         myHeaders.append("x-api-key", sessionId)
-        fetch(`https://localhost:7073/api/Budget/BudgetItems?budget_Id=${query}`,
+        fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/BudgetItems?budget_Id=${query}`,
             {
                 method: 'GET',
                 mode: 'cors',
@@ -37,7 +38,7 @@ function BudgetDisplay({Sidebar }) {
             setBudgetId(query)
         });
 
-        fetch(`https://localhost:7073/api/Budget/GetBudget?budget_Id=${query}`,
+        fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/GetBudget?budget_Id=${query}`,
             {
                 method: 'GET',
                 mode: 'cors',

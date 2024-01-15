@@ -5,8 +5,7 @@ import { Link } from "react-router-dom";
 import '../css/AccountHomepage.css'
 
 import BudgetListColumn from './BudgetListColumn'
-
-
+import serverConfig from "../../server-config.json"
 
 function DisplayBudgets({SideBar }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
@@ -18,7 +17,7 @@ function DisplayBudgets({SideBar }) {
 
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
-        fetch("https://localhost:7073/api/Budget/AllBudgets",
+        fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/AllBudgets`,
             {
                 method: 'GET',
                 mode: 'cors',

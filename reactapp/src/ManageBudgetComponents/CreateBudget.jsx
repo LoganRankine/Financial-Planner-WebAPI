@@ -1,6 +1,7 @@
 import React, { Children, Component, useState } from 'react';
 import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
+import serverConfig from "../../server-config.json"
 
 function CreateBudget() {
         const [cookies, setCookie] = useCookies(['SessionID']);
@@ -25,7 +26,7 @@ function CreateBudget() {
             const myHeaders = new Headers();
             myHeaders.append("x-api-key", sessionId)
 
-            let createUserRequest = await fetch("https://localhost:7073/api/Budget/CreateBudget",
+            let createUserRequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/CreateBudget`,
                 {
                     method: 'POST', body: JSON.stringify(createBudget),
                     mode: 'cors',

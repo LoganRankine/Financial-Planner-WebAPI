@@ -3,6 +3,7 @@ import '../css/Account.css'
 import '../css/AccountHomepage.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 import Dropdown from 'react-bootstrap/Dropdown';
+import serverConfig from "../../server-config.json"
 
 function LoginDisplay() {
     const [cookies, setCookie, removeCookie] = useCookies(['SessionID']);
@@ -19,7 +20,7 @@ function LoginDisplay() {
 
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
-        fetch("https://localhost:7073/api/User/GetUsername",
+        fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/User/GetUsername`,
             {
                 method: 'GET',
                 mode: 'cors',
