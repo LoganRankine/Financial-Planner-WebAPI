@@ -26,6 +26,8 @@ function DirectDebitsDisplay({Sidebar}) {
         setBudgetId(query)
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
+
+        //Get all direct debits that are assoiated with budget id
         fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/DirectDebit/AllDirectDebits?budget_Id=${query}`,
             {
                 method: 'GET',
@@ -38,6 +40,20 @@ function DirectDebitsDisplay({Sidebar}) {
             setDirectDebits(temp)
             setBudgetId(query)
         });
+
+        //get the budget name
+        fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/GetBudget?budget_id=${query}`,
+            {
+                method: 'GET',
+                mode: 'cors',
+                headers: myHeaders,
+            }
+        ).then(result => result.json()).then(data2 => {
+            console.log(data2)
+            console.log("Got budget")
+            setBudget(data2)
+        });
+
     }, []);
 
     console.log("BudgetId from query", p_budgetId)
@@ -50,6 +66,10 @@ function DirectDebitsDisplay({Sidebar}) {
                 <CreateDebitForm budget_id={p_budgetId} show={show} setShow={setShow }></CreateDebitForm>
                 <div className="budget-header">
                     {/*right header*/}
+                    <div className="budget-header-right">
+                        <a style={{ backgroundColor: "white" }} className="budget-header-item">{p_budget.BudgetName}</a>
+                    </div>
+
                     <div className="budget-header-right">
                         <button className="budget-header-item" onClick={handleShow}>Add Direct Debit</button>
                     </div>

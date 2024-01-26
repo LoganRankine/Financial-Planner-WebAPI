@@ -25,11 +25,75 @@ namespace webapi.Services
             return "No Match";
         }
 
-        public async Task<string> AuthenticateUser(string p_username, string p_password)
+        public async Task<UserSessionResponse> AuthenticateUser(User user)
         {
-            string response = await _userDataCRUD.AuthenticateUser(p_username, p_password);
+            try
+            {
+                //Check the user object
+                if (user != null)
+                {
 
-            return response;
+                    //Ensure there is a password included and isn't empty
+                    if (user.Password != null && user.Password != "")
+                    {
+
+                        //Ensure password or name included and isn't empty
+                        if (user.Name != null && user.Name != "")
+                        {
+                            if (user.Name.Contains('@'))
+                            {
+                                //Authenticate email
+                                string response = await _userDataCRUD.AuthenticateUserEmail(user.Name, user.Password);
+
+                                //Ensure that session is returned
+                                if (response != "")
+                                {
+                                    return new UserSessionResponse
+                                    {
+                                        Success = true,
+                                        SessionID = response,
+                                        Description = "Authenticated User"
+                                    };
+                                }
+
+                            }
+                        }
+                        else if (user.Name != null && user.Name != "")
+                        {
+                            //Authenticate name
+                            string response = await _userDataCRUD.AuthenticateUserName(user.Name, user.Password);
+
+                            //Ensure that session is returned
+                            if (response != "")
+                            {
+                                return new UserSessionResponse
+                                {
+                                    Success = true,
+                                    SessionID = response,
+                                    Description = "Authenticated User"
+                                };
+                            }
+
+                        }
+
+                        return new UserSessionResponse
+                        {
+                            Success = false,
+                            Description = "Username and Password incorrect"
+                        };
+                    }
+                }
+
+                return new UserSessionResponse
+                {
+                    Success = false,
+                    Description = "Username and Password incorrect"
+                };
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public async Task<bool> CheckAuthStatus(string p_sessionID)

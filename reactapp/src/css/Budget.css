@@ -173,4 +173,60 @@
 }
 
 
+@media only screen and (max-width: 430px) {
+    .budget-content {
+        display: flex;
+        margin-top: 10px;
+        height: 100%;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        background-color: #ffffff00;
+        box-shadow: 0px 0px 0px 0px #dcdcdc9c;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        justify-content: flex-start;
+        align-items: flex-start;
+        justify-content: center;
+        flex-grow: 0;
+        flex-shrink: 1;
+        overflow-y: scroll;
+    }
 
+    .budget-content-item {
+        color: black;
+        width: 100%;
+        height: 80px;
+        border: 1px solid grey;
+        border-radius: 5px;
+        margin: 5px;
+        padding: 5px;
+        background-color: white;
+    }
+
+    .debit-item-left-box {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+    }
+
+    .debit-content-item {
+        width: 100%;
+        height: 75px;
+        border: 1px solid grey;
+        border-radius: 5px;
+        margin: 5px;
+        padding: 5px;
+        background-color: white;
+    }
+
+    .budget-header-item {
+        margin-right: 5px;
+        margin-left: 5px;
+        border: 0px solid black;
+        padding: 10px;
+        border-radius: 5px;
+        color: black;
+        background-color: #0092FC;
+        text-decoration: none;
+    }
+}

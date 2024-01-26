@@ -62,8 +62,8 @@ function BudgetDisplay({Sidebar }) {
                     {/*left header*/}
                     <div className="budget-header-right">
                         <a style={{ backgroundColor: "white" }} className="budget-header-item">{p_budget.BudgetName}</a>
-                        <a className="budget-header-item">Weekly total: </a>
-                        <a className="budget-header-item">Weekly target: &#163;{!p_budget.WeeklyAmount ? 0 : p_budget.WeeklyAmount.toFixed(2)}</a>
+                        <a className="budget-header-item mobile-hide">Weekly total: </a>
+                        <a className="budget-header-item mobile-hide">Weekly target: &#163;{!p_budget.WeeklyAmount ? 0 : p_budget.WeeklyAmount.toFixed(2)}</a>
                     </div>
                     {/*right header*/}
                     <div className="budget-header-right">

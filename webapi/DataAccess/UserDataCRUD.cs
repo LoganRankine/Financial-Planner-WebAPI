@@ -48,12 +48,13 @@ namespace webapi.DataCRUD
             }
         }
 
-        public async Task<string> AuthenticateUser(string p_email, string p_password)
+        public async Task<string> AuthenticateUserEmail(string p_email, string p_password)
         {
             try
             {
+                //Get the user by email
                 var User = _userContext.Users.ToList().FirstOrDefault(username => username.Email == p_email);
-                //Ensure username does exists
+
                 if (User != null)
                 {
                     //Compare password
@@ -61,18 +62,46 @@ namespace webapi.DataCRUD
 
                     if (await userService.ComparePasswords(User.Password, p_password))
                     {
-                        return JsonConvert.SerializeObject(new UserSessionResponse() { SessionID = User.SessionId});
+                        return User.SessionId;
                     }
 
-                    return "Incorrect Password";
+                    return "";
                 }
-                return "Username does not exist";
+                return "";
             }
             catch
             {
-                return "";
+                throw;
             }
         }
+
+        public async Task<string> AuthenticateUserName(string p_username, string p_password)
+        {
+            try
+            {
+                //Ensure username does exists
+                var User = _userContext.Users.ToList().FirstOrDefault(username => username.Name == p_username);
+
+                if (User != null)
+                {
+                    //Compare password
+                    UserService userService = new UserService(new UserDataCRUD(_userContext));
+
+                    if (await userService.ComparePasswords(User.Password, p_password))
+                    {
+                        return  User.SessionId;
+                    }
+
+                    return "";
+                }
+                return "";
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
 
         public async Task<User> CheckAuthStatus(string p_sessionID)
         {

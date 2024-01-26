@@ -99,37 +99,41 @@ namespace webapi.Controllers
             HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             try
             {
+                //Decode request body
                 StreamReader reader = new StreamReader(Request.Body, Encoding.ASCII);
                 string getBody = await reader.ReadToEndAsync();
+
                 User requestUser = JsonConvert.DeserializeObject<User>(getBody);
 
                 if (requestUser != null)
                 {
-                    string response = await _userService.AuthenticateUser(requestUser.Name, requestUser.Password);
+                    UserSessionResponse response = await _userService.AuthenticateUser(requestUser);
 
-                    switch (response)
+                    if (response.Success)
                     {
-                        case string message when message.Contains("SessionID"):
+                        if(response.SessionID != null)
+                        {
                             HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                            var session = JsonConvert.DeserializeObject<UserSessionResponse>(response);
-                            HttpContext.Response.Cookies.Append("SessionID", session.SessionID);
-                            return response;
+                            string sessionId = response.SessionID;
+                            HttpContext.Response.Cookies.Append("SessionID", sessionId);
+                            return JsonConvert.SerializeObject(response);
+                        }
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        return JsonConvert.SerializeObject(new Models.Error 
+                        { 
+                            ErrorTitle = "Error occured",
+                            ErrorDescription = "Error occured getting SessionID"
+                        });
+                    }
+                    else
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        return JsonConvert.SerializeObject(new Models.Error
+                        {
+                            ErrorTitle = "User authentication error",
+                            ErrorDescription = "Password or username was incorrect. Try again."
+                        });
 
-                        case string message when message.Contains("Incorrect Password"):
-                            HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                            return JsonConvert.SerializeObject(new Models.Error
-                            {
-                                ErrorTitle = "User authentication error",
-                                ErrorDescription = "Password or username was incorrect. Try again."
-                            });
-
-                        case string message when message.Contains("Username does not exist"):
-                            HttpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                            return JsonConvert.SerializeObject(new Models.Error
-                            {
-                                ErrorTitle = "User authentication error",
-                                ErrorDescription = "Password or username was incorrect. Try again."
-                            });
                     }
                 }
 
@@ -137,7 +141,7 @@ namespace webapi.Controllers
                 return JsonConvert.SerializeObject(new Models.Error
                 {
                     ErrorTitle = "Error occured parsing Authentification object",
-                    ErrorDescription = "Check the object is constructed correct. Check request."
+                    ErrorDescription = "Check request. Check the object is constructed correct."
                 });
             }
             catch

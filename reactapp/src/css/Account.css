@@ -172,6 +172,14 @@
     display: none !important;
 }
 
+.errorbx {
+    width: 250px;
+    background-color: #f67575;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #908c8c;
+}
+
 @media only screen and (max-width: 430px) {
     #budget-title {
         font-weight: 600;
@@ -206,6 +214,10 @@
     }
     .desktop-hide {
         display: contents !important;
+    }
+    .budget-navbar {
+        display: flex;
+        width: 100vw;
     }
     #avaliable-content {
         display: flex;
