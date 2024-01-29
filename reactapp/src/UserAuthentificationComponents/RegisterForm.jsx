@@ -18,6 +18,8 @@ function Register() {
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const [validated, setValidated] = useState(false);
+    const [loading, setLoading] = useState(false);
+
 
     const handleSubmit = (event) => {
         const form = event.currentTarget;
@@ -25,6 +27,33 @@ function Register() {
             event.preventDefault();
             event.stopPropagation();
         }
+
+        if (form.checkValidity() === true) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const createUser = {
+                Email: email,
+                Name: username,
+                Password: password,
+                Confirm_Password: confirmPassword,
+            }
+            console.log("Add inputs to JSON object", createUser)
+
+            //Send data to create user
+            fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/User/CreateUser`,
+                { method: 'POST', body: JSON.stringify(createUser), mode: 'cors' }
+            ).then(response => {
+                if (response.status == 200) {
+                    response.json().then((data) => {
+                        setCookie("SessionID", JSON.parse(data).SessionID, { path: "/" })
+                        window.location.href = "/"
+                    })
+                    console.log(response);
+                }
+            })
+        }
+
 
         setValidated(true);
     };
@@ -56,97 +85,68 @@ function Register() {
     };
 
     return (
-        <div className="content">
-            <div className="input-container">
-                <label>Username</label><br />
-                <input type="text" value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="input-box" />
-            </div>
-            <div className="input-container">
-                <label>Email</label><br />
-                <input type="text" value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="input-box" />
-            </div>
-            <div className="input-container">
-                <label>Password</label><br />
-                <input type="password" value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="input-box" />
-            </div>
-            <div className="input-container">
-                <label>Confirm Password</label><br />
-                <input type="password" value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="input-box" />
-            </div>
-            <div className="input-container">
-                <button onClick={createRequest} className="signin">Register</button>
-            </div>
-            <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                    <Form.Label>Username</Form.Label>
-                    <InputGroup hasValidation>
-                        <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
-                        <Form.Control
-                            type="username"
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="brianna"
-                            required
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            Please input a username.
-                        </Form.Control.Feedback>
-                    </InputGroup>
-                </Form.Group>
+        <Form noValidate validated={validated} onSubmit={handleSubmit} className="content">
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                <Form.Label>Username</Form.Label>
+                <InputGroup hasValidation className="input-box">
+                    <Form.Control
+                        type="username"
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="brianna"
+                        required
+                    />
+                    <Form.Control.Feedback type="invalid">
+                        Please input a username.
+                    </Form.Control.Feedback>
+                </InputGroup>
+            </Form.Group>
 
-                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                    <Form.Label>Email address</Form.Label>
-                    <InputGroup hasValidation>
-                        <Form.Control
-                            type="email address"
-                            placeholder="brianna@demo.com"
-                            onChange={(e) => setEmail(e.target.value)}
-                            required />
-                        <Form.Control.Feedback type="invalid">
-                            Please input your email.
-                        </Form.Control.Feedback>
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                    <Form.Label>Password</Form.Label>
-                    <InputGroup hasValidation>
-                        <Form.Control
-                            type="password"
-                            onChange={(e) => setPassword(e.target.value)}
-                            required />
-                        <Form.Control.Feedback type="invalid">
-                            Please input a password.
-                        </Form.Control.Feedback>
-                    </InputGroup>
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                    <Form.Label>Confirm Password</Form.Label>
-                    <InputGroup hasValidation>
-                        <Form.Control
-                            type="password"
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required />
-                        <Form.Control.Feedback type="invalid">
-                            Please input a password.
-                        </Form.Control.Feedback>
-                    </InputGroup>
-                </Form.Group>
-                <Form.Check
-                    required
-                    label="Agree to terms and conditions"
-                    feedback="You must agree before submitting."
-                    feedbackType="invalid"
-                />
-                <button className="signin" type="submit">Register</button>
-            </Form>
-        </div>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                <Form.Label>Email address</Form.Label>
+                <InputGroup hasValidation className="input-box">
+                    <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
+                    <Form.Control
+                        type="email address"
+                        placeholder="brianna@demo.com"
+                        onChange={(e) => setEmail(e.target.value)}
+                        required />
+                    <Form.Control.Feedback type="invalid">
+                        Please input your email.
+                    </Form.Control.Feedback>
+                </InputGroup>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                <Form.Label>Password</Form.Label>
+                <InputGroup hasValidation className="input-box">
+                    <Form.Control
+                        type="password"
+                        onChange={(e) => setPassword(e.target.value)}
+                        required />
+                    <Form.Control.Feedback type="invalid">
+                        Please input a password.
+                    </Form.Control.Feedback>
+                </InputGroup>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                <Form.Label>Confirm Password</Form.Label>
+                <InputGroup hasValidation className="input-box">
+                    <Form.Control
+                        type="password"
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required />
+                    <Form.Control.Feedback type="invalid">
+                        Please input a password.
+                    </Form.Control.Feedback>
+                </InputGroup>
+            </Form.Group>
+            <Form.Check
+                required
+                label="Agree to terms and conditions"
+                feedback="You must agree before submitting."
+                feedbackType="invalid"
+            />
+            <button className="signin" type="submit">Register</button>
+        </Form>
     );
 }
 
