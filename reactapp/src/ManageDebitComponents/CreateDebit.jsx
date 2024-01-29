@@ -3,6 +3,13 @@ import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 import serverConfig from "../../server-config.json"
 
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Row from 'react-bootstrap/Row';
+
+
 function CreateDebit() {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [directDebitName, setDirectDebitName] = useState("");
@@ -69,50 +76,134 @@ function CreateDebit() {
         );
     }
 
+    const [validated, setValidated] = useState(false);
+    const [error, setError] = useState(false);
+
+    const handleSubmit = async (event) => {
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        if (form.checkValidity() === true) {
+            event.preventDefault();
+            event.stopPropagation();
+            const budgetId = sessionStorage.getItem("BudgetId")
+
+            const createDebit = {
+                BudgetId: budgetId,
+                DebitName: directDebitName,
+                DebitAmount: directDebitAmount,
+                DebitDate: paymentDate,
+                Frequency: interval
+            }
+            console.log("Add inputs to JSON object", createDebit)
+
+            //Send data to create budget
+            let sessionId = cookies.SessionID
+            console.log(sessionId)
+
+            const myHeaders = new Headers();
+            myHeaders.append("x-api-key", sessionId)
+
+            let createUserRequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/DirectDebit/CreateDebit`,
+                {
+                    method: 'POST', body: JSON.stringify(createDebit),
+                    mode: 'cors',
+                    headers: myHeaders,
+                }
+            )
+
+            //let response = await createUserRequest.json();
+
+
+            if (createUserRequest.ok) {
+                console.log("added direct debit successfully")
+            }
+
+        }
+
+        setValidated(true);
+    };
+
+
     return (
-        <div class="account-creation-content">
-            <div class="debit-creation-content">
-                <div class="debit-detail-input">
-                    <div class="input-container">
-                        <label>Direct Debit Name</label><br />
-                        <input type="text" value={directDebitName}
-                            onChange={(e) => setDirectDebitName(e.target.value)}
-                            class="input-box" />
-                    </div>
-                    <div class="input-container">
-                        <label>Payment Date</label><br />
-                        <input type="date" value={paymentDate}
-                            onChange={(e) => setPaymentDate(e.target.value)}
-                            class="input-box" />
-                    </div>
-                    <div class="input-container">
-                        <label>Interval</label><br />
-                        <input type="number" value={interval}
-                            onChange={(e) => setInterval(e.target.value)}
-                            class="input-box" />
-                    </div>
-                    <div class="input-container">
-                        <label>Amount</label><br />
-                        <input type="number" value={directDebitAmount}
-                            onChange={(e) => setDebitAmount(e.target.value)}
-                            class="input-box" />
-                    </div>
-                </div>
-                <div class="debit-details-display">
-                    
-                </div>
-            </div>
-            <div>
-                <div class="account-creation-footer">
-                    <div>
-                        <button title="Save budget details and continue to main page" class="positive-button">Save Budget</button>
-                        <button onClick={saveDebit} title="Save budget details and add direct debits" class="positive-button">Add Direct Debit</button>
-                    </div>
-                    <div>
-                        <button title="Skip first budget creation" class="negative-button">Skip</button>
-                    </div>
-                </div>
-            </div>
+        <div className="align-items-center">
+            <Form noValidate validated={validated} onSubmit={handleSubmit} className="align-items-center content" centred>
+                {error ? <p className="errorbx" >Username or password incorrect</p> : ""}
+                <Row className="mb-3">
+                    <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                        <Form.Label>Direct Debit Name</Form.Label>
+                        <InputGroup hasValidation className="input-box">
+                            <Form.Control
+                                type="text"
+                                onChange={(e) => setDirectDebitName(e.target.value)}
+                                aria-describedby="inputGroupPrepend"
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please input a driect debit name.
+                            </Form.Control.Feedback>
+                        </InputGroup>
+                    </Form.Group>
+                    <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                        <Form.Label>Payment Date</Form.Label>
+                        <InputGroup hasValidation className="input-box">
+                            <Form.Control
+                                type="datetime-local"
+                                onChange={(e) => setPaymentDate(e.target.value)}
+                                aria-describedby="inputGroupPrepend"
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please select a payment date.
+                            </Form.Control.Feedback>
+
+                        </InputGroup>
+                    </Form.Group>
+
+                </Row>
+                <Row className="mb-3">
+                    <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                        <Form.Label>Interval</Form.Label>
+                        <InputGroup hasValidation className="input-box">
+                            <Form.Control
+                                type="number"
+                                onChange={(e) => setInterval(e.target.value)}
+                                aria-describedby="inputGroupPrepend"
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please input an interval.
+                            </Form.Control.Feedback>
+                        </InputGroup>
+                    </Form.Group>
+                    <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                        <Form.Label>Amount</Form.Label>
+                        <InputGroup hasValidation className="input-box">
+                            <Form.Control
+                                type="number"
+                                step="0.01"
+                                onChange={(e) => setDebitAmount(e.target.value)}
+                                placeholder="0000"
+                                aria-describedby="inputGroupPrepend"
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please input an amount.
+                            </Form.Control.Feedback>
+                        </InputGroup>
+                    </Form.Group>
+
+                </Row>
+                <Row className="mb-3 align-items-center" >
+                    <button className="signin" type="submit">Create direct debit</button>
+                    <Form.Text id="passwordHelpBlock" muted>
+                        You can click CLOSE, if you do NOT want to add direct debits.
+                    </Form.Text>
+                </Row>
+            </Form>
         </div>
     );
 }

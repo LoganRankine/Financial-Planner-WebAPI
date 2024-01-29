@@ -2,15 +2,40 @@ import React, { Children, Component, useState } from 'react';
 import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 import serverConfig from "../../server-config.json"
+import CreateDebit from '../ManageDebitComponents/CreateDebit'
+
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
 
 function CreateBudget() {
-        const [cookies, setCookie] = useCookies(['SessionID']);
-        const [budgetName, setBudgetName] = useState("");
-        const [startDate, setStartDate] = useState("");
-        const [endDate, setEndDate] = useState("");
-        const [budgetAmount, setBudgetAmount] = useState("");
+    const [cookies, setCookie] = useCookies(['SessionID']);
+    const [budgetName, setBudgetName] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [budgetAmount, setBudgetAmount] = useState("");
+    const [loading, setLoading] = useState(false);
 
-        const saveBudget = async (event) => {
+    const [validated, setValidated] = useState(false);
+    const [error, setError] = useState(false);
+    const [showBudget, setshowBudget] = useState(true);
+
+
+    const handleSubmit = async (event) => {
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        if (form.checkValidity() === true) {
+            event.preventDefault();
+            event.stopPropagation();
+
             const createBudget = {
                 BudgetName: budgetName,
                 AvailableAmount: budgetAmount,
@@ -36,59 +61,154 @@ function CreateBudget() {
 
             let response = await createUserRequest.json();
 
-
             if (createUserRequest.ok) {
                 try {
                     //Get BudgetId from response
                     const budgetObject = JSON.parse(response)
                     sessionStorage.setItem("BudgetId", budgetObject.BudgetId)
                     console.log(budgetObject.BudgetName, "created, budgetID added to session storage")
-                    console.log(this.state.isBudgetDetail)
-                    return false;
+                    setshowBudget(false)
                 }
                 catch (err) {
                     console.error(err)
                     return false;
                 }
             }
-            return false;
         }
+
+        setValidated(true);
+    };
+
+    const handleSwitch = async (event) => {
+        setshowBudget(false)
+    }
+
+    const saveBudget = async (event) => {
+        const createBudget = {
+            BudgetName: budgetName,
+            AvailableAmount: budgetAmount,
+            StartDate: startDate,
+            EndDate: endDate,
+        }
+        console.log("Add inputs to JSON object", createBudget)
+
+        //Send data to create budget
+        let sessionId = cookies.SessionID
+        console.log(sessionId)
+
+        const myHeaders = new Headers();
+        myHeaders.append("x-api-key", sessionId)
+
+        let createUserRequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/CreateBudget`,
+            {
+                method: 'POST', body: JSON.stringify(createBudget),
+                mode: 'cors',
+                headers: myHeaders,
+            }
+        )
+
+        let response = await createUserRequest.json();
+
+
+        if (createUserRequest.ok) {
+            try {
+                //Get BudgetId from response
+                const budgetObject = JSON.parse(response)
+                sessionStorage.setItem("BudgetId", budgetObject.BudgetId)
+                console.log(budgetObject.BudgetName, "created, budgetID added to session storage")
+                console.log(this.state.isBudgetDetail)
+                return false;
+            }
+            catch (err) {
+                console.error(err)
+                return false;
+            }
+        }
+        return false;
+    }
+
+    if (showBudget) {
         return (
-            <div class="account-creation-content">
-                <div class="input-container">
-                    <label>Budget Name</label><br />
-                    <input type="text" value={budgetName}
-                        onChange={(e) => setBudgetName(e.target.value)}
-                        class="input-box" />
-                </div>
-                <div class="input-container">
-                    <label>Start Date</label><br />
-                    <input type="datetime-local" value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        class="input-box" />
-                </div>
-                <div class="input-container">
-                    <label>End Date</label><br />
-                    <input type="datetime-local" value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        class="input-box" />
-                </div>
-                <div class="input-container">
-                    <label>Total Budget Amount</label><br />
-                    <input type="number" value={budgetAmount}
-                        onChange={(e) => setBudgetAmount(e.target.value)}
-                        class="input-box" />
-                </div>
-                <div class="account-creation-footer">
-                    <div>
-                        <button title="Save budget details and continue to main page" class="positive-button" onClick={saveBudget}>Save Budget</button>
-                        <button title="Save budget details and add direct debits" class="positive-button">Add Direct Debit</button>
-                    </div>
-                    <div>
-                        <button title="Skip first budget creation" class="negative-button">Skip</button>
-                    </div>
-                </div>
-            </div>
+            <>
+                <Form noValidate validated={validated} onSubmit={handleSubmit} className="content">
+                    {error ? <p className="errorbx" >Username or password incorrect</p> : ""}
+                    <Row className="mb-3">
+                        <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                            <Form.Label>Budget Name</Form.Label>
+                            <InputGroup hasValidation className="input-box">
+                                <Form.Control
+                                    type="text"
+                                    onChange={(e) => setBudgetName(e.target.value)}
+                                    aria-describedby="inputGroupPrepend"
+                                    required
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    Please input a budget name.
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form.Group>
+                        <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                            <Form.Label>Total Budget Amount</Form.Label>
+                            <InputGroup hasValidation className="input-box">
+                                <Form.Control
+                                    type="number"
+                                    onChange={(e) => setBudgetAmount(e.target.value)}
+                                    placeholder="0000"
+                                    aria-describedby="inputGroupPrepend"
+                                    required
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    Please input a budget amount.
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form.Group>
+                    </Row>
+                    <Row className="mb-3">
+                        <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                            <Form.Label>Start Date</Form.Label>
+                            <InputGroup hasValidation className="input-box">
+                                <Form.Control
+                                    type="datetime-local"
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    aria-describedby="inputGroupPrepend"
+                                    required
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    Please select a start date.
+                                </Form.Control.Feedback>
+
+                            </InputGroup>
+                        </Form.Group>
+                        <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                            <Form.Label>End Date</Form.Label>
+                            <InputGroup hasValidation className="input-box">
+                                <Form.Control
+                                    type="datetime-local"
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    aria-describedby="inputGroupPrepend"
+                                    required
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    Please select a end date.
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form.Group>
+
+                    </Row>
+                    <button className="signin" type="submit">
+                        {loading ? <>
+                            <Spinner animation="border" variant="info" role="status" size="sm" />
+                            <span>Creating budget</span>
+                        </> : 'Create budget'}
+                    </button>
+                </Form>
+            </>
         );
+    }
+    else {
+        return (
+            <CreateDebit></CreateDebit>
+        );
+    }
 }
 export default CreateBudget

@@ -75,7 +75,7 @@ function DirectDebitsDisplay({Sidebar}) {
                     </div>
                 </div>
                 <div className="budget-content">
-                    {!directDebits ? 'Loading' : directDebits.map(p_directDebit => (<DebitColumn directDebit={p_directDebit} />))}
+                    {!directDebits ? 'Loading' : directDebits.map(p_directDebit => (<DebitColumn directDebit={p_directDebit} key={p_directDebit.Id} />))}
                     {/*    <DebitColumn></DebitColumn>*/}
                 </div>
             </div>

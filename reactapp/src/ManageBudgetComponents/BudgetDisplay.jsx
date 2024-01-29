@@ -71,7 +71,7 @@ function BudgetDisplay({Sidebar }) {
                     </div>
                 </div>
                 <div className="budget-content">
-                    {!budgetItems ? 'Loading' : budgetItems.map(budgetItem => (< BudgetItemColumn budgetItem={budgetItem} />))}
+                    {!budgetItems ? 'Loading' : budgetItems.map(budgetItem => (< BudgetItemColumn budgetItem={budgetItem} key={budgetItem.Id} />))}
                 </div>
             </div>
 

@@ -12,7 +12,7 @@ import ToastContainer from 'react-bootstrap/ToastContainer';
 import EditBudget from './EditBudget';
 import serverConfig from "../../server-config.json"
 
-function BudgetListColumn(budgets) {
+function BudgetListColumn(budgets, key) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [budgetId, setBudgetId] = useState("");
     const [budgetName, setBudgetName] = useState("");
@@ -94,11 +94,11 @@ function BudgetListColumn(budgets) {
     }
 
     return (
-        <div className={extendDetailText ? "list-content-column-expand" : "list-content-column"}>
+        <div style={isSuccess ? { display: 'none' } : { display: 'flex' }} className={extendDetailText ? "list-content-column-expand" : "list-content-column"} >
             <div className="list-content-item">
-                <a onClick={directBudget} id="budget-title">{budgetName}</a>
+                <div onClick={directBudget} id="budget-title">{budgetName}</div>
                 <div className="desktop-hide" onClick={handleExpansion}>
-                    <a id="more-detail" >{extendDetailText ? "Less detail" : "More Detail"} <span class="material-symbols-outlined">arrow_drop_down</span></a>
+                    <a id="more-detail" >{extendDetailText ? "Less detail" : "More Detail"} <span className="material-symbols-outlined">arrow_drop_down</span></a>
                 </div>
             </div>
             <div className="list-content-item mobile-hide" onClick={directBudget}>{formattedStartDate}</div>
@@ -109,8 +109,8 @@ function BudgetListColumn(budgets) {
             </div>
             <div id="available-amount" className="mobile-hide list-content-item">&#163;{budgets.budgets.WeeklyAmount.toFixed(2)}</div>
             <div className="list-content-option">
-                <span class="material-symbols-outlined" style={{ cursor: 'pointer' } } onClick={handleEdit}>edit</span>
-                <span id="delete-icon" class="material-symbols-outlined" onClick={handleDelete}>delete</span>
+                <span className="material-symbols-outlined" style={{ cursor: 'pointer' } } onClick={handleEdit}>edit</span>
+                <span id="delete-icon" className="material-symbols-outlined" onClick={handleDelete}>delete</span>
             </div>
             <EditBudget showEdit={show} setShowEdit={setShow} budget={budgets.budgets}></EditBudget>
             <Modal show={showDelete} onHide={handleClose} animation={true} centered >

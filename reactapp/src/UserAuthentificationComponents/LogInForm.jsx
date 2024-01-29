@@ -10,6 +10,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
+import Spinner from 'react-bootstrap/Spinner';
 
 function login() {
     const [cookies, setCookie] = useCookies();
@@ -17,6 +18,7 @@ function login() {
     const [password, setPassword] = useState("");
 
     const [validated, setValidated] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
 
     const handleSubmit = async (event) => {
@@ -27,6 +29,7 @@ function login() {
         }
 
         if (form.checkValidity() === true) {
+            setLoading(true)
             event.preventDefault();
             event.stopPropagation();
 
@@ -116,7 +119,12 @@ function login() {
                     </InputGroup>
                 </Form.Group>
             </Row>
-            <button className="signin" type="submit">Sign In</button>
+            <button className="signin" type="submit">
+                {loading ? <>
+                    <Spinner animation="border" variant="info" role="status" size="sm" />
+                    <span>Signing in</span>
+                </> : 'Sign In'}
+            </button>
         </Form>
 
     );

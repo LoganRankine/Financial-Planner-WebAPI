@@ -14,7 +14,7 @@ function Homepage({ Sidebar, Content, loginDisplay }) {
                 {/*Section to show name and logo*/}
                 <div className="title-box">
                     {/*Logo*/}
-                    <span style={{ cursor: 'pointer' }} href="/Account/Home" class="material-symbols-outlined top-navbar-logo">
+                    <span style={{ cursor: 'pointer' }} href="/Account/Home" className="material-symbols-outlined top-navbar-logo">
                         account_balance
                     </span>
                     {/*Name*/}

@@ -12,7 +12,7 @@ import serverConfig from "../../server-config.json"
 
 import '../css/Budget.css'
 import EditBudgetItem from './EditBudgetItem';
-function BudgetItemColumn(budgetItem) {
+function BudgetItemColumn(budgetItem, key) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [itemId, setItemId] = useState("");
     const [budgetId, setBudgetId] = useState("");
@@ -50,6 +50,7 @@ function BudgetItemColumn(budgetItem) {
             setIsSuccess(true)
             setDeleteStatusText(message.SuccessTitle)
             setDeleteStatus(true)
+            budgetItem.
             console.log("delete was successful")
         }
         else {
@@ -83,8 +84,8 @@ function BudgetItemColumn(budgetItem) {
                 <div className="budget-item-right">
                     <a className="budget-item-price">&#163;{budgetItem.budgetItem.ItemAmount}</a>
                     <div className="list-content-option">
-                        <span class="material-symbols-outlined" onClick={handleEdit}>edit</span>
-                        <span id="delete-icon" class="material-symbols-outlined" onClick={handleDelete}>delete</span>
+                        <span className="material-symbols-outlined" onClick={handleEdit}>edit</span>
+                        <span id="delete-icon" className="material-symbols-outlined" onClick={handleDelete}>delete</span>
                     </div>
                 </div>
             </div>

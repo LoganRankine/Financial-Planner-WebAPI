@@ -6,9 +6,11 @@ import '../css/AccountHomepage.css'
 
 import BudgetListColumn from './BudgetListColumn'
 import serverConfig from "../../server-config.json"
+import Spinner from 'react-bootstrap/Spinner';
 
 function DisplayBudgets({SideBar }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
+    const [loading, setLoading] = useState(true);
 
     const [allBudgets, setBudgets] = useState(null);
 
@@ -23,11 +25,19 @@ function DisplayBudgets({SideBar }) {
                 mode: 'cors',
                 headers: myHeaders,
             }
-        ).then(response => response.json()).then(data => {
-            const temp = JSON.parse(data)
-            console.log(temp)
-            setBudgets(temp)
-        });
+        ).then(response => {
+            if (response.status == 200) {
+                response.json().then(data => {
+                    const temp = JSON.parse(data)
+                    console.log(temp)
+                    setBudgets(temp)
+                    setLoading(false)
+                })
+            }
+            else if (response.status == 204) {
+                setLoading(true)
+            }
+        })
     }, []);
 
     const reload = (event) => {
@@ -44,16 +54,17 @@ function DisplayBudgets({SideBar }) {
                         <div className="list-header-item">Budget Name</div>
                         <div className="list-header-item">Start Date</div>
                         <div className="list-header-item">End Date</div>
-                        <div className="list-header-item">Total Amount</div>
+                        <div className="list-header-item">Available Amount</div>
                         <div className="list-header-item">Weekly Amount</div>
                         <div className="list-content-option">
-                            <span onClick={reload} class="material-symbols-outlined" style={{ cursor: 'pointer' }}>
+                            <span onClick={reload} className="material-symbols-outlined" style={{ cursor: 'pointer' }}>
                                 refresh
                             </span>
                         </div>
                     </div>
                     <div className="list-content">
-                        {!allBudgets ? 'Loading' : allBudgets.map(budget => (< BudgetListColumn budgets={budget} />))}
+                        {loading ? <div className="no-budgets"><Spinner animation="border" variant="info" role="status"></Spinner></div> : <></>}
+                        {!allBudgets ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Budgets</div> : allBudgets.map(budget => (<BudgetListColumn budgets={budget} key={budget.Id} />))}
                         {/*{!allBudgets ? 'Loading' : allBudgets.allBudgets.map}*/}
                     </div>
                 </div>

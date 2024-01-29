@@ -91,8 +91,8 @@ function DebitColumn({ directDebit }) {
                 <div className="debit-item-right">
                     <a className="debit-item-price">&#163;{directDebit.DebitAmount}</a>
                     <div className="list-content-option">
-                        <span class="material-symbols-outlined" onClick={handleEdit}>edit</span>
-                        <span id="delete-icon" class="material-symbols-outlined" onClick={handleDelete}>delete</span>
+                        <span className="material-symbols-outlined" onClick={handleEdit}>edit</span>
+                        <span id="delete-icon" className="material-symbols-outlined" onClick={handleDelete}>delete</span>
                     </div>
                 </div>
             </div>

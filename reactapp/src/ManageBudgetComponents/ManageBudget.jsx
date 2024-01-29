@@ -4,8 +4,12 @@ import { CookiesProvider, useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 import Sidebar from '../AccountComponents/BudgetSidebar';
 import serverConfig from "../../server-config.json"
+import CreateBudget from './CreateBudget'
+import CreateDebit from '../ManageDebitComponents/CreateDebit'
 
 function ManageBudget({ child }) {
+
+    const [budget, setBudget] = useState(false);
 
     let budgetStyle = {
     };
@@ -14,10 +18,12 @@ function ManageBudget({ child }) {
 
     if (window.location.pathname === "/Account/CreateBudget") {
         budgetStyle = { color: "grey" }
+
     }
     else {
         debitStyle = { color: "grey" }
     }
+    console.log(budget)
 
     return (
         <div className="base-content">
@@ -34,7 +40,7 @@ function ManageBudget({ child }) {
                                 <Link to="/Account/ManageBudget/CreateDebit" style={debitStyle} class="account-creation-nav-item">Direct Debits</Link>
                             </div>
                         </div>
-                        {child}
+                        {budget ? <CreateDebit></CreateDebit> : <CreateBudget></CreateBudget>}
                     </div>
                 </div>
             </div>
