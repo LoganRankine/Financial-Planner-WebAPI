@@ -10,18 +10,41 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
+import Container from 'react-bootstrap/Container';
+import Spinner from 'react-bootstrap/Spinner';
+import Modal from 'react-bootstrap/Modal';
 
 function Register() {
+    //User form variables
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
+    const [notification, setNotification] = useState("");
+
+    //Show Modal
+    const [show, setShow] = useState(false);
+    const handleClose = () => {
+        setShow(false)
+        window.location.reload()
+    };
+
+    //Validation
     const [validated, setValidated] = useState(false);
+    const [passwordMatch, setPasswordMatch] = useState(false);
+    const match = (p_password, p_confirm) => {
+        if (p_password === p_confirm) {
+            return true;
+            setPasswordMatch(true)
+        }
+        return false
+    }
+
     const [loading, setLoading] = useState(false);
 
-
-    const handleSubmit = (event) => {
+    //Submit form
+    const handleCreation = (event) => {
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.preventDefault();
@@ -29,6 +52,7 @@ function Register() {
         }
 
         if (form.checkValidity() === true) {
+            setLoading(true)
             event.preventDefault();
             event.stopPropagation();
 
@@ -38,114 +62,134 @@ function Register() {
                 Password: password,
                 Confirm_Password: confirmPassword,
             }
+
             console.log("Add inputs to JSON object", createUser)
 
-            //Send data to create user
+            //Create user using API
             fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/User/CreateUser`,
                 { method: 'POST', body: JSON.stringify(createUser), mode: 'cors' }
             ).then(response => {
-                if (response.status == 200) {
+                //User created
+                if (response.status == 201) {
+                    //Go to sign in page
+                    window.location.href = "/"
+                }
+
+                //Error occured
+                if (response.status == 400) {
                     response.json().then((data) => {
-                        setCookie("SessionID", JSON.parse(data).SessionID, { path: "/" })
-                        window.location.href = "/"
+                        //Display the error to user
+                        setNotification(data.ErrorDescription)
+                        setShow(true)
+                        setLoading(false)
+                        setValidated(false)
                     })
-                    console.log(response);
                 }
             })
         }
 
-
         setValidated(true);
     };
 
-    const createRequest = async (event) => {
-        const createUser = {
-            Email: email,
-            Name: username,
-            Password: password,
-            Confirm_Password: confirmPassword,
-        }
-        console.log("Add inputs to JSON object", createUser)
-
-        //Send data to create user
-        let createUserRequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/User/CreateUser`,
-            { method: 'POST', body: JSON.stringify(createUser), mode: 'cors' }
-        )
-
-        let response = await createUserRequest.json();
-
-        if (createUserRequest.ok) {
-            setCookie("SessionID", JSON.parse(response).SessionID, { path: "/" })
-            window.location.href = "/"
-        }
-
-        console.log(response);
-
-
-    };
-
     return (
-        <Form noValidate validated={validated} onSubmit={handleSubmit} className="content">
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                <Form.Label>Username</Form.Label>
-                <InputGroup hasValidation className="input-box">
-                    <Form.Control
-                        type="username"
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="brianna"
-                        required
-                    />
-                    <Form.Control.Feedback type="invalid">
-                        Please input a username.
-                    </Form.Control.Feedback>
-                </InputGroup>
-            </Form.Group>
+        <Form style={{display: 'contents'}} noValidate validated={validated} onSubmit={handleCreation}>
+            <Row className="mb-3">
+                <Form.Group as={Col} >
+                    <Form.Label>Username</Form.Label>
+                    <InputGroup hasValidation >
+                        <Form.Control
+                            type="username"
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="brianna"
+                            required
+                            
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            Please input a username.
+                        </Form.Control.Feedback>
+                    </InputGroup>
+                </Form.Group>
+            </Row>
+            <Row className="mb-3">
+                <Form.Group as={Col} >
+                    <Form.Label>Email address</Form.Label>
+                    <InputGroup hasValidation >
+                        <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
+                        <Form.Control
+                            type="email"
+                            placeholder="brianna@demo.com"
+                            onChange={(e) => setEmail(e.target.value)}
+                            required />
+                        <Form.Control.Feedback type="invalid">
+                            Please input your email.
+                        </Form.Control.Feedback>
+                    </InputGroup>
+                </Form.Group>
+            </Row>
 
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                <Form.Label>Email address</Form.Label>
-                <InputGroup hasValidation className="input-box">
-                    <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
-                    <Form.Control
-                        type="email address"
-                        placeholder="brianna@demo.com"
-                        onChange={(e) => setEmail(e.target.value)}
-                        required />
-                    <Form.Control.Feedback type="invalid">
-                        Please input your email.
-                    </Form.Control.Feedback>
-                </InputGroup>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                <Form.Label>Password</Form.Label>
-                <InputGroup hasValidation className="input-box">
-                    <Form.Control
-                        type="password"
-                        onChange={(e) => setPassword(e.target.value)}
-                        required />
-                    <Form.Control.Feedback type="invalid">
-                        Please input a password.
-                    </Form.Control.Feedback>
-                </InputGroup>
-            </Form.Group>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                <Form.Label>Confirm Password</Form.Label>
-                <InputGroup hasValidation className="input-box">
-                    <Form.Control
-                        type="password"
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required />
-                    <Form.Control.Feedback type="invalid">
-                        Please input a password.
-                    </Form.Control.Feedback>
-                </InputGroup>
-            </Form.Group>
-            <Form.Check
-                required
-                label="Agree to terms and conditions"
-                feedback="You must agree before submitting."
-                feedbackType="invalid"
-            />
-            <button className="signin" type="submit">Register</button>
+            <Row className="mb-3">
+                <Form.Group as={Col} >
+                    <Form.Label>Password</Form.Label>
+                    <InputGroup hasValidation >
+                        <Form.Control
+                            type="password"
+                            onChange={(e) => setPassword(e.target.value)}
+                            isInvalid={!match(password, confirmPassword)}
+                            required />
+                        <Form.Control.Feedback type="invalid">
+                            {passwordMatch ? 'Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters' : 'Passwords do not match'}
+                        </Form.Control.Feedback>
+                    </InputGroup>
+                </Form.Group>
+            </Row>
+            <Row className="mb-3">
+                <Form.Group as={Col} >
+                    <Form.Label>Confirm Password</Form.Label>
+                    <InputGroup hasValidation>
+                        <Form.Control
+                            type="password"
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            isInvalid={!match(password, confirmPassword)}
+                            required />
+                        <Form.Control.Feedback type="invalid">
+                            {passwordMatch ? 'Please input a password' : 'Passwords do not match'}
+                        </Form.Control.Feedback>
+                    </InputGroup>
+                </Form.Group>
+            </Row>
+
+            <Row className="mb-3">
+                <Form.Group as={Col} style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                }}>
+                    <Form.Check
+                        required
+                        label="Agree to terms and conditions"
+                        feedback="You must agree before submitting."
+                        feedbackType="invalid"
+                    />
+                    <button className="signin" type="submit">
+                        {loading ? <>
+                        <Spinner animation="border" variant="info" role="status" size="sm" />
+                        <span>Creating account</span>
+                        </> : 'Register'}
+                    </button>
+                </Form.Group>
+            </Row>
+
+            <Modal show={show} onHide={handleClose} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Error creating account</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{notification}</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Try again
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Form>
     );
 }

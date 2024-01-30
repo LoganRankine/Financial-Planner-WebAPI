@@ -35,42 +35,42 @@ namespace webapi.Controllers
 
                 if (requestUser != null)
                 {
-                    if (requestUser.Password == requestUser.Confirm_Password)
+                    CreateUserResponse createUserResponse = await _userService.CreateUser(requestUser);
+
+                    if (createUserResponse.Success)
                     {
-                        string response = await _userService.CreateUser(requestUser.Name, requestUser.Email, requestUser.Password, requestUser.Confirm_Password);
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
+                        return JsonConvert.SerializeObject(createUserResponse);
+                    }
 
-                        switch (response)
+                    if(createUserResponse.UserNameExists)
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        return JsonConvert.SerializeObject(new Models.Error
                         {
-                            case string message when message.Contains("No Match"):
-                                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                                return JsonConvert.SerializeObject(new Models.Error
-                                {
-                                    ErrorTitle = "Passwords do not match",
-                                    ErrorDescription = "Confirm password and password does not match. Ensure they match before making request"
-                                });
+                            ErrorTitle = "Username exists",
+                            ErrorDescription = createUserResponse.Desciption
+                        });
+                    }
 
-                            case string message when message.Contains("Creation error"):
-                                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                                return JsonConvert.SerializeObject(new Models.Error
-                                {
-                                    ErrorTitle = "Error occured creating user",
-                                    ErrorDescription = "An error occured creating the user"
-                                });
+                    if (createUserResponse.EmailExists)
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        return JsonConvert.SerializeObject(new Models.Error
+                        {
+                            ErrorTitle = "Email exists",
+                            ErrorDescription = createUserResponse.Desciption
+                        });
+                    }
 
-                            case string message when message.Contains("Username exists"):
-                                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                                return JsonConvert.SerializeObject(new Models.Error
-                                {
-                                    ErrorTitle = "Username exists",
-                                    ErrorDescription = "The username provided is already in use. Try again with different username"
-                                });
-
-                            case string message when message.Contains("SessionID"):
-                                HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                                var session = JsonConvert.DeserializeObject<UserSessionResponse>(response);
-                                HttpContext.Response.Cookies.Append("SessionID", session.SessionID);
-                                return JsonConvert.SerializeObject(response);
-                        }
+                    if (!createUserResponse.PasswordsMatch)
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        return JsonConvert.SerializeObject(new Models.Error
+                        {
+                            ErrorTitle = "Passwords don't match",
+                            ErrorDescription = createUserResponse.Desciption
+                        });
                     }
                 }
 

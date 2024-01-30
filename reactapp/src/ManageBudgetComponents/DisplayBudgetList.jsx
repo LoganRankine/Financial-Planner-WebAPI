@@ -35,7 +35,7 @@ function DisplayBudgets({SideBar }) {
                 })
             }
             else if (response.status == 204) {
-                setLoading(true)
+                setLoading(false)
             }
         })
     }, []);

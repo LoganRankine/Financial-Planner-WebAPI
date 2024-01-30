@@ -55,6 +55,7 @@ function login() {
                 }
                 else {
                     console.log(data)
+                    setLoading(false)
                     setError(true);
                     setValidated(false);
                 }
