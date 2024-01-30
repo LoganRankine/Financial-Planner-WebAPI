@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import '../css/Budget.css'
 import BudgetItemColumn from './BudgetItemColumn'
 import PurchaseForm from './PurchaseForm'
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+
+import { Button, Modal, Spinner } from 'react-bootstrap';
 import serverConfig from "../../server-config.json"
 
 function BudgetDisplay({Sidebar }) {
@@ -16,15 +16,20 @@ function BudgetDisplay({Sidebar }) {
     const [p_budgetId, setBudgetId] = useState("");
     const [p_budget, setBudget] = useState("");
 
+    const [loading, setLoading] = useState(true);
+
     const handleShow = () => setShow(true);
 
-    useEffect(() => {
-        const query = window.location.pathname.replace("/Account/Display/Budget/budget_id=", "")
-        setBudgetId(query)
+    const getBudgetId = () => {
+    }
+
+    const getBudgetItems = (query) => {
+        setLoading(true)
         const myHeaders = new Headers();
         let sessionId = cookies.SessionID
 
         myHeaders.append("x-api-key", sessionId)
+
         fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/BudgetItems?budget_Id=${query}`,
             {
                 method: 'GET',
@@ -34,9 +39,21 @@ function BudgetDisplay({Sidebar }) {
         ).then(response => response.json()).then(data => {
             const temp = JSON.parse(data)
             console.log(temp)
+            setLoading(false)
             setBudgetItems(temp)
             setBudgetId(query)
         });
+
+    }
+
+    const getBudget = (query) => {
+        setLoading(true)
+
+        const myHeaders = new Headers();
+        let sessionId = cookies.SessionID
+
+        myHeaders.append("x-api-key", sessionId)
+
 
         fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/GetBudget?budget_Id=${query}`,
             {
@@ -44,10 +61,30 @@ function BudgetDisplay({Sidebar }) {
                 mode: 'cors',
                 headers: myHeaders,
             }
-        ).then(response => response.json()).then(data2 => {
-            console.log("Budget details", data2)
-            setBudget(data2)
-        });
+        ).then(response => {
+            if (response.status == 200) {
+                response.json().then(data => {
+                    console.log("Budget details", data)
+                    setBudget(data)
+                    setLoading(false)
+                });
+            }
+            if (response.status == 204) {
+                setLoading(false)
+            }
+        })
+
+    }
+
+    useEffect(() => {
+        setLoading(true)
+
+        const query = window.location.pathname.replace("/Account/Display/Budget/budget_id=", "")
+
+        getBudgetItems(query)
+
+        getBudget(query)
+
     }, []);
 
     console.log("BudgetId from query",p_budgetId)
@@ -71,7 +108,8 @@ function BudgetDisplay({Sidebar }) {
                     </div>
                 </div>
                 <div className="budget-content">
-                    {!budgetItems ? 'Loading' : budgetItems.map(budgetItem => (< BudgetItemColumn budgetItem={budgetItem} key={budgetItem.Id} />))}
+                    {loading ? <div className="no-budgets"><Spinner animation="border" variant="info" role="status"></Spinner></div> : <></>}
+                    {!budgetItems ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Purchases</div> : budgetItems.map(budgetItem => (<BudgetItemColumn budgetItem={budgetItem} key={budgetItem.Id} />))}
                 </div>
             </div>
 

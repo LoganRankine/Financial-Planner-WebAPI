@@ -3,12 +3,7 @@ import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 import serverConfig from "../../server-config.json"
 
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Row from 'react-bootstrap/Row';
-
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 
 function CreateDebit() {
     const [cookies, setCookie] = useCookies(['SessionID']);
@@ -129,11 +124,11 @@ function CreateDebit() {
 
 
     return (
-        <div className="align-items-center">
-            <Form noValidate validated={validated} onSubmit={handleSubmit} className="align-items-center content" centred>
+        <div className="centre-form">
+            <Form noValidate validated={validated} onSubmit={handleSubmit} className="centre-form" centred>
                 {error ? <p className="errorbx" >Username or password incorrect</p> : ""}
                 <Row className="mb-3">
-                    <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                    <Form.Group controlId="validationCustomUsername">
                         <Form.Label>Direct Debit Name</Form.Label>
                         <InputGroup hasValidation className="input-box">
                             <Form.Control
@@ -147,7 +142,7 @@ function CreateDebit() {
                             </Form.Control.Feedback>
                         </InputGroup>
                     </Form.Group>
-                    <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                    <Form.Group controlId="validationCustomUsername">
                         <Form.Label>Payment Date</Form.Label>
                         <InputGroup hasValidation className="input-box">
                             <Form.Control
@@ -165,7 +160,7 @@ function CreateDebit() {
 
                 </Row>
                 <Row className="mb-3">
-                    <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                    <Form.Group controlId="validationCustomUsername">
                         <Form.Label>Interval</Form.Label>
                         <InputGroup hasValidation className="input-box">
                             <Form.Control
@@ -179,7 +174,7 @@ function CreateDebit() {
                             </Form.Control.Feedback>
                         </InputGroup>
                     </Form.Group>
-                    <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                    <Form.Group controlId="validationCustomUsername">
                         <Form.Label>Amount</Form.Label>
                         <InputGroup hasValidation className="input-box">
                             <Form.Control
@@ -197,13 +192,13 @@ function CreateDebit() {
                     </Form.Group>
 
                 </Row>
-                <Row className="mb-3 align-items-center" >
-                    <button className="signin" type="submit">Create direct debit</button>
-                    <Form.Text id="passwordHelpBlock" muted>
-                        You can click CLOSE, if you do NOT want to add direct debits.
-                    </Form.Text>
+                <Row className="mb-3" >
+                    <button className="update-button" type="submit">Create direct debit</button>
                 </Row>
             </Form>
+            <Form.Text muted>
+                You can click CLOSE, if you do NOT want to add direct debits.
+            </Form.Text>
         </div>
     );
 }

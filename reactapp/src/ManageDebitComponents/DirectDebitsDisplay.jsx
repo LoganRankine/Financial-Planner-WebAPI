@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import '../css/Budget.css'
 import DebitColumn from './DebitColumn'
 import CreateDebitForm from './CreateDebitForm'
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+
+import { Button, Spinner, Modal } from 'react-bootstrap';
 import serverConfig from "../../server-config.json"
 
 function DirectDebitsDisplay({Sidebar}) {
@@ -15,15 +15,13 @@ function DirectDebitsDisplay({Sidebar}) {
     const [p_budgetId, setBudgetId] = useState("");
     const [p_budget, setBudget] = useState("");
     const [show, setShow] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const handleShow = () => setShow(true);
 
-
-    useEffect(() => {
+    const getDirectDebits = (query) => {
+        setLoading(true)
         let sessionId = cookies.SessionID
-        const query = window.location.pathname.replace("/Account/Display/DirectDebits/budget_id=", "")
-
-        setBudgetId(query)
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
 
@@ -39,8 +37,19 @@ function DirectDebitsDisplay({Sidebar}) {
             console.log(temp)
             setDirectDebits(temp)
             setBudgetId(query)
+            setLoading(false)
         });
 
+
+    }
+
+    const getBudget = (query) => {
+        let sessionId = cookies.SessionID
+
+        const myHeaders = new Headers();
+        myHeaders.append("x-api-key", sessionId)
+
+        setLoading(true)
         //get the budget name
         fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/Budget/GetBudget?budget_id=${query}`,
             {
@@ -48,11 +57,24 @@ function DirectDebitsDisplay({Sidebar}) {
                 mode: 'cors',
                 headers: myHeaders,
             }
-        ).then(result => result.json()).then(data2 => {
-            console.log(data2)
+        ).then(result => result.json()).then(data => {
+            setLoading(false)
+            console.log(data)
             console.log("Got budget")
-            setBudget(data2)
+            setBudget(data)
+            setLoading(false)
         });
+
+    }
+
+    useEffect(() => {
+        setLoading(true)
+
+        const query = window.location.pathname.replace("/Account/Display/DirectDebits/budget_id=", "")
+
+        getDirectDebits(query)
+
+        getBudget(query)
 
     }, []);
 
@@ -75,7 +97,10 @@ function DirectDebitsDisplay({Sidebar}) {
                     </div>
                 </div>
                 <div className="budget-content">
-                    {!directDebits ? 'Loading' : directDebits.map(p_directDebit => (<DebitColumn directDebit={p_directDebit} key={p_directDebit.Id} />))}
+                    {loading ? <div className="no-budgets"><Spinner animation="border" variant="info" role="status"></Spinner></div> : <></>}
+                    {!directDebits ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Direct Debits</div> : directDebits.map(p_directDebit => (<DebitColumn directDebit={p_directDebit} key={p_directDebit.Id} />))}
+
+
                     {/*    <DebitColumn></DebitColumn>*/}
                 </div>
             </div>

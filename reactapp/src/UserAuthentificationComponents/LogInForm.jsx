@@ -12,6 +12,8 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import Spinner from 'react-bootstrap/Spinner';
 
+
+
 function login() {
     const [cookies, setCookie] = useCookies();
     const [name, setName] = useState("");
@@ -20,6 +22,37 @@ function login() {
     const [validated, setValidated] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
+
+    const authenticate = () => {
+        const user = {
+            Name: name,
+            Password: password,
+        }
+
+        console.log("add inputs to json object", user)
+
+        //send data to create user
+        fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/user/authenticateuser`,
+            { method: 'post', body: JSON.stringify(user), mode: 'cors' }
+        ).then(response => response.json().then(data => {
+            console.log(response)
+            console.log(data)
+            if (response.ok) {
+                console.log(response)
+                setCookie("SessionID", data.SessionID, { path: "/" })
+                window.location.href = "/Account/Home"
+                setValidated(true);
+
+            }
+            else {
+                console.log(data)
+                setLoading(false)
+                setError(true);
+                setValidated(false);
+            }
+        }))
+
+    }
 
     const handleSubmit = async (event) => {
         const form = event.currentTarget;
@@ -32,60 +65,13 @@ function login() {
             setLoading(true)
             event.preventDefault();
             event.stopPropagation();
-
             console.log("validated")
-            const user = {
-                Name: name,
-                Password: password,
-            }
-            console.log("add inputs to json object", user)
 
-            //send data to create user
-            fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/user/authenticateuser`,
-                { method: 'post', body: JSON.stringify(user), mode: 'cors' }
-            ).then(response => response.json().then(data => {
-                console.log(response)
-                console.log(data)
-                if (response.ok) {
-                    console.log(response)
-                    setCookie("SessionID", data.SessionID, { path: "/" })
-                    window.location.href = "/Account/Home"
-                    setValidated(true);
-
-                }
-                else {
-                    console.log(data)
-                    setLoading(false)
-                    setError(true);
-                    setValidated(false);
-                }
-            }))
+            authenticate()
         }
+
 
         setValidated(true);
-    };
-
-    const authenticaterequest = async (event) => {
-        const user = {
-            Name: name,
-            Password: password,
-        }
-        console.log("add inputs to json object", user)
-
-        //send data to create user
-        let createuserrequest = await fetch(`https://${serverConfig.serverIP}:${serverConfig.serverPort}/api/user/authenticateuser`,
-            { method: 'post', body: JSON.stringify(user), mode: 'cors' }
-        )
-
-        let response = await createuserrequest.json();
-
-        if (createuserrequest.ok) {
-            console.log(response)
-            setCookie("SessionID", response.SessionID, { path: "/" })
-            window.location.href = "/Account/Home"
-        }
-
-        console.log(response);
     };
 
     return (

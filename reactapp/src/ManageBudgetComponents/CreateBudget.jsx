@@ -4,13 +4,7 @@ import { CookiesProvider, useCookies } from "react-cookie";
 import serverConfig from "../../server-config.json"
 import CreateDebit from '../ManageDebitComponents/CreateDebit'
 
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Row from 'react-bootstrap/Row';
-import Spinner from 'react-bootstrap/Spinner';
+import {Modal, Button, Col, Form, InputGroup, Row, Spinner} from 'react-bootstrap';
 
 function CreateBudget() {
     const [cookies, setCookie] = useCookies(['SessionID']);
@@ -129,27 +123,24 @@ function CreateBudget() {
 
     if (showBudget) {
         return (
-            <>
-                <Form noValidate validated={validated} onSubmit={handleSubmit} className="content">
-                    {error ? <p className="errorbx" >Username or password incorrect</p> : ""}
+            <div className="centre-form">
+                <Form noValidate validated={validated} onSubmit={handleSubmit} className="centre-form">
                     <Row className="mb-3">
-                        <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                        <Form.Group >
                             <Form.Label>Budget Name</Form.Label>
-                            <InputGroup hasValidation className="input-box">
-                                <Form.Control
-                                    type="text"
-                                    onChange={(e) => setBudgetName(e.target.value)}
-                                    aria-describedby="inputGroupPrepend"
-                                    required
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Please input a budget name.
-                                </Form.Control.Feedback>
-                            </InputGroup>
+                            <Form.Control
+                                type="text"
+                                onChange={(e) => setBudgetName(e.target.value)}
+                                aria-describedby="inputGroupPrepend"
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please input a budget name.
+                            </Form.Control.Feedback>
                         </Form.Group>
-                        <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                        <Form.Group controlId="validationCustomUsername">
                             <Form.Label>Total Budget Amount</Form.Label>
-                            <InputGroup hasValidation className="input-box">
+                            <InputGroup hasValidation>
                                 <Form.Control
                                     type="number"
                                     onChange={(e) => setBudgetAmount(e.target.value)}
@@ -163,46 +154,44 @@ function CreateBudget() {
                             </InputGroup>
                         </Form.Group>
                     </Row>
-                    <Row className="mb-3">
-                        <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
-                            <Form.Label>Start Date</Form.Label>
-                            <InputGroup hasValidation className="input-box">
-                                <Form.Control
-                                    type="datetime-local"
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                    aria-describedby="inputGroupPrepend"
-                                    required
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Please select a start date.
-                                </Form.Control.Feedback>
 
-                            </InputGroup>
+                    <Row className="mb-3">
+                        <Form.Group as={Col} controlId="validationCustomUsername">
+                            <Form.Label>Start Date</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                onChange={(e) => setStartDate(e.target.value)}
+                                aria-describedby="inputGroupPrepend"
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please select a start date.
+                            </Form.Control.Feedback>
                         </Form.Group>
-                        <Form.Group as={Col} className="mb-3" controlId="validationCustomUsername">
+                        <Form.Group as={Col} controlId="validationCustomUsername">
                             <Form.Label>End Date</Form.Label>
-                            <InputGroup hasValidation className="input-box">
-                                <Form.Control
-                                    type="datetime-local"
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                    aria-describedby="inputGroupPrepend"
-                                    required
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Please select a end date.
-                                </Form.Control.Feedback>
-                            </InputGroup>
+                            <Form.Control
+                                type="datetime-local"
+                                onChange={(e) => setEndDate(e.target.value)}
+                                aria-describedby="inputGroupPrepend"
+                                required
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please select a end date.
+                            </Form.Control.Feedback>
                         </Form.Group>
 
                     </Row>
-                    <button className="signin" type="submit">
-                        {loading ? <>
-                            <Spinner animation="border" variant="info" role="status" size="sm" />
-                            <span>Creating budget</span>
-                        </> : 'Create budget'}
-                    </button>
+                    <Row className="mb-3">
+                        <button className="update-button" type="submit">
+                            {loading ? <>
+                                <Spinner animation="border" variant="info" role="status" size="sm" />
+                                <span>Creating budget</span>
+                            </> : 'Create budget'}
+                        </button>
+                    </Row>
                 </Form>
-            </>
+            </div>
         );
     }
     else {

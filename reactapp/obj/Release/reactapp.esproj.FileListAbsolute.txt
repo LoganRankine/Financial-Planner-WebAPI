@@ -1,0 +1,2 @@
+C:\Users\logan\Source\Repos\LoganRankine\Financial-Planner-WebAPI\reactapp\obj\Release\reactapp.esproj.CoreCompileInputs.cache
+C:\Users\logan\source\repos\Financial-Planner-WebAPI\reactapp\obj\Release\reactapp.esproj.CoreCompileInputs.cache

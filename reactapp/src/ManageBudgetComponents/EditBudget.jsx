@@ -2,10 +2,7 @@ import React, { Children, Component, useState, useEffect } from 'react';
 import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Toast from 'react-bootstrap/Toast';
-import ToastContainer from 'react-bootstrap/ToastContainer';
+import { Modal, Form, InputGroup, Row, Button, Col, Container, Toast, ToastContainer } from 'react-bootstrap';
 import serverConfig from "../../server-config.json"
 
 function EditBudget({ showEdit, setShowEdit, budget }) {
@@ -24,7 +21,7 @@ function EditBudget({ showEdit, setShowEdit, budget }) {
     const handleCloseEdit = () => setShowEdit(false);
     const handleEdit = () => setShowEdit(true);
 
-    const editBudgetItem = (event) => {
+    const editBudgetItem = () => {
         const budgetId = budget.BudgetId
 
         const editBudget = {
@@ -62,56 +59,79 @@ function EditBudget({ showEdit, setShowEdit, budget }) {
         })
     }
 
+    const [validated, setValidated] = useState(false);
+
+    const handleSubmit = (event) => {
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        if (form.checkValidity() === true) {
+            event.preventDefault();
+            event.stopPropagation();
+            editBudgetItem()
+        }
+
+        setValidated(true);
+    };
+
     return (
         <div>
             <Modal show={showEdit} onHide={handleCloseEdit} animation={true} centered >
                 <Modal.Header closeButton>
                     <Modal.Title>Edit <b>{budget.ItemName}</b> Information</Modal.Title>
                 </Modal.Header>
-                <Modal.Body centered>
-                    <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                        <div class="input-container">
-                            <label>Budget Name</label><br />
-                            <input type="text" value={budgetName}
-                                onChange={(e) => setBudgetName(e.target.value)}
-                                placeholder={budget.BudgetName}
-                                class="input-box" />
-                        </div>
-                        <div class="input-container">
-                            <label>Start Date</label><br />
-                            <input type="datetime-local" value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                                onFocus={(e) => (e.target.type = "date")}
-                                placeholder={budget.StartDate}
-                                class="input-box" />
-                        </div>
-                        <div class="input-container">
-                            <label>End Date</label><br />
-                            <input type="datetime-local" value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
-                                onFocus={(e) => (e.target.type = "date")}
-                                placeholder={budget.EndDate}
-                                class="input-box" />
-                        </div>
-                        <div class="input-container">
-                            <label>Total Budget Amount</label><br />
-                            <input type="number" value={budgetAmount}
-                                onChange={(e) => setBudgetAmount(e.target.value)}
-                                placeholder={budget.BudgetAmount}
-                                class="input-box" />
-                        </div>
-                    </div>
-
+                <Modal.Body className="centre-form">
+                    <Form noValidate validated={validated} onSubmit={handleSubmit} className="centre-form">
+                        <Row className="mb-3">
+                            <Form.Group md="4">
+                                <Form.Label>Budget Name</Form.Label><br />
+                                <Form.Control type="text" value={budgetName}
+                                    onChange={(e) => setBudgetName(e.target.value)}
+                                    placeholder={budget.BudgetName}
+                                    className="input-box"
+                                />
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label>Start Date</Form.Label><br />
+                                <Form.Control type="datetime-local" value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    onFocus={(e) => (e.target.type = "date")}
+                                    placeholder={budget.StartDate}
+                                    className="input-box" />
+                            </Form.Group>
+                        </Row>
+                        <Row className="mb-3">
+                            <Form.Group className="input-container">
+                                <Form.Label>End Date</Form.Label><br />
+                                <Form.Control type="datetime-local" value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    onFocus={(e) => (e.target.type = "date")}
+                                    placeholder={budget.EndDate}
+                                    className="input-box" />
+                            </Form.Group>
+                            <Form.Group className="input-container">
+                                <Form.Label>Total Budget Amount</Form.Label><br />
+                                <Form.Control type="number" value={budgetAmount}
+                                    onChange={(e) => setBudgetAmount(e.target.value)}
+                                    placeholder={budget.BudgetAmount}
+                                    className="input-box" />
+                            </Form.Group>
+                        </Row>
+                        <Row>
+                            <button className="update-button" variant="success" type="submit">Update</button>
+                        </Row>
+                    </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="success" onClick={editBudgetItem}>
-                        Update
-                    </Button>
                     <Button variant="secondary" onClick={handleCloseEdit} >
                         Cancel
                     </Button>
                 </Modal.Footer>
             </Modal>
+
             <ToastContainer position="top-center" >
                 <Toast show={deleteStatus} onClose={toggleDeleteStatus} animation={true} bg={isSuccess ? "success" : "warning"} delay={5000} autohide>
                     <Toast.Header>

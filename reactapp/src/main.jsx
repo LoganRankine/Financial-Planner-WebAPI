@@ -14,28 +14,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </React.StrictMode>,
 )
 
-async function isAuthenticated() {
-    if (document.cookie == '') {
-        return false
-        console.log("Cookie not found")
-    }
-    else {
-        let sessionID = document.cookie.replace("SessionID=", "")
-        let checkAuthStatus = await fetch(`https://localhost:7073/api/User/CheckAuthStatus?SessionId=${sessionID}`,
-            {
-                method: 'GET',
-                mode: 'cors',
-            }
-        )
-        if (checkAuthStatus.ok) {
-            return true;
-        }
-
-        return false;
-    }
-    
-}
-
     //< React.StrictMode >
     //<App />
     //</React.StrictMode >,
