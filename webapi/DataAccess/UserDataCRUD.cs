@@ -48,11 +48,33 @@ namespace webapi.DataCRUD
             }
         }
 
+        public bool CreateUser(User p_create_user)
+        {
+            try
+            {
+                if(p_create_user != null && p_create_user.Email != null && p_create_user.Name != null && p_create_user.Password != null)
+                {
+                    p_create_user.Id = Guid.NewGuid().ToString();
+                    p_create_user.SessionId = Guid.NewGuid().ToString();
+
+                    _userContext.Users.Add(p_create_user);
+                    _userContext.SaveChanges();
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public async Task<string> AuthenticateUserEmail(string p_email, string p_password)
         {
             try
             {
-                //Get the user by email
+                //Get the p_create_user by email
                 var User = _userContext.Users.ToList().FirstOrDefault(username => username.Email == p_email);
 
                 if (User != null)
@@ -102,7 +124,6 @@ namespace webapi.DataCRUD
             }
         }
 
-
         public async Task<User> CheckAuthStatus(string p_sessionID)
         {
             try
@@ -120,6 +141,7 @@ namespace webapi.DataCRUD
                 throw;
             }
         }
+
         public async Task<string> UserName(string p_sessionID)
         {
             try
@@ -137,5 +159,44 @@ namespace webapi.DataCRUD
                 return "Error";
             }
         }
+
+        public async Task<bool> UsernameExist(string p_username)
+        {
+            try
+            {
+                User user = _userContext.Users.Where(username => username.Name == p_username).FirstOrDefault();
+
+                if (user != null)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> EmailExist(string p_email)
+        {
+            try
+            {
+                User user = _userContext.Users.Where(email => email.Email == p_email).FirstOrDefault();
+
+                if (user != null)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
     }
 }
