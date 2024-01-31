@@ -153,6 +153,22 @@
 }
 .debit-detail-input {
 }
+
+.enlarge-button {
+    display: flex;
+    width: 100%;
+    min-width: 100%;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.description-text {
+    text-align: center;
+    color: black !important;
+    border-radius: 5px;
+    padding: 4px;
+    background-color: #f0f0f0;
+}
 .debit-creation-content {
     display: flex;
     flex-direction: row;
@@ -164,6 +180,8 @@
     height: 40px;
     width: 250px;
     font-size: 15px;
+    display: flex;
+    justify-content: center;
 }
 
 .account-creation-header {

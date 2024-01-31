@@ -1185,6 +1185,15 @@
             "rid": "win"
           }
         }
+      },
+      "reactapp/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/reactapp.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/reactapp.dll": {}
+        }
       }
     }
   },
@@ -3418,6 +3427,11 @@
         "system.windows.extensions.nuspec",
         "useSharedDesignerContext.txt"
       ]
+    },
+    "reactapp/1.0.0": {
+      "type": "project",
+      "path": "../reactapp/reactapp.esproj",
+      "msbuildProject": "../reactapp/reactapp.esproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -3429,7 +3443,8 @@
       "Microsoft.EntityFrameworkCore.SqlServer >= 7.0.13",
       "Microsoft.EntityFrameworkCore.Tools >= 7.0.13",
       "Newtonsoft.Json >= 13.0.3",
-      "Swashbuckle.AspNetCore >= 6.5.0"
+      "Swashbuckle.AspNetCore >= 6.5.0",
+      "reactapp >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -3464,7 +3479,11 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\reactapp\\reactapp.esproj": {
+              "projectPath": "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\reactapp\\reactapp.esproj"
+            }
+          }
         }
       },
       "warningProperties": {

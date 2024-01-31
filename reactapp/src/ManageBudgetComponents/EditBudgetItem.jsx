@@ -2,10 +2,8 @@ import React, { Children, Component, useState, useEffect } from 'react';
 import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Toast from 'react-bootstrap/Toast';
-import ToastContainer from 'react-bootstrap/ToastContainer';
+import { Modal, Button, Toast, ToastContainer, Form, Row, Spinner } from 'react-bootstrap';
+
 import serverConfig from "../../server-config.json"
 
 function EditBudgetItem({ showEdit, setShowEdit, budgetItem }) {
@@ -13,6 +11,8 @@ function EditBudgetItem({ showEdit, setShowEdit, budgetItem }) {
     const [itemName, setItemName] = useState("");
     const [purchaseDate, setPurchaseDate] = useState("");
     const [itemAmount, setItemAmount] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [validated, setValidated] = useState(false);
 
     const [deleteStatus, setDeleteStatus] = useState(false);
     const [deleteStatusText, setDeleteStatusText] = useState(null);
@@ -21,9 +21,10 @@ function EditBudgetItem({ showEdit, setShowEdit, budgetItem }) {
     const toggleDeleteStatus = () => setDeleteStatus(!deleteStatus);
 
     const handleCloseEdit = () => setShowEdit(false);
+
     const handleEdit = () => setShowEdit(true);
 
-    const editBudgetItem = (event) => {
+    const editBudgetItem = () => {
         const budgetId = budgetItem.BudgetId
 
         const editBudgetItem = {
@@ -49,7 +50,6 @@ function EditBudgetItem({ showEdit, setShowEdit, budgetItem }) {
             }
         ).then(response => {
             if (response.status == 201) {
-
                 response.json().then(data => {
                     setDeleteStatus(true)
                     setDeleteStatusText(data.SuccessDescription)
@@ -61,45 +61,84 @@ function EditBudgetItem({ showEdit, setShowEdit, budgetItem }) {
         })
     }
 
+    const handleSubmit = async (event) => {
+        const form = event.currentTarget;
+
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        if (form.checkValidity() === true) {
+            setLoading(true)
+            event.preventDefault();
+            event.stopPropagation();
+
+            editBudgetItem()
+        }
+
+        setValidated(true);
+    };
+
+    useEffect(() => {
+        setPurchaseDate(budgetItem.PurchaseDate)
+        setItemName(budgetItem.ItemName)
+        setItemAmount(budgetItem.ItemAmount)
+    }, []);
+
+
     return (
         <div>
             <Modal show={showEdit} onHide={handleCloseEdit} animation={true} centered >
                 <Modal.Header closeButton>
                     <Modal.Title>Edit <b>{budgetItem.ItemName}</b> Information</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                    <div class="purchase-creation-content">
-                        <div class="input-container">
-                            <label>Purchase Name</label><br />
-                            <input type="text" value={itemName}
-                                onChange={(e) => setItemName(e.target.value)}
-                                placeholder={budgetItem.ItemName}
-                                class="input-box" />
-                        </div>
-                        <div class="input-container">
-                            <label>Purchase Date</label><br />
-                            <input type="datetime-local" value={purchaseDate}
-                                onChange={(e) => setPurchaseDate(e.target.value)}
-                                class="input-box" />
-                        </div>
-                        <div class="input-container">
-                            <label>Purchase Amount</label><br />
-                            <input type="number" value={itemAmount}
-                                onChange={(e) => setItemAmount(e.target.value)}
-                                placeholder={budgetItem.ItemAmount}
-                                class="input-box" />
-                        </div>
-                    </div>
+                <Modal.Body className="centre-form">
+                    <Form.Text className="description-text">
+                        You can make changes to your purchase details
+                        by updating only the information you need. If you want to edit the purchase <b>name</b>, payment <b>date</b>,
+                        or <b>amount</b>, simply fill in the respective field. <b>No need to fill out everything, just update what you want</b>.
+                    </Form.Text>
+                    <Form noValidate validated={validated} onSubmit={handleSubmit} className="centre-form" centred>
+                        <Row className="mb-3">
+                            <Form.Group class="input-container">
+                                <Form.Label>Purchase Name</Form.Label><br />
+                                <Form.Control type="text" value={itemName}
+                                    onChange={(e) => setItemName(e.target.value)}
+                                    placeholder={budgetItem.ItemName}
+                                    class="input-box" />
+                            </Form.Group>
+                            <Form.Group class="input-container">
+                                <Form.Label>Purchase Date</Form.Label><br />
+                                <Form.Control type="datetime-local" value={purchaseDate}
+                                    onChange={(e) => setPurchaseDate(e.target.value)}
+                                    class="input-box" />
+                            </Form.Group>
+                            <Form.Group class="input-container">
+                                <Form.Label>Purchase Amount</Form.Label><br />
+                                <Form.Control type="number" value={itemAmount}
+                                    onChange={(e) => setItemAmount(e.target.value)}
+                                    placeholder={budgetItem.ItemAmount}
+                                    class="input-box" />
+                            </Form.Group>
+                        </Row>
+                        <Row className="mb-3">
+                            <button className="update-button" type="submit">
+                                {loading ? <>
+                                    <Spinner animation="border" variant="info" role="status" size="sm" />
+                                    <span> Updating Purchase</span>
+                                </> : 'Update Purchase'}
+                            </button>
+                        </Row>
+                    </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="success" onClick={editBudgetItem}>
-                        Update
-                    </Button>
                     <Button variant="secondary" onClick={handleCloseEdit} >
                         Cancel
                     </Button>
                 </Modal.Footer>
             </Modal>
+
             <ToastContainer position="top-center" >
                 <Toast show={deleteStatus} onClose={toggleDeleteStatus} animation={true} bg={isSuccess ? "success" : "warning"} delay={5000} autohide>
                     <Toast.Header>

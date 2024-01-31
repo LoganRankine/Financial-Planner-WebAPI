@@ -143,7 +143,7 @@ namespace webapi.Controllers
                     
                     if (response.Contains("BudgetName"))
                     {
-                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
                         return JsonConvert.SerializeObject(response);
                     }
 
@@ -243,7 +243,7 @@ namespace webapi.Controllers
 
                         if (response.Contains("ItemName"))
                         {
-                            HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                            HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
                             return JsonConvert.SerializeObject(response);
                         }
 

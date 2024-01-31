@@ -36,14 +36,21 @@ function BudgetDisplay({Sidebar }) {
                 mode: 'cors',
                 headers: myHeaders,
             }
-        ).then(response => response.json()).then(data => {
-            const temp = JSON.parse(data)
-            console.log(temp)
-            setLoading(false)
-            setBudgetItems(temp)
-            setBudgetId(query)
+        ).then(response => {
+            if (response.status == 200) {
+                response.json().then(data => {
+                    const temp = JSON.parse(data)
+                    console.log(temp)
+                    setLoading(false)
+                    setBudgetItems(temp)
+                    setBudgetId(query)
+                })
+            }
+            if (response.status == 204) {
+                setLoading(false)
+                setBudgetId(query)
+            }
         });
-
     }
 
     const getBudget = (query) => {

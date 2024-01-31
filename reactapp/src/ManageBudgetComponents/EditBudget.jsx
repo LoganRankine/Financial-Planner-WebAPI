@@ -2,7 +2,7 @@ import React, { Children, Component, useState, useEffect } from 'react';
 import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
 
-import { Modal, Form, InputGroup, Row, Button, Col, Container, Toast, ToastContainer } from 'react-bootstrap';
+import { Modal, Form, InputGroup, Row, Button, Col, Container, Toast, ToastContainer, Spinner } from 'react-bootstrap';
 import serverConfig from "../../server-config.json"
 
 function EditBudget({ showEdit, setShowEdit, budget }) {
@@ -11,6 +11,7 @@ function EditBudget({ showEdit, setShowEdit, budget }) {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [budgetAmount, setBudgetAmount] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const [deleteStatus, setDeleteStatus] = useState(false);
     const [deleteStatusText, setDeleteStatusText] = useState(null);
@@ -49,6 +50,7 @@ function EditBudget({ showEdit, setShowEdit, budget }) {
             if (response.status == 201) {
 
                 response.json().then(data => {
+                    setLoading(true)
                     setDeleteStatus(true)
                     setDeleteStatusText(data.Description)
                     setIsSuccess(true)
@@ -69,6 +71,7 @@ function EditBudget({ showEdit, setShowEdit, budget }) {
         }
 
         if (form.checkValidity() === true) {
+            setLoading(true)
             event.preventDefault();
             event.stopPropagation();
             editBudgetItem()
@@ -77,13 +80,25 @@ function EditBudget({ showEdit, setShowEdit, budget }) {
         setValidated(true);
     };
 
+    useEffect(() => {
+        setBudgetName(budget.BudgetName)
+        setStartDate(budget.StartDate)
+        setEndDate(budget.EndDate)
+        setBudgetAmount(budget.BudgetAmount)
+    }, []);
+
     return (
         <div>
             <Modal show={showEdit} onHide={handleCloseEdit} animation={true} centered >
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit <b>{budget.ItemName}</b> Information</Modal.Title>
+                    <Modal.Title>Update {budget.BudgetName} Budget</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="centre-form">
+                    <Form.Text className="description-text">
+                        You can modify <b>{budget.BudgetName}</b> by updating only the information you need.
+                        If you want to change the budget name, start or end date, or the initial amount, simply fill in the respective field.
+                        <b> No need to fill out everything, just update what you want.</b> Let's make the changes you need!
+                    </Form.Text>
                     <Form noValidate validated={validated} onSubmit={handleSubmit} className="centre-form">
                         <Row className="mb-3">
                             <Form.Group md="4">
@@ -121,7 +136,12 @@ function EditBudget({ showEdit, setShowEdit, budget }) {
                             </Form.Group>
                         </Row>
                         <Row>
-                            <button className="update-button" variant="success" type="submit">Update</button>
+                            <button className="update-button" type="submit">
+                                {loading ? <>
+                                    <Spinner animation="border" variant="info" role="status" size="sm" />
+                                    <span> Update Budget</span>
+                                </> : 'Update Budget'}
+                            </button>
                         </Row>
                     </Form>
                 </Modal.Body>

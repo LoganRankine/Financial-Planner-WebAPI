@@ -16,11 +16,13 @@ function DirectDebitsDisplay({Sidebar}) {
     const [p_budget, setBudget] = useState("");
     const [show, setShow] = useState(false);
     const [loading, setLoading] = useState(true);
+    const query = window.location.pathname.replace("/Account/Display/DirectDebits/budget_id=", "")
 
     const handleShow = () => setShow(true);
 
     const getDirectDebits = (query) => {
         setLoading(true)
+
         let sessionId = cookies.SessionID
         const myHeaders = new Headers();
         myHeaders.append("x-api-key", sessionId)
@@ -32,18 +34,21 @@ function DirectDebitsDisplay({Sidebar}) {
                 mode: 'cors',
                 headers: myHeaders,
             }
-        ).then(response => response.json()).then(data => {
-            const temp = JSON.parse(data)
-            console.log(temp)
-            setDirectDebits(temp)
-            setBudgetId(query)
-            setLoading(false)
+        ).then(response => {
+            if (response.status == 200) {
+                response.json().then(data => {
+                    const temp = JSON.parse(data)
+                    console.log(temp)
+                    setDirectDebits(temp)
+                    setBudgetId(query)
+                    setLoading(false)
+                })
+            }
         });
-
-
     }
 
     const getBudget = (query) => {
+
         let sessionId = cookies.SessionID
 
         const myHeaders = new Headers();
@@ -70,13 +75,11 @@ function DirectDebitsDisplay({Sidebar}) {
     useEffect(() => {
         setLoading(true)
 
-        const query = window.location.pathname.replace("/Account/Display/DirectDebits/budget_id=", "")
-
         getDirectDebits(query)
 
         getBudget(query)
 
-    }, []);
+    }, [loading === true]);
 
     console.log("BudgetId from query", p_budgetId)
 

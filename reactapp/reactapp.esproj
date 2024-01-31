@@ -4,7 +4,7 @@
     <JavaScriptTestRoot>src\</JavaScriptTestRoot>
     <JavaScriptTestFramework>Jest</JavaScriptTestFramework>
     <!-- Allows the build (or compile) script located on package.json to run on Build -->
-    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <ShouldRunBuildScript>true</ShouldRunBuildScript>
     <!-- Command to create an optimized build of the project that's ready for publishing -->
     <ProductionBuildCommand>npm run build</ProductionBuildCommand>
     <!-- Folder where production build objects will be placed -->
@@ -14,9 +14,5 @@
     <Folder Include="src\NotFoundComponents\" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove=".vscode/launch.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptConfiguration Include=".vscode/launch.json" />
   </ItemGroup>
 </Project>

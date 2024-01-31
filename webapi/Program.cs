@@ -21,9 +21,9 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         policy =>
         {
-            policy.WithOrigins("https://localhost:5173/", "https://192.168.190.1:5173/",
-                                "https://localhost:7073/", "https://192.168.190.1:7073/",
-                                "https://localhost:5173", "https://192.168.190.1:5173");
+            policy.WithOrigins("https://localhost:5173/", "https://192.168.0.37:5173/",
+                                "https://localhost:7073/", "https://192.168.0.37:7073/",
+                                "https://localhost:5173", "https://192.168.0.37:5173");
             policy.AllowAnyHeader();
             policy.AllowAnyMethod();
         });
@@ -49,9 +49,10 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.UseHttpsRedirection();
 

@@ -27,7 +27,7 @@ function DisplayBudgetsSidebar() {
                 aria-labelledby="contained-modal-title-vcenter"
                 centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Create Budget</Modal.Title>
+                    <Modal.Title>Create Your Budget</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <CreateBudget></CreateBudget>

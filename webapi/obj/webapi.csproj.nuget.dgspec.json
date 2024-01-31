@@ -4,6 +4,21 @@
     "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\webapi\\webapi.csproj": {}
   },
   "projects": {
+    "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\reactapp\\reactapp.esproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\reactapp\\reactapp.esproj",
+        "projectName": "reactapp",
+        "projectPath": "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\reactapp\\reactapp.esproj",
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net472": {}
+      }
+    },
     "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\webapi\\webapi.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -32,7 +47,11 @@
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\reactapp\\reactapp.esproj": {
+                "projectPath": "C:\\Users\\logan\\source\\repos\\Financial-Planner-WebAPI\\reactapp\\reactapp.esproj"
+              }
+            }
           }
         },
         "warningProperties": {
