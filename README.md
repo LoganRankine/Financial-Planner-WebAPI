@@ -33,17 +33,17 @@ The secondary objective of this project is to learn and develop my front-end ski
 ## UI Screenshots
 ### Registraion page
 #### Login option
-<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/03f3df1c-eaae-439a-a54c-a08d2b2101ab">
+<img width="960" alt="home page" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/e8bb22c5-8a4c-4559-9c74-33290c79a595">
 
 #### Register option
-<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/dcb37a0d-78e8-4074-b9b7-e3d6fc0c3a14">
+<img width="960" alt="register" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/929b41a9-e03c-4b9e-806a-3ee96e5d1aca">
 
 ### Create Budget page
 #### Budget details option
-<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/e0a74648-092a-403f-a4be-f46fb68e171c">
+<img width="960" alt="create budget" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/c7f29b53-6e63-4cab-a72f-77c9bfa26a80">
 
 #### Direct debit option
-<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/4a7b6d60-b1d7-4f87-b0d0-14d79cb2a983">
+<img width="960" alt="create budget- add direct debit" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/b69ad7fb-e9e9-4df1-b8ee-c8a6873226ab">
 
 ### Main Account page
 <img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/e1553121-8001-4035-8902-9ed1f7daa55c">
