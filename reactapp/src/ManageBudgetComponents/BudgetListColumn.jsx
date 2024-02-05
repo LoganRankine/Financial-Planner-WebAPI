@@ -12,7 +12,7 @@ import ToastContainer from 'react-bootstrap/ToastContainer';
 import EditBudget from './EditBudget';
 import serverConfig from "../../server-config.json"
 
-function BudgetListColumn(budgets, key) {
+function BudgetListColumn(budgets, key, budgetArray) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [budgetId, setBudgetId] = useState("");
     const [budgetName, setBudgetName] = useState("");
@@ -79,6 +79,7 @@ function BudgetListColumn(budgets, key) {
 
     const directBudget = async (event) => {
         window.location.href = `/Account/Display/Budget/budget_id=${budgetId}`
+        sessionStorage.setItem("currentBudget", budgetId)
     }
 
     const handleExpansion = async (event) => {

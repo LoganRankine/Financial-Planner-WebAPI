@@ -86,8 +86,8 @@ function BudgetDisplay({Sidebar }) {
     useEffect(() => {
         setLoading(true)
 
-        const query = window.location.pathname.replace("/Account/Display/Budget/budget_id=", "")
-
+        const query = sessionStorage.getItem("currentBudget")
+        setBudgetId(query)
         getBudgetItems(query)
 
         getBudget(query)

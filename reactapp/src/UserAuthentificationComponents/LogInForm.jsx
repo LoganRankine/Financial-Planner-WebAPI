@@ -40,6 +40,7 @@ function login() {
             if (response.ok) {
                 console.log(response)
                 setCookie("SessionID", data.SessionID, { path: "/" })
+                sessionStorage.setItem("SessionID", data.SessionID)
                 window.location.href = "/Account/Home"
                 setValidated(true);
 

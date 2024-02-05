@@ -424,7 +424,6 @@ namespace webapi.DataCRUD
         {
             try
             {
-
                 if (p_budget != null)
                 {
                     _userContext.ChangeTracker.Clear();

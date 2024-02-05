@@ -16,7 +16,7 @@ function DirectDebitsDisplay({Sidebar}) {
     const [p_budget, setBudget] = useState("");
     const [show, setShow] = useState(false);
     const [loading, setLoading] = useState(true);
-    const query = window.location.pathname.replace("/Account/Display/DirectDebits/budget_id=", "")
+    const query = sessionStorage.getItem("currentBudget")
 
     const handleShow = () => setShow(true);
 
@@ -79,7 +79,7 @@ function DirectDebitsDisplay({Sidebar}) {
 
         getBudget(query)
 
-    }, [loading === true]);
+    }, []);
 
     console.log("BudgetId from query", p_budgetId)
 

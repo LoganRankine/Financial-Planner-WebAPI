@@ -211,7 +211,8 @@
 
     .debit-content-item {
         width: 100%;
-        height: 75px;
+        min-height: 95px;
+        max-height: 95px;
         border: 1px solid grey;
         border-radius: 5px;
         margin: 5px;

@@ -11,6 +11,7 @@ function LoginDisplay() {
 
     const logout = async (event) => {
         removeCookie("SessionID", { path: "/" })
+        sessionStorage.clear()
         console.log("logged out")
         window.location.href = "/"
     }
