@@ -30,7 +30,7 @@ The secondary objective of this project is to learn and develop my front-end ski
 - Option to aid in calculating and how much you can save
 - Connect to bank in future
 
-## UI Screenshots
+## Desktop UI Screenshots
 ### Registraion page
 #### Login option
 <img width="960" alt="home page" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/e8bb22c5-8a4c-4559-9c74-33290c79a595">
@@ -40,15 +40,31 @@ The secondary objective of this project is to learn and develop my front-end ski
 
 ### Create Budget page
 #### Budget details option
-<img width="960" alt="create budget" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/c7f29b53-6e63-4cab-a72f-77c9bfa26a80">
+<img width="960" alt="create budget" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/e06781a5-3613-4e84-bf6e-0ba05082bf97">
 
 #### Direct debit option
-<img width="960" alt="create budget- add direct debit" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/b69ad7fb-e9e9-4df1-b8ee-c8a6873226ab">
+<img width="960" alt="create budget- add direct debit" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/b36ac34f-1d66-461c-a1a3-6facd4a34cd5">
 
-### Main Account page
-<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/e1553121-8001-4035-8902-9ed1f7daa55c">
-<img width="960" alt="image" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/c4a89a4c-a135-4bcd-ad90-9e7f70e5a583">
+### Display Budgets
+<img width="960" alt="display budgets" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/218c29cd-18d7-4091-8b9a-628b1cbdb650">
 
+### Display Budget - Current week
+<img width="960" alt="display purchases - this week" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/2f328b39-b2eb-4592-bad4-f1b79b11f79d">
+
+### Display Budget - All Purchases
+<img width="960" alt="display purchases" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/ec824cd5-e8b6-41ed-9ff0-9e9b9cf5d5c1">
+
+#### Edit Budget
+<img width="960" alt="edit budget" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/8ab6dfa9-92a8-4fdc-bbdb-002b5b5a8091">
+
+#### Edit Purchase
+<img width="960" alt="edit purchase" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/570e5c73-f851-4e6c-8f91-c413b4b01dd9">
+
+### Display Budget - Direct Debits
+<img width="960" alt="direct debit display" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/11b89bdd-3d97-42f4-aa64-4a4ea1279812">
+
+#### Edit Direct Debit 
+<img width="960" alt="edit debit" src="https://github.com/LoganRankine/Financial-Planner-WebAPI/assets/72498942/f1dee36a-3968-4326-898b-8a0004e93215">
 
 ## Page Design Mockups
 ### Registraion page
