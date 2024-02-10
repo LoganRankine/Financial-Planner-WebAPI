@@ -17,6 +17,7 @@ function BudgetDisplay({Sidebar }) {
     const [p_budget, setBudget] = useState("");
 
     const [loading, setLoading] = useState(true);
+    const [reload, setReload] = useState(true);
 
     const handleShow = () => setShow(true);
 
@@ -92,7 +93,7 @@ function BudgetDisplay({Sidebar }) {
 
         getBudget(query)
 
-    }, []);
+    },[]);
 
     console.log("BudgetId from query",p_budgetId)
 

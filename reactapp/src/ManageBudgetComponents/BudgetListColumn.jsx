@@ -12,7 +12,7 @@ import ToastContainer from 'react-bootstrap/ToastContainer';
 import EditBudget from './EditBudget';
 import serverConfig from "../../server-config.json"
 
-function BudgetListColumn(budgets, key, budgetArray) {
+function BudgetListColumn(budget, key, budgetArray) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [budgetId, setBudgetId] = useState("");
     const [budgetName, setBudgetName] = useState("");
@@ -63,10 +63,10 @@ function BudgetListColumn(budgets, key, budgetArray) {
     }
 
     useEffect(() => {
-        setBudgetId(budgets.budgets.BudgetId)
-        setBudgetName(budgets.budgets.BudgetName)
-        var startDate = new Date(budgets.budgets.StartDate)
-        var endDate = new Date(budgets.budgets.EndDate)
+        setBudgetId(budget.budget.BudgetId)
+        setBudgetName(budget.budget.BudgetName)
+        var startDate = new Date(budget.budget.StartDate)
+        var endDate = new Date(budget.budget.EndDate)
         setformattedStartDate(format(startDate, "dd-MM-yyyy"))
         setformattedEndDate(format(endDate, "dd-MM-yyyy"))
     }, []);
@@ -106,14 +106,14 @@ function BudgetListColumn(budgets, key, budgetArray) {
             <div className="list-content-item mobile-hide" onClick={directBudget}>{formattedEndDate}</div>
             <div id="avaliable-content" className="list-content-item" onClick={directBudget}>
                 <a id="available-text">Available amout:</a>
-                <a id="avaliable">&#163;{budgets.budgets.AvailableAmount.toFixed(2)}</a>
+                <a id="avaliable">&#163;{budget.budget.AvailableAmount.toFixed(2)}</a>
             </div>
-            <div id="available-amount" className="mobile-hide list-content-item">&#163;{budgets.budgets.WeeklyAmount.toFixed(2)}</div>
+            <div id="available-amount" className="mobile-hide list-content-item">&#163;{budget.budget.WeeklyAmount.toFixed(2)}</div>
             <div className="list-content-option">
                 <span className="material-symbols-outlined" style={{ cursor: 'pointer' } } onClick={handleEdit}>edit</span>
                 <span id="delete-icon" className="material-symbols-outlined" onClick={handleDelete}>delete</span>
             </div>
-            <EditBudget showEdit={show} setShowEdit={setShow} budget={budgets.budgets}></EditBudget>
+            <EditBudget showEdit={show} setShowEdit={setShow} budget={budget.budget}></EditBudget>
             <Modal show={showDelete} onHide={handleClose} animation={true} centered >
                 <Modal.Header closeButton>
                     <Modal.Title>Delete Budget</Modal.Title>
@@ -139,7 +139,7 @@ function BudgetListColumn(budgets, key, budgetArray) {
                             className="rounded me-2"
                             alt=""
                         />
-                        <strong className="me-auto">{!budgets.budgets.BudgetName ? "Error occured" : budgets.budgets.BudgetName}</strong>
+                        <strong className="me-auto">{!budget.budget.BudgetName ? "Error occured" : budget.budget.BudgetName}</strong>
                         <small>Just now</small>
                     </Toast.Header>
                     <Toast.Body>{deleteStatusText}</Toast.Body>

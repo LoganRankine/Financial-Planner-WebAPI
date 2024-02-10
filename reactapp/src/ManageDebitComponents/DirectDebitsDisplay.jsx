@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import '../css/Budget.css'
 import DebitColumn from './DebitColumn'
 import CreateDebitForm from './CreateDebitForm'
+import CreateDebit from '../ManageDebitComponents/CreateDebit'
 
 import { Button, Spinner, Modal } from 'react-bootstrap';
 import serverConfig from "../../server-config.json"
@@ -19,6 +20,7 @@ function DirectDebitsDisplay({Sidebar}) {
     const query = sessionStorage.getItem("currentBudget")
 
     const handleShow = () => setShow(true);
+    const handleClose = () => setShow(false);
 
     const getDirectDebits = (query) => {
         setLoading(true)
@@ -88,7 +90,20 @@ function DirectDebitsDisplay({Sidebar}) {
         <div className="base-content">
             <Sidebar budget_id={p_budgetId}></Sidebar>
             <div className="budget-display">
-                <CreateDebitForm budget_id={p_budgetId} show={show} setShow={setShow }></CreateDebitForm>
+                <Modal show={show} onHide={handleClose} animation={true} centered >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Add Direct Debit</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <CreateDebit></CreateDebit>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose} >
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                {/*<CreateDebitForm budget_id={p_budgetId} show={show} setShow={setShow }></CreateDebitForm>*/}
                 <div className="budget-header">
                     {/*right header*/}
                     <div className="budget-header-right">

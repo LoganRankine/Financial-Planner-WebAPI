@@ -64,7 +64,7 @@ function DisplayBudgets({SideBar }) {
                     </div>
                     <div className="list-content">
                         {loading ? <div className="no-budgets"><Spinner animation="border" variant="info" role="status"></Spinner></div> : <></>}
-                        {!allBudgets ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Budgets</div> : allBudgets.map(budget => (<BudgetListColumn budgets={budget} key={budget.Id} budgetArray={allBudgets} />))}
+                        {!allBudgets ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Budgets</div> : allBudgets.map(budget => (<BudgetListColumn budget={budget} key={budget.Id} budgetArray={allBudgets} />))}
                         {/*{!allBudgets ? 'Loading' : allBudgets.allBudgets.map}*/}
                     </div>
                 </div>

@@ -11,10 +11,10 @@ function PageNotFound({ SideBar }) {
 
     return (
         <div className="centre-loading">
-            <span class="material-symbols-outlined">
-                account_balance
-            </span>
-            <Spinner animation="border" variant="light" role="status" />
+            {/*<span class="material-symbols-outlined">*/}
+            {/*    account_balance*/}
+            {/*</span>*/}
+            <Spinner className="spinner-size" animation="border" variant="light" role="status" />
         </div>);
 }
 

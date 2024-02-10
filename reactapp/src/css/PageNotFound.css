@@ -19,8 +19,14 @@
     box-shadow: 0px 0px 2px 4px #dcdcdc9c;
 }
 
+.spinner-size{
+    width: 100px;
+    height: 100px;
+}
+
 .centre-loading {
     display: flex;
+    width: 100vw;
     width: 100vw;
     align-items: center;
     justify-content: center;

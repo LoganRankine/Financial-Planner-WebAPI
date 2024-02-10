@@ -1,11 +1,11 @@
 import React, { Children, Component, useState } from 'react';
 import '../css/Account.css'
 import { CookiesProvider, useCookies } from "react-cookie";
+import CreateDebit from '../ManageDebitComponents/CreateDebit'
 
-import Button from 'react-bootstrap/Button';
-import Toast from 'react-bootstrap/Toast';
-import ToastContainer from 'react-bootstrap/ToastContainer';
-import Modal from 'react-bootstrap/Modal';
+
+import { Button, Spinner, Modal, Toast, ToastContainer } from 'react-bootstrap';
+
 import serverConfig from "../../server-config.json"
 
 function CreateDebitForm({ budget_id, show, setShow }) {
@@ -67,41 +67,11 @@ function CreateDebitForm({ budget_id, show, setShow }) {
                     <Modal.Title>Add Direct Debit</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div class="debit-creation-content">
-                        <div class="debit-detail-input">
-                            <div class="input-container">
-                                <label>Direct Debit Name</label><br />
-                                <input type="text" value={directDebitName}
-                                    onChange={(e) => setDirectDebitName(e.target.value)}
-                                    class="input-box" />
-                            </div>
-                            <div class="input-container">
-                                <label>Payment Date</label><br />
-                                <input type="date" value={paymentDate}
-                                    onChange={(e) => setPaymentDate(e.target.value)}
-                                    class="input-box" />
-                            </div>
-                            <div class="input-container">
-                                <label>Interval</label><br />
-                                <input type="number" value={interval}
-                                    onChange={(e) => setInterval(e.target.value)}
-                                    class="input-box" />
-                            </div>
-                            <div class="input-container">
-                                <label>Amount</label><br />
-                                <input type="number" value={directDebitAmount}
-                                    onChange={(e) => setDebitAmount(e.target.value)}
-                                    class="input-box" />
-                            </div>
-                        </div>
-                    </div>
+                    <CreateDebit></CreateDebit>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="success" onClick={saveDebit}>
-                        Create
-                    </Button>
                     <Button variant="secondary" onClick={handleClose} >
-                        Cancel
+                        Close
                     </Button>
                 </Modal.Footer>
             </Modal>

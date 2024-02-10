@@ -112,7 +112,7 @@ function CreateDebit() {
                 choose how often it occurs, and enter the <b>amount</b> of the direct debit.
                 This helps calculate the total cost of your direct debits within the budget period. Let's add your direct debit details!
             </Form.Text>
-            <Form noValidate validated={validated} onSubmit={handleSubmit} className="centre-form" centred>
+            <Form noValidate validated={validated} onSubmit={handleSubmit} className="centre-form">
                 <Row className="mb-3">
                     <Form.Group controlId="validationCustomUsername">
                         <Form.Label>Direct Debit Name</Form.Label>
@@ -148,9 +148,9 @@ function CreateDebit() {
                         <Form.Label>Frequency</Form.Label>
                         <InputGroup hasValidation className="input-box">
                             <DropdownButton title={!intervalString ? "Frequency" : `${intervalString}: ${interval} days`} id="dropdown-autoclose-outside" autoClose="outside" className="enlarge-button">
-                                <Dropdown.Item autoClose="inside" onClick={(e) => { setInterval(7); setIntervalString("Weekly")}}>Weekly</Dropdown.Item>
-                                <Dropdown.Item autoClose="inside" onClick={(e) => { setInterval(14); setIntervalString("Bi-Weekly") }}>Bi-Weekly</Dropdown.Item>
-                                <Dropdown.Item autoClose="inside" onClick={(e) => { setInterval(30); setIntervalString("Monthly") }}>Monthly</Dropdown.Item>
+                                <Dropdown.Item onClick={(e) => { setInterval(7); setIntervalString("Weekly")}}>Weekly</Dropdown.Item>
+                                <Dropdown.Item onClick={(e) => { setInterval(14); setIntervalString("Bi-Weekly") }}>Bi-Weekly</Dropdown.Item>
+                                <Dropdown.Item onClick={(e) => { setInterval(30); setIntervalString("Monthly") }}>Monthly</Dropdown.Item>
                                 <Dropdown.Item>
                                     <Form.Label>Custom value</Form.Label>
                                     <Form.Control
