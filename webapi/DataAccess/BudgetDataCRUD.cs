@@ -110,6 +110,7 @@ namespace webapi.DataCRUD
                     {
                         if (budgets.Count > 0)
                         {
+                            budgets = budgets.OrderByDescending(date => date.StartDate).ToList();
                             return budgets;
                         }
                     }

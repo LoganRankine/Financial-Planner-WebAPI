@@ -24,7 +24,7 @@ function Register() {
     };
 
     //Show toast
-    const [showError, setShowError] = useState(true);
+    const [showError, setShowError] = useState(false);
     const toggleShowError = () => setShowError(!showError);
 
     //Validation
@@ -97,7 +97,7 @@ function Register() {
 
     return (
         <>
-            <Form style={{ display: 'contents' }} noValidate validated={validated} onSubmit={handleCreation}>
+            <Form style={{ display: 'contents' }} noValidate validated={validated} onSubmit={handleCreation} className="centre-form">
                 <Row className="mb-3">
                     <Form.Group as={Col} >
                         <Form.Label>Username</Form.Label>
@@ -121,7 +121,7 @@ function Register() {
                             <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
                             <Form.Control
                                 type="email"
-                                placeholder="brianna@demo.com"
+                                placeholder="youremail@emailprovider.com"
                                 onChange={(e) => setEmail(e.target.value)}
                                 required />
                             <Form.Control.Feedback type="invalid">

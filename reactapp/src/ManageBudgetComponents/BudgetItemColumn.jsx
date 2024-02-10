@@ -4,10 +4,7 @@ import { CookiesProvider, useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Toast from 'react-bootstrap/Toast';
-import ToastContainer from 'react-bootstrap/ToastContainer';
+import { Modal, Button, Toast, ToastContainer } from 'react-bootstrap';
 import serverConfig from "../../server-config.json"
 
 import '../css/Budget.css'
