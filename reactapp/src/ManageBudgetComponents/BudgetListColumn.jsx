@@ -12,7 +12,7 @@ import ToastContainer from 'react-bootstrap/ToastContainer';
 import EditBudget from './EditBudget';
 import serverConfig from "../../server-config.json"
 
-function BudgetListColumn(budget, key, budgetArray) {
+function BudgetListColumn({ budget, key, refresh }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [budgetId, setBudgetId] = useState("");
     const [budgetName, setBudgetName] = useState("");
@@ -44,12 +44,13 @@ function BudgetListColumn(budget, key, budgetArray) {
             mode: 'cors'
         })
 
-        if (deleteRequest.ok) {
+        if (deleteRequest.status == 200) {
             setShowDelete(false)
             const message = await deleteRequest.json()
             setIsSuccess(true)
             setDeleteStatusText(message.SuccessTitle)
             setDeleteStatus(true)
+            refresh()
             console.log("delete was successful")
         }
         else {
@@ -58,15 +59,16 @@ function BudgetListColumn(budget, key, budgetArray) {
             setIsSuccess(true)
             setDeleteStatusText(message.ErrorTitle)
             setDeleteStatus(true)
+            refresh()
             console.log("delete failed")
         }
     }
 
     useEffect(() => {
-        setBudgetId(budget.budget.BudgetId)
-        setBudgetName(budget.budget.BudgetName)
-        var startDate = new Date(budget.budget.StartDate)
-        var endDate = new Date(budget.budget.EndDate)
+        setBudgetId(budget.BudgetId)
+        setBudgetName(budget.BudgetName)
+        var startDate = new Date(budget.StartDate)
+        var endDate = new Date(budget.EndDate)
         setformattedStartDate(format(startDate, "dd-MM-yyyy"))
         setformattedEndDate(format(endDate, "dd-MM-yyyy"))
     }, []);
@@ -106,14 +108,14 @@ function BudgetListColumn(budget, key, budgetArray) {
             <div className="list-content-item mobile-hide" onClick={directBudget}>{formattedEndDate}</div>
             <div id="avaliable-content" className="list-content-item" onClick={directBudget}>
                 <a id="available-text">Available amout:</a>
-                <a id="avaliable">&#163;{budget.budget.AvailableAmount.toFixed(2)}</a>
+                <a id="avaliable">&#163;{budget.AvailableAmount.toFixed(2)}</a>
             </div>
-            <div id="available-amount" className="mobile-hide list-content-item">&#163;{budget.budget.WeeklyAmount.toFixed(2)}</div>
+            <div id="available-amount" className="mobile-hide list-content-item">&#163;{budget.WeeklyAmount.toFixed(2)}</div>
             <div className="list-content-option">
                 <span className="material-symbols-outlined" style={{ cursor: 'pointer' } } onClick={handleEdit}>edit</span>
                 <span id="delete-icon" className="material-symbols-outlined" onClick={handleDelete}>delete</span>
             </div>
-            <EditBudget showEdit={show} setShowEdit={setShow} budget={budget.budget}></EditBudget>
+            <EditBudget showEdit={show} setShowEdit={setShow} budget={budget} _refresh={refresh}></EditBudget>
             <Modal show={showDelete} onHide={handleClose} animation={true} centered >
                 <Modal.Header closeButton>
                     <Modal.Title>Delete Budget</Modal.Title>
@@ -139,7 +141,7 @@ function BudgetListColumn(budget, key, budgetArray) {
                             className="rounded me-2"
                             alt=""
                         />
-                        <strong className="me-auto">{!budget.budget.BudgetName ? "Error occured" : budget.budget.BudgetName}</strong>
+                        <strong className="me-auto">{!budget.BudgetName ? "Error occured" : budget.BudgetName}</strong>
                         <small>Just now</small>
                     </Toast.Header>
                     <Toast.Body>{deleteStatusText}</Toast.Body>

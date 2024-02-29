@@ -95,7 +95,7 @@ function CreateDebit() {
             event.preventDefault();
             event.stopPropagation();
 
-            const budgetId = sessionStorage.getItem("BudgetId")
+            const budgetId = sessionStorage.getItem("currentBudget")
             const budgetStart = sessionStorage.getItem("BudgetStart")
             setPaymentDate(budgetStart)
             createDebit(budgetId)

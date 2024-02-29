@@ -276,22 +276,25 @@ namespace webapi.Services
                             List<DirectDebit> debits = await GetDirectDebits(temp_budget.BudgetId);
 
                             //Update debits
-                            debits.ForEach(async debit =>
+                            if(debits != null && debits.Count > 0)
                             {
-                                decimal oldTotal = debit.DebitTotalAmount;
-                                decimal newTotal = await CalculateDirectDebit(debit, temp_budget);
+                                debits.ForEach(async debit =>
+                                {
+                                    decimal oldTotal = debit.DebitTotalAmount;
+                                    decimal newTotal = await CalculateDirectDebit(debit, temp_budget);
 
-                                //Update value
-                                debit.DebitTotalAmount = newTotal;
+                                    //Update value
+                                    debit.DebitTotalAmount = newTotal;
 
-                                //Add b
-                                temp_budget.AvailableAmount = decimal.Add(temp_budget.AvailableAmount, oldTotal);
+                                    //Add b
+                                    temp_budget.AvailableAmount = decimal.Add(temp_budget.AvailableAmount, oldTotal);
 
-                                //Remove new value
-                                temp_budget.AvailableAmount = decimal.Subtract(temp_budget.AvailableAmount, newTotal);
-                            });
+                                    //Remove new value
+                                    temp_budget.AvailableAmount = decimal.Subtract(temp_budget.AvailableAmount, newTotal);
+                                });
+                                await UpdateDirectDebits(debits);
 
-                            await UpdateDirectDebits(debits);
+                            }
                         }
 
                         //Budget populdated wit new values

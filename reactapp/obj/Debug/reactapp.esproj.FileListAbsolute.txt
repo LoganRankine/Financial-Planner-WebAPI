@@ -1,2 +1,1 @@
 C:\Users\logan\source\repos\Solution1\reactapp\obj\Debug\reactapp.esproj.CoreCompileInputs.cache
-C:\Users\logan\source\repos\Financial-Planner-WebAPI\reactapp\obj\Debug\reactapp.esproj.CoreCompileInputs.cache

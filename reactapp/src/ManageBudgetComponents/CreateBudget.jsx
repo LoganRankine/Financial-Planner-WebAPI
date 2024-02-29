@@ -45,7 +45,7 @@ function CreateBudget() {
                 response.json().then(data => {
                     setLoading(false)
                     const budgetObject = JSON.parse(data)
-                    sessionStorage.setItem("BudgetId", budgetObject.BudgetId)
+                    sessionStorage.setItem("currentBudget", budgetObject.BudgetId)
                     sessionStorage.setItem("BudgetStart", budgetObject.StartDate)
                     console.log(budgetObject.BudgetName, "created, budgetID added to session storage")
                     setshowBudget(false)

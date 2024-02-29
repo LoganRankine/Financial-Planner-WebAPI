@@ -5,7 +5,7 @@ import { CookiesProvider, useCookies } from "react-cookie";
 import { Modal, Form, InputGroup, Row, Button, Col, Container, Toast, ToastContainer, Spinner } from 'react-bootstrap';
 import serverConfig from "../../server-config.json"
 
-function EditBudget({ showEdit, setShowEdit, budget }) {
+function EditBudget({ showEdit, setShowEdit, budget, _refresh }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [budgetName, setBudgetName] = useState("");
     const [startDate, setStartDate] = useState("");
@@ -55,6 +55,7 @@ function EditBudget({ showEdit, setShowEdit, budget }) {
                     setDeleteStatusText(data.Description)
                     setIsSuccess(true)
                     setShowEdit(false)
+                    _refresh()
                     console.log("added direct budget successfully")
                 })
             }

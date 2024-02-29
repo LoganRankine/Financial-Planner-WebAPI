@@ -52,6 +52,7 @@
     border-top: 2px solid black;
     display: flex;
     flex-direction: row;
+    border-radius: 5px;
 }
 
 .list-content {

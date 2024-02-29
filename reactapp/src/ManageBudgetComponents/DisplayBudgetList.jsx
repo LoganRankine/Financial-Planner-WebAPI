@@ -11,10 +11,14 @@ import Spinner from 'react-bootstrap/Spinner';
 function DisplayBudgets({SideBar }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [loading, setLoading] = useState(true);
+    const [fetchBudgets, setFetchBudgets] = useState(false);
 
     const [allBudgets, setBudgets] = useState(null);
 
-    useEffect(() => {
+    const refreshBudgets = () => setFetchBudgets(true);
+
+    const loadBudgets = () => {
+        setLoading(true)
         let sessionId = cookies.SessionID
 
         const myHeaders = new Headers();
@@ -38,12 +42,12 @@ function DisplayBudgets({SideBar }) {
                 setLoading(false)
             }
         })
-    }, []);
 
-    const reload = (event) => {
-        window.location.reload()
     }
 
+    useEffect(() => {
+        loadBudgets()
+    }, [fetchBudgets]);
 
     return (
         <div className="base-content">
@@ -57,14 +61,14 @@ function DisplayBudgets({SideBar }) {
                         <div className="list-header-item">Available Amount</div>
                         <div className="list-header-item">Weekly Amount</div>
                         <div className="list-content-option">
-                            <span onClick={reload} className="material-symbols-outlined" style={{ cursor: 'pointer' }}>
+                            <span className="material-symbols-outlined" style={{ cursor: 'pointer' }}>
                                 refresh
                             </span>
                         </div>
                     </div>
                     <div className="list-content">
                         {loading ? <div className="no-budgets"><Spinner animation="border" variant="info" role="status"></Spinner></div> : <></>}
-                        {!allBudgets ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Budgets</div> : allBudgets.map(budget => (<BudgetListColumn budget={budget} key={budget.Id} budgetArray={allBudgets} />))}
+                        {!allBudgets ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Budgets</div> : allBudgets.map(budget => (<BudgetListColumn budget={budget} key={budget.Id} refresh={refreshBudgets} />))}
                         {/*{!allBudgets ? 'Loading' : allBudgets.allBudgets.map}*/}
                     </div>
                 </div>
