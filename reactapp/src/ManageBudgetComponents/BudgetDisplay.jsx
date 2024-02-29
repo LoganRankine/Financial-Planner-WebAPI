@@ -10,10 +10,10 @@ import { format, startOfWeek, isThisWeek } from "date-fns";
 import { Button, Modal, Spinner } from 'react-bootstrap';
 import serverConfig from "../../server-config.json"
 
-function BudgetDisplay({Sidebar }) {
+function BudgetDisplay({Sidebar}) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [budgetItems, setBudgetItems] = useState(null);
-    const [weeklyTotal, setWeeklyTotal] = useState(null);
+    const [weeklyTotal, setWeeklyTotal] = useState(0);
     const [weekBudgets, setWeekBudgets] = useState(null);
     const [nonFiltered, setNonFiltered] = useState(null);
     const [show, setShow] = useState(false);
@@ -22,9 +22,10 @@ function BudgetDisplay({Sidebar }) {
     const [All, setAll] = useState(false);
 
     const [loading, setLoading] = useState(true);
-    const [reload, setReload] = useState(true);
+    const [fetchBudget, setFetchBudget] = useState(false);
 
     const handleShow = () => setShow(true);
+    const refreshBudget = () => setFetchBudget(true);
 
     const getBudgetItems = (query) => {
         setLoading(true)
@@ -95,7 +96,9 @@ function BudgetDisplay({Sidebar }) {
 
         getBudget(query)
 
-    }, []);
+        //Once refreshed, ensure variable set to false so action can happen again
+        setFetchBudget(false)
+    }, [fetchBudget]);
 
     const currentWeek = (event) => {
         setAll(false)
@@ -128,13 +131,13 @@ function BudgetDisplay({Sidebar }) {
     return (
         <div className="base-content">
             <Sidebar budget_id={p_budgetId}></Sidebar>
-            <PurchaseForm budget_id={p_budgetId} show={show} setShow={setShow}></PurchaseForm>
+            <PurchaseForm budget_id={p_budgetId} show={show} setShow={setShow} refresh={refreshBudget}></PurchaseForm>
             <div className="budget-display">
                 <div className="budget-header">
                     {/*left header*/}
                     <div className="budget-header-right">
                         <a style={{ backgroundColor: "white" }} className="budget-header-item">{p_budget.BudgetName}</a>
-                        <a className="budget-header-item mobile-hide">Weekly total: &#163;{weeklyTotal}</a>
+                        <a className="budget-header-item mobile-hide">Weekly total: &#163;{weeklyTotal.toFixed(2)}</a>
                         <a className="budget-header-item mobile-hide">Weekly target: &#163;{!p_budget.WeeklyAmount ? 0 : p_budget.WeeklyAmount.toFixed(2)}</a>
                     </div>
                     {/*right header*/}
@@ -149,7 +152,7 @@ function BudgetDisplay({Sidebar }) {
                     </div>
                     <div className="budget-content">
                         {loading ? <div className="no-budgets"><Spinner animation="border" variant="info" role="status"></Spinner></div> : <></>}
-                        {!budgetItems ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Purchases</div> : budgetItems.map(budgetItem => (<BudgetItemColumn budgetItem={budgetItem} key={budgetItem.Id} />))}
+                        {!budgetItems ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Purchases</div> : budgetItems.map(budgetItem => (<BudgetItemColumn budgetItem={budgetItem} key={budgetItem.Id} refresh={refreshBudget} />))}
                     </div>
                 </div>
             </div>

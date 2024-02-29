@@ -9,7 +9,7 @@ import serverConfig from "../../server-config.json"
 
 import '../css/Budget.css'
 import EditBudgetItem from './EditBudgetItem';
-function BudgetItemColumn(budgetItem, key) {
+function BudgetItemColumn({ budgetItem, key, refresh }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [itemId, setItemId] = useState("");
     const [budgetId, setBudgetId] = useState("");
@@ -47,8 +47,8 @@ function BudgetItemColumn(budgetItem, key) {
             setIsSuccess(true)
             setDeleteStatusText(message.SuccessTitle)
             setDeleteStatus(true)
-            budgetItem.
             console.log("delete was successful")
+            refresh()
         }
         else {
             setShowDelete(false)
@@ -56,15 +56,17 @@ function BudgetItemColumn(budgetItem, key) {
             setIsSuccess(false)
             setDeleteStatusText(message.ErrorTitle)
             setDeleteStatus(true)
-            console.log("delete failed")        }
+            console.log("delete failed")
+            refresh()
+        }
     }
 
     useEffect(() => {
-        setItemId(budgetItem.budgetItem.ItemId)
-        setItemName(budgetItem.budgetItem.ItemName)
-        setBudgetId(budgetItem.budgetItem.BudgetId)
+        setItemId(budgetItem.ItemId)
+        setItemName(budgetItem.ItemName)
+        setBudgetId(budgetItem.BudgetId)
 
-        var purchaseDate = new Date(budgetItem.budgetItem.PurchaseDate)
+        var purchaseDate = new Date(budgetItem.PurchaseDate)
 
         let date = format(purchaseDate, "EEEE do LLLL yyyy")
         let time = format(purchaseDate, "p")
@@ -79,14 +81,14 @@ function BudgetItemColumn(budgetItem, key) {
                     <a className="budget-item-date">{formattedPurchaseDate} </a>
                 </div>
                 <div className="budget-item-right">
-                    <a className="budget-item-price">&#163;{budgetItem.budgetItem.ItemAmount}</a>
+                    <a className="budget-item-price">&#163;{budgetItem.ItemAmount}</a>
                     <div className="list-content-option">
                         <span className="material-symbols-outlined" onClick={handleEdit}>edit</span>
                         <span id="delete-icon" className="material-symbols-outlined" onClick={handleDelete}>delete</span>
                     </div>
                 </div>
             </div>
-            <EditBudgetItem showEdit={showEdit} setShowEdit={setShowEdit} budgetItem={budgetItem.budgetItem}></EditBudgetItem>
+            <EditBudgetItem showEdit={showEdit} setShowEdit={setShowEdit} budgetItem={budgetItem} _refresh={refresh}></EditBudgetItem>
             <Modal show={showDelete} onHide={handleClose} animation={true} centered >
                 <Modal.Header closeButton>
                     <Modal.Title>Delete Purchase</Modal.Title>

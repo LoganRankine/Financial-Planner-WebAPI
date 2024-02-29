@@ -6,7 +6,7 @@ import Alert from 'react-bootstrap/Alert';
 import { Modal, Button, Toast, ToastContainer, Form, Spinner, Row } from 'react-bootstrap';
 import serverConfig from "../../server-config.json"
 
-function PurchaseForm({ budget_id, show, setShow }) {
+function PurchaseForm({ budget_id, show, setShow, refresh }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [itemName, setItemName] = useState("");
     const [purchaseDate, setPurchaseDate] = useState("");
@@ -44,6 +44,7 @@ function PurchaseForm({ budget_id, show, setShow }) {
             if (response.status == 201) {
                 response.json().then(data => {
                     setLoading(false)
+                    refresh()
                     try {
                         //Get BudgetId from response
                         const BudgetItemObject = JSON.parse(data)

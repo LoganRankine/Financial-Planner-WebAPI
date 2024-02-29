@@ -6,7 +6,7 @@ import serverConfig from "../../server-config.json"
 import { Button, Col, Form, InputGroup, Row, Dropdown, DropdownButton, Spinner } from 'react-bootstrap';
 import { FormControl } from '../../node_modules/react-bootstrap/esm/index';
 
-function CreateDebit() {
+function CreateDebit({refresh, refreshFunction}) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [directDebitName, setDirectDebitName] = useState("");
     const [paymentDate, setPaymentDate] = useState("");
@@ -53,11 +53,17 @@ function CreateDebit() {
                 setIntervalString("")
                 setPaymentDate("")
                 console.log("added direct createDebit successfully")
+                if (refreshFunction) {
+                  refresh()
+                }
             }
             if (response.status == 400)
             {
                 console.log("failed to add direct createDebit")
                 setLoading(false)
+                if (refreshFunction) {
+                    refresh()
+                }
             }
         })
     }

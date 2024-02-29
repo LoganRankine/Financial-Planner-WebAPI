@@ -18,6 +18,10 @@ function DirectDebitsDisplay({Sidebar}) {
     const [show, setShow] = useState(false);
     const [loading, setLoading] = useState(true);
     const query = sessionStorage.getItem("currentBudget")
+    const [fetchDebits, setFetchDebits] = useState(false);
+
+    const refreshDebits = () => setFetchDebits(true);
+
 
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
@@ -81,7 +85,9 @@ function DirectDebitsDisplay({Sidebar}) {
 
         getBudget(query)
 
-    }, []);
+        //Once refreshed, ensure variable set to false so action can happen again
+        setFetchDebits(false)
+    }, [fetchDebits]);
 
     console.log("BudgetId from query", p_budgetId)
 
@@ -95,7 +101,7 @@ function DirectDebitsDisplay({Sidebar}) {
                         <Modal.Title>Add Direct Debit</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <CreateDebit></CreateDebit>
+                        <CreateDebit refresh={refreshDebits} refreshFunction={true}></CreateDebit>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose} >
@@ -116,7 +122,7 @@ function DirectDebitsDisplay({Sidebar}) {
                 </div>
                 <div className="budget-content">
                     {loading ? <div className="no-budgets"><Spinner animation="border" variant="info" role="status"></Spinner></div> : <></>}
-                    {!directDebits ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Direct Debits</div> : directDebits.map(p_directDebit => (<DebitColumn directDebit={p_directDebit} key={p_directDebit.Id} />))}
+                    {!directDebits ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Direct Debits</div> : directDebits.map(p_directDebit => (<DebitColumn directDebit={p_directDebit} key={p_directDebit.Id} refresh={refreshDebits} />))}
 
 
                     {/*    <DebitColumn></DebitColumn>*/}

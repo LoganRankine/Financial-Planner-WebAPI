@@ -12,7 +12,7 @@ import ToastContainer from 'react-bootstrap/ToastContainer';
 import EditDirectForm from './EditDirectDebit';
 import serverConfig from "../../server-config.json"
 
-function DebitColumn({ directDebit }) {
+function DebitColumn({ directDebit, key, refresh }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [debitId, setDebitId] = useState("");
     const [budgetId, setBudgetId] = useState("");
@@ -63,6 +63,7 @@ function DebitColumn({ directDebit }) {
             setDeleteStatusText(message.SuccessTitle)
             setDeleteStatus(true)
             console.log("delete was successful")
+            refresh()
         }
         else {
             setShowDelete(false)
@@ -71,6 +72,7 @@ function DebitColumn({ directDebit }) {
             setDeleteStatusText(message.ErrorTitle)
             setDeleteStatus(true)
             console.log("delete failed")
+            refresh()
         }
     }
 
@@ -113,7 +115,7 @@ function DebitColumn({ directDebit }) {
 
                 </Modal.Footer>
             </Modal>
-            <EditDirectForm showEdit={showEdit} setShowEdit={setShowEdit} debit={directDebit}></EditDirectForm>
+            <EditDirectForm showEdit={showEdit} setShowEdit={setShowEdit} debit={directDebit} _refresh={refresh}></EditDirectForm>
         </div>
     );
 }

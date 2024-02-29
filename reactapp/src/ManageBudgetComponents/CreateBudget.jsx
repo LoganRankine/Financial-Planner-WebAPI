@@ -199,7 +199,7 @@ function CreateBudget() {
     }
     else {
         return (
-            <CreateDebit></CreateDebit>
+            <CreateDebit refreshFunction={false}></CreateDebit>
         );
     }
 }

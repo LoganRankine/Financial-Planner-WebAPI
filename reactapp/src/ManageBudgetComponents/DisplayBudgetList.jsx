@@ -47,6 +47,9 @@ function DisplayBudgets({SideBar }) {
 
     useEffect(() => {
         loadBudgets()
+
+        //Once refreshed, ensure variable set to false so action can happen again
+        setFetchBudgets(false)
     }, [fetchBudgets]);
 
     return (

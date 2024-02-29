@@ -5,7 +5,7 @@ import { CookiesProvider, useCookies } from "react-cookie";
 import { Modal, Button, Toast, ToastContainer, Form, Row, Spinner, DropdownButton, Dropdown, InputGroup } from 'react-bootstrap';
 import serverConfig from "../../server-config.json"
 
-function EditDirectForm({ showEdit, setShowEdit, debit }) {
+function EditDirectForm({ showEdit, setShowEdit, debit, _refresh }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [directDebitName, setDirectDebitName] = useState("");
     const [paymentDate, setPaymentDate] = useState("");
@@ -87,6 +87,7 @@ function EditDirectForm({ showEdit, setShowEdit, debit }) {
                     setIsSuccess(true)
                     setShowEdit(false)
                     console.log("added direct budgetItem successfully")
+                    _refresh()
                 })
             }
         })

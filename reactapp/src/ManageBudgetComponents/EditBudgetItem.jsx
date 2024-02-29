@@ -6,7 +6,7 @@ import { Modal, Button, Toast, ToastContainer, Form, Row, Spinner } from 'react-
 
 import serverConfig from "../../server-config.json"
 
-function EditBudgetItem({ showEdit, setShowEdit, budgetItem }) {
+function EditBudgetItem({ showEdit, setShowEdit, budgetItem, _refresh }) {
     const [cookies, setCookie] = useCookies(['SessionID']);
     const [itemName, setItemName] = useState("");
     const [purchaseDate, setPurchaseDate] = useState("");
@@ -56,6 +56,7 @@ function EditBudgetItem({ showEdit, setShowEdit, budgetItem }) {
                     setIsSuccess(true)
                     setShowEdit(false)
                     console.log("added direct budget successfully")
+                    _refresh()
                 })
             }
         })
