@@ -6,6 +6,36 @@
     cursor: inherit;
 }
 
+.expand {
+    display: none;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.expand-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+summary {
+    display: none;
+}
+
+details {
+    display: flex;
+    width: 100%;
+    border-top: black solid;
+    background-color: white;
+    margin-top: 5px;
+    border-radius: 0px 0px 5px 5px;
+}
+summary, .list-content-column {
+    display: flex;
+}
+
+
 .centre-form {
     display: flex;
     flex-direction: column;
@@ -51,6 +81,14 @@
     margin-top: 10px;
     justify-content: space-between;
 }
+
+#budget-title {
+    font-weight: 600;
+    font-family: sans-serif;
+    font-size: medium;
+    margin-right: auto;
+}
+
 
 .account-creation-container {
     width: 700px;
@@ -217,6 +255,12 @@
 }
 
 @media only screen and (max-width: 430px) {
+    .expand {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
     #budget-title {
         font-weight: 600;
         font-family: sans-serif;

@@ -97,25 +97,43 @@ function BudgetListColumn({ budget, key, refresh }) {
     }
 
     return (
-        <div style={isSuccess ? { display: 'none' } : { display: 'flex' }} className={extendDetailText ? "list-content-column-expand" : "list-content-column"} >
-            <div className="list-content-item">
-                <div onClick={directBudget} id="budget-title">{budgetName}</div>
-                <div className="desktop-hide" onClick={handleExpansion}>
-                    <a id="more-detail" >{extendDetailText ? "Less detail" : "More Detail"} <span className="material-symbols-outlined">arrow_drop_down</span></a>
+        <>
+            <details>
+                <summary>
+                    <div className="list-content-item">
+                        <div onClick={directBudget} id="budget-title">{budgetName}</div>
+                        <div className="desktop-hide" onClick={handleExpansion}>
+                            <a id="more-detail" >{extendDetailText ? "Less detail" : "More Detail"} <span className="material-symbols-outlined">arrow_drop_down</span></a>
+                        </div>
+                    </div>
+                    <div className="list-content-item mobile-hide" onClick={{/*directBudget*/}}>{formattedStartDate}</div>
+                    <div className="list-content-item mobile-hide" onClick={directBudget}>{formattedEndDate}</div>
+                    <div id="avaliable-content" className="list-content-item" onClick={directBudget}>
+                        <a id="available-text">Available amout:</a>
+                        <a id="avaliable">&#163;{budget.AvailableAmount.toFixed(2)}</a>
+                    </div>
+                    <div id="available-amount" className="mobile-hide list-content-item">&#163;{budget.WeeklyAmount.toFixed(2)}</div>
+                    <div className="list-content-option">
+                        <span className="material-symbols-outlined" style={{ cursor: 'pointer' }} onClick={handleEdit}>edit</span>
+                        <span id="delete-icon" className="material-symbols-outlined" onClick={handleDelete}>delete</span>
+                    </div>
+                    <EditBudget showEdit={show} setShowEdit={setShow} budget={budget} _refresh={refresh}></EditBudget>
+                </summary>
+                <div className="expand">
+                    <div className="expand-info">
+                        <text>Start Date:</text>
+                        <text>{formattedStartDate}</text>
+                    </div>
+                    <div className="expand-info">
+                        <text>End Date:</text>
+                        <text>{formattedEndDate}</text>
+                    </div>
+                    <div className="expand-info">
+                        <text>Weekly Amount:</text>
+                        <text>&#163;{budget.WeeklyAmount.toFixed(2)}</text>
+                    </div>
                 </div>
-            </div>
-            <div className="list-content-item mobile-hide" onClick={directBudget}>{formattedStartDate}</div>
-            <div className="list-content-item mobile-hide" onClick={directBudget}>{formattedEndDate}</div>
-            <div id="avaliable-content" className="list-content-item" onClick={directBudget}>
-                <a id="available-text">Available amout:</a>
-                <a id="avaliable">&#163;{budget.AvailableAmount.toFixed(2)}</a>
-            </div>
-            <div id="available-amount" className="mobile-hide list-content-item">&#163;{budget.WeeklyAmount.toFixed(2)}</div>
-            <div className="list-content-option">
-                <span className="material-symbols-outlined" style={{ cursor: 'pointer' } } onClick={handleEdit}>edit</span>
-                <span id="delete-icon" className="material-symbols-outlined" onClick={handleDelete}>delete</span>
-            </div>
-            <EditBudget showEdit={show} setShowEdit={setShow} budget={budget} _refresh={refresh}></EditBudget>
+            </details>
             <Modal show={showDelete} onHide={handleClose} animation={true} centered >
                 <Modal.Header closeButton>
                     <Modal.Title>Delete Budget</Modal.Title>
@@ -131,7 +149,7 @@ function BudgetListColumn({ budget, key, refresh }) {
                         Cancel
                     </Button>
 
-                    </Modal.Footer>
+                </Modal.Footer>
             </Modal>
             <ToastContainer position="top-end" >
                 <Toast show={deleteStatus} onClose={toggleDeleteStatus} animation={true} bg={isSuccess ? "success" : "warning"} delay={3000} autohide>
@@ -147,8 +165,70 @@ function BudgetListColumn({ budget, key, refresh }) {
                     <Toast.Body>{deleteStatusText}</Toast.Body>
                 </Toast>
             </ToastContainer>
-        </div>
+        </>
     );
+
+
+//    return (
+//        <div style={isSuccess ? { display: 'none' } : { display: 'flex' }} className={extendDetailText ? "list-content-column-expand" : "list-content-column"} >
+//            <details>
+//                <summary>
+//                    <div className="list-content-item">
+//                        <div onClick={directBudget} id="budget-title">{budgetName}</div>
+//                        <div className="desktop-hide" onClick={handleExpansion}>
+//                            <a id="more-detail" >{extendDetailText ? "Less detail" : "More Detail"} <span className="material-symbols-outlined">arrow_drop_down</span></a>
+//                        </div>
+//                    </div>
+//                    <div className="list-content-item mobile-hide" onClick={directBudget}>{formattedStartDate}</div>
+//                    <div className="list-content-item mobile-hide" onClick={directBudget}>{formattedEndDate}</div>
+//                    <div id="avaliable-content" className="list-content-item" onClick={directBudget}>
+//                        <a id="available-text">Available amout:</a>
+//                        <a id="avaliable">&#163;{budget.AvailableAmount.toFixed(2)}</a>
+//                    </div>
+//                    <div id="available-amount" className="mobile-hide list-content-item">&#163;{budget.WeeklyAmount.toFixed(2)}</div>
+//                    <div className="list-content-option">
+//                        <span className="material-symbols-outlined" style={{ cursor: 'pointer' }} onClick={handleEdit}>edit</span>
+//                        <span id="delete-icon" className="material-symbols-outlined" onClick={handleDelete}>delete</span>
+//                    </div>
+//                    <EditBudget showEdit={show} setShowEdit={setShow} budget={budget} _refresh={refresh}></EditBudget>
+//                </summary>
+//                <div>
+//                    she's a runner, she's a track star.
+//                </div>
+//            </details>
+//            <Modal show={showDelete} onHide={handleClose} animation={true} centered >
+//                <Modal.Header closeButton>
+//                    <Modal.Title>Delete Budget</Modal.Title>
+//                </Modal.Header>
+//                <Modal.Body>
+//                    <p style={{ fontWeight: '400' }}>You are deleting the budget: <b>{budgetName}</b>, are you sure?</p>
+//                </Modal.Body>
+//                <Modal.Footer>
+//                    <Button variant="danger" onClick={deleteBudget}>
+//                        Delete
+//                    </Button>
+//                    <Button variant="secondary">
+//                        Cancel
+//                    </Button>
+
+//                    </Modal.Footer>
+//            </Modal>
+//            <ToastContainer position="top-end" >
+//                <Toast show={deleteStatus} onClose={toggleDeleteStatus} animation={true} bg={isSuccess ? "success" : "warning"} delay={3000} autohide>
+//                    <Toast.Header>
+//                        <img
+//                            src="holder.js/20x20?text=%20"
+//                            className="rounded me-2"
+//                            alt=""
+//                        />
+//                        <strong className="me-auto">{!budget.BudgetName ? "Error occured" : budget.BudgetName}</strong>
+//                        <small>Just now</small>
+//                    </Toast.Header>
+//                    <Toast.Body>{deleteStatusText}</Toast.Body>
+//                </Toast>
+//            </ToastContainer>
+//        </div>
+//    );
 }
 
 export default BudgetListColumn
