@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using webapi.Models;
+using webapi.Models.BudgetObjects;
 using webapi.Services;
 
 namespace webapi.DataCRUD
@@ -12,7 +13,8 @@ namespace webapi.DataCRUD
         { 
             _userContext = userContext; 
         }
-
+        
+        //NO LONGER IN USE
         public async Task<string> CreateUser(string p_username, string p_email, string p_password)
         {
             try
@@ -31,7 +33,7 @@ namespace webapi.DataCRUD
                         Name = p_username,
                         Password = p_password,
                         Email = p_email,
-                        SessionId = sessionID.ToString()
+                        SessionId = sessionID.ToString(),
                     };
 
                     _userContext.Users.Add(user);

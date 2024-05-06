@@ -300,6 +300,7 @@ namespace webapi.Services
                         //Budget populdated wit new values
                         Budget updatedBudget = new()
                         {
+                            User = temp_budget.User,
                             BudgetName = temp_budget.BudgetName,
                             AvailableAmount = temp_budget.AvailableAmount,
                             StartDate = temp_budget.StartDate,

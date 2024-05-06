@@ -8,12 +8,19 @@ namespace webapi.Models.BudgetItemObjects
     {
         [Key]
         public string ItemId { get; set; }
+
         [ForeignKey("Budget")]
         public string BudgetId { get; set; }
+
         public Budget Budget { get; set; }
+
         public string ItemName { get; set; }
+
         [Column(TypeName = "decimal(19,4)")]
         public decimal ItemAmount { get; set; }
+
         public DateTime PurchaseDate { get; set; }
+
+        public Budget budget { get; set; }
     }
 }

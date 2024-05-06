@@ -30,12 +30,10 @@ export default defineConfig({
         }
     },
     server: {
-        proxy: {
-            '^/weatherforecast': {
-                target: 'https://localhost:7074/',
-                secure: false
-            }
+        hmr: {
+            host: 'localhost',
         },
+
         port: 5173,
         https: {
             key: fs.readFileSync(keyFilePath),

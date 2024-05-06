@@ -90,7 +90,7 @@ namespace webapi.Migrations
 
                     b.Property<string>("BudgetId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("DebitAmount")
                         .HasColumnType("decimal(19,4)");
@@ -112,6 +112,8 @@ namespace webapi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("DebitId");
+
+                    b.HasIndex("BudgetId");
 
                     b.ToTable("DirectDebits");
                 });
@@ -156,7 +158,7 @@ namespace webapi.Migrations
             modelBuilder.Entity("webapi.Models.BudgetObjects.Budget", b =>
                 {
                     b.HasOne("webapi.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Budgets")
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -164,9 +166,25 @@ namespace webapi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("webapi.Models.DirectDebitObjects.DirectDebit", b =>
+                {
+                    b.HasOne("webapi.Models.BudgetObjects.Budget", null)
+                        .WithMany("DirectDebits")
+                        .HasForeignKey("BudgetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("webapi.Models.BudgetObjects.Budget", b =>
                 {
                     b.Navigation("BudgetItems");
+
+                    b.Navigation("DirectDebits");
+                });
+
+            modelBuilder.Entity("webapi.Models.User", b =>
+                {
+                    b.Navigation("Budgets");
                 });
 #pragma warning restore 612, 618
         }

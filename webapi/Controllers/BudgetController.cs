@@ -26,6 +26,8 @@ namespace webapi.Controllers
         [HttpGet("AllBudgets")]
         async public Task<string> GetAllBudgets()
         {
+            //Some sort of pagenation
+            //Content?
             try
             {
                 string sessionID = HttpContext.Request.Headers["x-api-key"].ToString();

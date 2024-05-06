@@ -30,6 +30,7 @@ namespace webapi.DataCRUD
 
                     Budget budget = new Budget()
                     {
+                        User = user,
                         BudgetId = budgetId.ToString(),
                         Id = user.Id,
                         BudgetName = p_budget_name,
@@ -40,6 +41,9 @@ namespace webapi.DataCRUD
                     };
 
                     _userContext.Budgets.Add(budget);
+                    //user.Budgets.Add(budget);
+
+                    //_userContext.Budgets.Add(budget);
                     _userContext.SaveChanges();
 
                     return budget;
@@ -54,40 +58,36 @@ namespace webapi.DataCRUD
         {
             try
             {
-                //Try and find user using SessionID
-                User user = _userContext.Users.Where(user => user.SessionId == p_session_Id).FirstOrDefault();
+                //Budget budget = _userContext.Budgets.Where(temp_budget => temp_budget.BudgetId == p_budget_id).FirstOrDefault();
+                //Budget budget = user.Budgets.Where(budget => budget.BudgetId == p_budget_id).FirstOrDefault();
+                Budget budget = _userContext.Budgets.Where(budget => (budget.User.SessionId == p_session_Id) && (budget.BudgetId == p_budget_id)).FirstOrDefault();
 
-                //Ensure the user is able to use this budgetID
-                if (user != null)
+                if (budget != null)
                 {
-                    Budget budget = _userContext.Budgets.Where(temp_budget => temp_budget.BudgetId == p_budget_id).FirstOrDefault();
+                    //Create BudgetItem
+                    Guid itemId = Guid.NewGuid();
 
-                    if (budget != null)
+                    BudgetItem budgetItem = new BudgetItem
                     {
-                        //Create BudgetItem
-                        Guid itemId = Guid.NewGuid();
+                        BudgetId = p_budget_id,
+                        ItemId = itemId.ToString(),
+                        ItemAmount = p_item_amount,
+                        PurchaseDate = p_purchase_date,
+                        ItemName = p_item_name,
+                        Budget = budget
+                    };
 
-                        BudgetItem budgetItem = new BudgetItem
-                        {
-                            BudgetId = p_budget_id,
-                            ItemId = itemId.ToString(),
-                            ItemAmount = p_item_amount,
-                            PurchaseDate = p_purchase_date,
-                            ItemName = p_item_name,
-                        };
+                    //Deduct item amount form budget total
+                    Budget updatedBudget = budget;
+                    updatedBudget.AvailableAmount -= budgetItem.ItemAmount;
 
-                        //Deduct item amount form budget total
-                        Budget updatedBudget = budget;
-                        updatedBudget.AvailableAmount -= budgetItem.ItemAmount;
+                    //Add to database
+                    _userContext.BudgetItems.Add(budgetItem);
+                    _userContext.Budgets.Update(updatedBudget);
 
-                        //Add to database
-                        _userContext.BudgetItems.Add(budgetItem);
-                        _userContext.Budgets.Update(updatedBudget);
+                    _userContext.SaveChanges();
 
-                        _userContext.SaveChanges();
-
-                        return budgetItem;
-                    }
+                    return budgetItem;
                 }
                 return null;
             }
@@ -98,21 +98,16 @@ namespace webapi.DataCRUD
         {
             try
             {
-                //find user using SessionID
-                User user = _userContext.Users.Where(user => user.SessionId == p_session_Id).FirstOrDefault();
+                //Get all budgets for user
+                //List<Budget> budgets = _userContext.Budgets.Where(budget => budget.Id == user.Id).ToList();
+                List<Budget> budgets = _userContext.Budgets.Where(budget => (budget.User.SessionId == p_session_Id) && (budget.Id == budget.Id)).ToList();
 
-                if (user != null)
+                if (budgets != null)
                 {
-                    //Get all budgets for user
-                    List<Budget> budgets = _userContext.Budgets.Where(budget => budget.Id == user.Id).ToList();
-
-                    if(budgets != null)
+                    if (budgets.Count > 0)
                     {
-                        if (budgets.Count > 0)
-                        {
-                            budgets = budgets.OrderByDescending(date => date.StartDate).ToList();
-                            return budgets;
-                        }
+                        budgets = budgets.OrderByDescending(date => date.StartDate).ToList();
+                        return budgets;
                     }
                 }
                 return null;
@@ -128,8 +123,8 @@ namespace webapi.DataCRUD
             try
             {
                 //find user using SessionID
-                List<BudgetItem> p_budgetItems = _userContext.BudgetItems.Where(budgetItem => budgetItem.BudgetId == p_budget_id).ToList();
-
+                List<BudgetItem> p_budgetItems = _userContext.BudgetItems.Where(budgetItem => (budgetItem.BudgetId == p_budget_id)).ToList();
+                
                 if (p_budgetItems.Count != 0)
                 {
                     //Get all budgets for user
