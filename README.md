@@ -24,8 +24,12 @@ The secondary objective of this project is to learn and develop my front-end ski
 - Add purchases to budgets
 - Calculate weekly budget
 - Calculate weekly budget
-### Features to be added
 - Create first budget upon account creation
+### Features to be added
+- Initial desirable functionality implemented
+### Improvements to be made
+- Implement pagination for API and UI
+- Implement LINQ's for more efficent retrieval of data from database
 ### Future updates 
 - Option to aid in calculating and how much you can save
 - Connect to bank in future
