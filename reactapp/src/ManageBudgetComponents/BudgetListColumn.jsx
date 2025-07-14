@@ -98,42 +98,25 @@ function BudgetListColumn({ budget, key, refresh }) {
 
     return (
         <>
-            <details>
-                <summary>
-                    <div className="list-content-item">
-                        <div onClick={directBudget} id="budget-title">{budgetName}</div>
-                        <div className="desktop-hide" onClick={handleExpansion}>
-                            <a id="more-detail" >{extendDetailText ? "Less detail" : "More Detail"} <span className="material-symbols-outlined">arrow_drop_down</span></a>
-                        </div>
-                    </div>
-                    <div className="list-content-item mobile-hide" onClick={{/*directBudget*/}}>{formattedStartDate}</div>
-                    <div className="list-content-item mobile-hide" onClick={directBudget}>{formattedEndDate}</div>
-                    <div id="avaliable-content" className="list-content-item" onClick={directBudget}>
-                        <a id="available-text">Available amout:</a>
-                        <a id="avaliable">&#163;{budget.AvailableAmount.toFixed(2)}</a>
-                    </div>
-                    <div id="available-amount" className="mobile-hide list-content-item">&#163;{budget.WeeklyAmount.toFixed(2)}</div>
-                    <div className="list-content-option">
-                        <span className="material-symbols-outlined" style={{ cursor: 'pointer' }} onClick={handleEdit}>edit</span>
-                        <span id="delete-icon" className="material-symbols-outlined" onClick={handleDelete}>delete</span>
-                    </div>
+            <tr>
+                <th onClick={directBudget}>
+                    {budgetName}
+                </th>
+                <td onClick={{/*directBudget*/ }}>{formattedStartDate}</td>
+                <td onClick={directBudget}>{formattedEndDate}</td>
+                <td onClick={directBudget}>
+                    <a id="available-text">Available amout:</a>
+                    <a id="avaliable">&#163;{budget.AvailableAmount.toFixed(2)}</a>
+                </td>
+                <td >&#163;{budget.WeeklyAmount.toFixed(2)}</td>
+                <td>
+                    <span className="material-symbols-outlined" style={{ cursor: 'pointer' }} onClick={handleEdit}>edit</span>
+                    <span id="delete-icon" className="material-symbols-outlined" onClick={handleDelete}>delete</span>
+                </td>
+                <td>
                     <EditBudget showEdit={show} setShowEdit={setShow} budget={budget} _refresh={refresh}></EditBudget>
-                </summary>
-                <div className="expand">
-                    <div className="expand-info">
-                        <text>Start Date:</text>
-                        <text>{formattedStartDate}</text>
-                    </div>
-                    <div className="expand-info">
-                        <text>End Date:</text>
-                        <text>{formattedEndDate}</text>
-                    </div>
-                    <div className="expand-info">
-                        <text>Weekly Amount:</text>
-                        <text>&#163;{budget.WeeklyAmount.toFixed(2)}</text>
-                    </div>
-                </div>
-            </details>
+                </td>
+            </tr>
             <Modal show={showDelete} onHide={handleClose} animation={true} centered >
                 <Modal.Header closeButton>
                     <Modal.Title>Delete Budget</Modal.Title>

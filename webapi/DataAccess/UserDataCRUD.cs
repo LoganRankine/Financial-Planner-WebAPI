@@ -128,6 +128,10 @@ namespace webapi.DataCRUD
 
         public async Task<User> CheckAuthStatus(string p_sessionID)
         {
+            if (p_sessionID == "null") //nothing to authenticate
+            {
+                return null;
+            }
             try
             {
                 var User = _userContext.Users.ToList().FirstOrDefault(user => user.SessionId == p_sessionID);

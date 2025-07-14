@@ -56,25 +56,28 @@ function DisplayBudgets({SideBar }) {
         <div className="base-content">
             {SideBar}
             <div className="content-area">
-                <div className="list">
-                    <div className="list-header">
-                        <div className="list-header-item">Budget Name</div>
-                        <div className="list-header-item">Start Date</div>
-                        <div className="list-header-item">End Date</div>
-                        <div className="list-header-item">Available Amount</div>
-                        <div className="list-header-item">Weekly Amount</div>
-                        <div className="list-content-option">
-                            <span className="material-symbols-outlined" style={{ cursor: 'pointer' }}>
-                                refresh
-                            </span>
-                        </div>
-                    </div>
-                    <div className="list-content">
-                        {loading ? <div className="no-budgets"><Spinner animation="border" variant="info" role="status"></Spinner></div> : <></>}
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" >Budget Name</th>
+                            <th scope="col" >Start Date</th>
+                            <th scope="col" >End Date</th>
+                            <th scope="col" >Available Amount</th>
+                            <th scope="col" >Weekly Amount</th>
+                            <th scope="col" >Actions</th>
+                            <th scope="col" className="list-content-option">
+                                <span className="material-symbols-outlined" style={{ cursor: 'pointer' }}>
+                                    refresh
+                                </span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody className="table-striped table-hover">
+                            {loading ? <div className="no-budgets"><Spinner animation="border" variant="info" role="status"></Spinner></div> : <></>}
                         {!allBudgets ? <div className={loading ? "budgets-loading" : "no-budgets"}>No Budgets</div> : allBudgets.map(budget => (<BudgetListColumn budget={budget} key={budget.Id} refresh={refreshBudgets} />))}
                         {/*{!allBudgets ? 'Loading' : allBudgets.allBudgets.map}*/}
-                    </div>
-                </div>
+                    </tbody>
+                </table>
             </div>
 
         </div>

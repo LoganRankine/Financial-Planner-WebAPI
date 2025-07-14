@@ -47,6 +47,11 @@ namespace webapi.Auth
             //APIKEY exists
             var ApiKey = Request.Headers["x-api-key"];
 
+            if (ApiKey.Count == 0 || ApiKey.Count == null)
+            {
+                return Task.FromResult(AuthenticateResult.Fail("Unauthorized.Check ApiKey in Header is correct."));
+            }
+
             Models.User user = _dbAccess.CheckAuthStatus(ApiKey).Result;
             if (user != null)
             {

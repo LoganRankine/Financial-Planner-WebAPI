@@ -21,6 +21,5 @@ namespace webapi.Models.BudgetItemObjects
 
         public DateTime PurchaseDate { get; set; }
 
-        public Budget budget { get; set; }
     }
 }
